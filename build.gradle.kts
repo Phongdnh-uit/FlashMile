@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.uit"
+    group = "com.uit.se356"
     version = "0.0.1-SNAPSHOT"
     description = "Dự án cho môn học SE356"
     repositories {
