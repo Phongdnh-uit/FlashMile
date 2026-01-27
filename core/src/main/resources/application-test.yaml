@@ -1,0 +1,25 @@
+spring:
+  # Testcontainers sẽ inject datasource → không cấu hình datasource tại đây
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # Bắt buộc khi dùng Flyway
+    show-sql: false       # Test không cần spam log SQL
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  flyway:
+    enabled: true
+    clean-disabled: false   # Cho phép clean trong test (tuyệt đối KHÔNG dùng ở prod)
+
+  docker:
+    compose:
+      enabled: false        # Test không dùng Docker Compose
+
+logging:
+  level:
+    root: WARN
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

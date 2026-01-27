@@ -1,0 +1,29 @@
+spring:
+  # Cấu hình data source cho môi trường local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/delivery_db
+    username: myuser
+    password: secret
+    driver-class-name: org.postgresql.Driver
+
+  # Cấu hình JPA cho môi trường local
+  jpa:
+    hibernate:
+      ddl-auto: validate # Validate khi có flyway
+    show-sql: true # Hiển thị câu lệnh SQL trong log để tối ưu khi cần
+    properties:
+      hibernate:
+        format_sql: true # Định dạng câu lệnh SQL cho dễ đọc
+
+  # Cấu hình tự động hỗ trợ docker khi chạy ứng dụng local
+  docker:
+    compose:
+      enabled: true
+      lifecycle-management: start-and-stop # Tự động khởi động và dừng Docker Compose khi ứng dụng chạy và dừng
+      file: docker/local/compose.yaml # Đường dẫn đến file Docker Compose cho môi trường local (tính từ thư mục gốc của dự án)
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # Xem giá trị truyền vào tham số SQL

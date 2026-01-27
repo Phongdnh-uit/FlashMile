@@ -1,3 +1,26 @@
 spring:
   application:
     name: se356
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local} # Thiết lập profile mặc định là local nếu không có biến môi trường
+  # Cấu hình chung cho toàn ứng dụng
+
+  # Cấu hình jackson
+  jackson:
+    time-zone: GMT+7
+
+  # Cấu hình flyway
+  flyway:
+    enabled: true # luôn kích hoạt cho bất kỳ môi trường nào
+    baseline-on-migrate: true # Thiết lập baseline cho schema không rỗng
+
+  # Cấu hình validation
+  messages:
+    basename: i18n/messages # Basename cho validation message tìm
+    encoding: UTF-8 # Mã hóa cho file i18n phù hợp với tiếng Việt
+
+# Cấu hình server
+server:
+  compression:
+    enabled: true # Bật nén response
+    mime-types: application/json,application/xml,text/xml,text/plain # Các loại MIME
