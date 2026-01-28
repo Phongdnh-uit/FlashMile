@@ -5,6 +5,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.flywaydb:flyway-database-postgresql")
+    implementation ("io.micrometer:micrometer-registry-prometheus:1.17.0-M1")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
