@@ -24,3 +24,19 @@ server:
   compression:
     enabled: true # Bật nén response
     mime-types: application/json,application/xml,text/xml,text/plain # Các loại MIME
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - loggers
+          - metrics
+          - prometheus
+  endpoint:
+    loggers:
+      access: read-only
+    health:
+      show-details: always # Luôn hiển thị chi tiết health

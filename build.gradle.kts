@@ -1,7 +1,18 @@
 plugins {
 	java
+    id("com.diffplug.spotless") version "8.2.1"
 	id("org.springframework.boot") version "4.0.2" apply false
 	id("io.spring.dependency-management") version "1.1.7" apply false
+}
+
+spotless {
+    java {
+        target("core/src/**/*.java","common/src/**/*.java")
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 allprojects {
