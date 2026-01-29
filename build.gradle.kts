@@ -1,17 +1,32 @@
 plugins {
 	java
+    id("org.sonarqube") version "7.2.2.6593"
+    id("jacoco")
     id("com.diffplug.spotless") version "8.2.1"
 	id("org.springframework.boot") version "4.0.2" apply false
 	id("io.spring.dependency-management") version "1.1.7" apply false
 }
 
+jacoco {
+    toolVersion = "0.8.14"
+}
+
 spotless {
     java {
-        target("core/src/**/*.java","common/src/**/*.java")
+        target("**/src/**/*.java")
         googleJavaFormat()
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "Phongdnh-uit_SE356")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.organization", "phongdnh")
+        property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
 
@@ -26,6 +41,7 @@ allprojects {
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "jacoco")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 
@@ -41,6 +57,14 @@ subprojects {
         }
     }
 
+    sonar {
+        properties {
+            property("sonar.sources", "src/main/java")
+            property("sonar.tests", "src/test/java")
+            property("sonar.java.binaries", "build/classes/java/main")
+        }
+    }
+
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         compileOnly("org.projectlombok:lombok")
@@ -52,5 +76,14 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        finalizedBy("jacocoTestReport")
+    }
+
+    tasks.withType<JacocoReport> {
+        dependsOn(tasks.test)
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
     }
 }
