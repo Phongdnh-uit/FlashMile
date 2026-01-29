@@ -44,3 +44,4 @@ node_modules
 /.kotlin/
 .env
 .idea/
+!gradle/wrapper/gradle-wrapper.jar
