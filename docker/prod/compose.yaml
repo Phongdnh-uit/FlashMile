@@ -1,0 +1,12 @@
+services:
+  core:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+      args:
+        SERVICE: core
+    container_name: core_service
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8080:8080"

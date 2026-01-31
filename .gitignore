@@ -45,3 +45,4 @@ node_modules
 .env
 .idea/
 !gradle/wrapper/gradle-wrapper.jar
+**/.env

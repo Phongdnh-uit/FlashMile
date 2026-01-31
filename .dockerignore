@@ -1,0 +1,43 @@
+# Gradle cache và build output
+.gradle
+**/build
+
+# Chỉ re-include JAR của module chạy chính
+!app/build/libs/*.jar
+
+# IDE
+.idea
+*.iml
+.vscode
+
+# Logs
+*.log
+
+# Env files
+.env
+.env.local
+
+# Git
+.git
+.github
+
+# Test reports
+**/test-results
+**/test-reports
+
+# Postman
+*.postman_collection*.json
+
+# Temp files
+*.tmp
+*.temp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docs
+docs
+*.md
+!README.md
