@@ -1,7 +1,7 @@
 package com.uit.se356.common.services;
 
 import com.uit.se356.common.dto.PageResponse;
-import com.uit.se356.common.mappers.GenericMapper;
+import com.uit.se356.common.mappers.CommonMapper;
 import com.uit.se356.common.repository.CommonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,14 +16,14 @@ import org.springframework.data.jpa.domain.Specification;
  * @param O Output đầu ra, thường là Response DTO
  * @version 1.0
  */
-public interface CrudQueryService<E, ID, S, O> {
+public interface CrudQueryService<ID, S, O> {
   // ============================ CONTRACT ============================
-  PageResponse<S> findAll(Pageable pageable, Specification<E> specification);
+  <E> PageResponse<S> findAll(Pageable pageable, Specification<E> specification);
 
   O findById(ID id);
 
   // ============================ FIND ALL UTIL ============================
-  default void defaultBeforeFindAll(Pageable pageable, Specification<E> specification) {
+  default <E> void defaultBeforeFindAll(Pageable pageable, Specification<E> specification) {
     // Chèn các logic dùng chung ở đây nếu cần
   }
 
@@ -31,10 +31,10 @@ public interface CrudQueryService<E, ID, S, O> {
     // Chèn các logic dùng chung ở đây nếu cần
   }
 
-  default <I> PageResponse<S> defaultFindAll(
+  default <E, ICreate, IUpdate> PageResponse<S> defaultFindAll(
       Pageable pageable,
       Specification<E> specification,
-      GenericMapper<E, I, O, S> mapper,
+      CommonMapper<E, ICreate, IUpdate, O, S> mapper,
       CommonRepository<E, ID> repository) {
     defaultBeforeFindAll(pageable, specification);
     Page<E> entitiesPage = repository.findAll(specification, pageable);
@@ -52,8 +52,8 @@ public interface CrudQueryService<E, ID, S, O> {
     // Chèn các logic dùng chung ở đây nếu cần
   }
 
-  default <I> O defaultFindById(
-      ID id, GenericMapper<E, I, O, S> mapper, CommonRepository<E, ID> repository) {
+  default <E, ICreate, IUpdate> O defaultFindById(
+      ID id, CommonMapper<E, ICreate, IUpdate, O, S> mapper, CommonRepository<E, ID> repository) {
     defaultBeforeFindById(id);
     E entity = repository.findById(id).orElseThrow();
     O response = mapper.entityToResponse(entity);
