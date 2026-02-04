@@ -1,0 +1,32 @@
+spring:
+  # Cấu hình data source cho môi trường prod
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 30 # Tăng pool size cho traffic lớn
+      minimum-idle: 10
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 30000
+      pool-name: LastMileHikariPool
+
+  # Cấu hình JPA cho môi trường local
+  jpa:
+    hibernate:
+      ddl-auto: validate # Validate khi có flyway
+    show-sql: false # Tắt hiển thị câu lệnh SQL trong log để tránh lộ thông tin nhạy cảm
+    properties:
+      hibernate:
+        jdbc.batch_size: 30 # Tối ưu insert/update hàng loạt
+        order_inserts: true
+        order_updates: true
+  flyway:
+    clean-disabled: true # Vô hiệu hóa lệnh clean trong môi trường production
+
+logging:
+  level:
+    root: WARN # Giảm mức log gốc để tránh quá tải log
+    '[com.uit.se356.core]': INFO # Giữ mức log INFO cho package chính của ứng dụng

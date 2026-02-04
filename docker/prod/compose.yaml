@@ -1,10 +1,6 @@
 services:
   core:
-    build:
-      context: ../../
-      dockerfile: Dockerfile
-      args:
-        SERVICE: core
+    image: dnhphong2005/flashmile-core:latest
     container_name: core_service
     restart: unless-stopped
     env_file: .env
