@@ -35,6 +35,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew spotlessCheck clean build sonar --no-daemon --info
 
+  push_registry:
+    name: Build and Push Docker Images to Docker Hub
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [core]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Log in to Docker Hub
         # Chỉ push khi merge vào main, tránh đẩy rác từ Pull Request
         if: github.event_name != 'pull_request'
@@ -48,7 +59,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            SERVICE=${{ matrix.service }}
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:${{ github.sha }}
