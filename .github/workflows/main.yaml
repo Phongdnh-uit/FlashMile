@@ -66,6 +66,18 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:${{ github.sha }}
 
+      - name: Wait until image is available
+        run: |
+          for i in {1..15}; do
+            docker manifest inspect \
+              ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:latest \
+              && exit 0
+            echo "Waiting for image..."
+            sleep 4
+          done
+          echo "Image not available"
+          exit 1
+
       - name: Trigger deployment workflow
         run: |
           curl --fail --silent --show-error \
