@@ -29,4 +29,26 @@ spring:
 logging:
   level:
     root: WARN # Giảm mức log gốc để tránh quá tải log
-    '[com.uit.se356.core]': INFO # Giữ mức log INFO cho package chính của ứng dụng
+    "[com.uit.se356.core]": INFO # Giữ mức log INFO cho package chính của ứng dụng
+
+server:
+  port: ${PORT:8080} # Lấy port từ biến môi trường, mặc định là 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Chỉ expose những gì thực sự cần thiết
+        include: health, info
+      base-path: ${ACTUATOR_BASE_PATH:/actuator} # Thay đổi path mặc định (/actuator) để tăng tính bảo mật
+  endpoint:
+    health:
+      show-details: never # Không show chi tiết DB, Disk cho người dùng công cộng, sửa lại when-authorized nếu có security
+      probes:
+        enabled: true # Bật Liveness và Readiness probes cho Render
+    # prometheus:
+    #   access: read-only
+  metrics:
+    tags:
+      application: ${spring.application.name:core-service} # Lấy tên app tự động
+      env: render # Phân biệt môi trường
