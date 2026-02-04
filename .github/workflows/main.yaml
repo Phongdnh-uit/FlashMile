@@ -35,27 +35,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew spotlessCheck clean build sonar --no-daemon --info
 
-  push_registry:
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     name: Build and Push Docker Images to Docker Hub
     needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [core]
+        include:
+          - service: core
+            deploy_url: ${{ secrets.DEPLOY_CORE_URL }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Log in to Docker Hub
-        # Chỉ push khi merge vào main, tránh đẩy rác từ Pull Request
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -65,3 +65,9 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:${{ github.sha }}
+
+      - name: Trigger deployment workflow
+        run: |
+          curl --fail --silent --show-error \
+           --max-time 30 \
+           -X POST "${{ matrix.deploy_url }}"
