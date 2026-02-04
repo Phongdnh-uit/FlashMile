@@ -44,7 +44,7 @@ jobs:
       matrix:
         include:
           - service: core
-            deploy_url: ${{ secrets.DEPLOY_CORE_URL }}
+            deploy_url: DEPLOY_CORE_URL
     steps:
       - uses: actions/checkout@v4
         with:
@@ -70,4 +70,4 @@ jobs:
         run: |
           curl --fail --silent --show-error \
            --max-time 30 \
-           -X POST "${{ matrix.deploy_url }}"
+           -X POST "${{ secrets[matrix.deploy_url] }}"
