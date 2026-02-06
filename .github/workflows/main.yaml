@@ -63,14 +63,14 @@ jobs:
             SERVICE=${{ matrix.service }}
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile_${{ matrix.service }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/flashmile_${{ matrix.service }}:${{ github.sha }}
 
       - name: Wait until image is available
         run: |
           for i in {1..15}; do
             docker manifest inspect \
-              ${{ secrets.DOCKERHUB_USERNAME }}/flashmile-${{ matrix.service }}:latest \
+              ${{ secrets.DOCKERHUB_USERNAME }}/flashmile_${{ matrix.service }}:latest \
               && exit 0
             echo "Waiting for image..."
             sleep 4
