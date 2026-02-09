@@ -23,7 +23,7 @@
         </encoder>
     </appender>
 
-    <springProfile name="dev, local">
+    <springProfile name="dev, local, render">
         <root level="INFO">
             <appender-ref ref="CONSOLE" />
         </root>

@@ -26,13 +26,13 @@ spring:
   flyway:
     clean-disabled: true # Vô hiệu hóa lệnh clean trong môi trường production
 
-server:
-  port: ${PORT:8080} # Lấy port từ biến môi trường, mặc định là 8080
-
 logging:
   level:
     root: WARN # Giảm mức log gốc để tránh quá tải log
     "[com.uit.se356.core]": INFO # Giữ mức log INFO cho package chính của ứng dụng
+
+server:
+  port: ${PORT:8080} # Lấy port từ biến môi trường, mặc định là 8080
 
 management:
   endpoints:
@@ -51,4 +51,4 @@ management:
   metrics:
     tags:
       application: ${spring.application.name:core-service} # Lấy tên app tự động
-      env: production # Phân biệt môi trường
+      env: render # Phân biệt môi trường
