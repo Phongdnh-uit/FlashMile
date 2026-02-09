@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum AppError implements ErrorCode {
+public enum CommonErrorCode implements ErrorCode {
   ;
   private final String code;
   private final String messageKey;
