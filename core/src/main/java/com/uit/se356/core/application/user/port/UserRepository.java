@@ -1,4 +1,4 @@
-package com.uit.se356.core.application.ports.authentication;
+package com.uit.se356.core.application.user.port;
 
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.vo.authentication.Email;

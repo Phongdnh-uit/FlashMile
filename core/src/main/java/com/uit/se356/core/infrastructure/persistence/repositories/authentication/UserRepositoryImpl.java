@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.persistence.repositories.authentication;
 
-import com.uit.se356.core.application.ports.authentication.UserRepository;
+import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
