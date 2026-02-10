@@ -162,6 +162,16 @@ public class User {
     touch(updatedBy);
   }
 
+  public void updateProfile(String newFullName, String newEmail) {
+      if (newFullName != null && !newFullName.isBlank()) {
+          this.fullName = newFullName;
+      }
+      if (newEmail != null && !newEmail.isBlank()) {
+          this.email = new Email(newEmail);
+      }
+      this.updatedAt = Instant.now();
+  }
+
   // ============================ GETTERS ============================
   public UserId getUserId() {
     return userId;
