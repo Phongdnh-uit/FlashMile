@@ -12,7 +12,7 @@ spring:
   # Cấu hình flyway
   flyway:
     enabled: true # luôn kích hoạt cho bất kỳ môi trường nào
-    baseline-on-migrate: true # Thiết lập baseline cho schema không rỗng
+    # baseline-on-migrate: true # Thiết lập baseline cho schema không rỗng
 
   # Cấu hình validation
   messages:
