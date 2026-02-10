@@ -40,3 +40,10 @@ management:
       access: read-only
     health:
       show-details: always # Luôn hiển thị chi tiết health
+
+application:
+  security:
+    jwt:
+      secret-key: "mySuperSecretKeyForJwtSigningMustBeLongEnoughToSatisfyHS256Requirements"
+      expiration: 86400000 # 1 day
+      refresh-expiration: 604800000 # 7 days

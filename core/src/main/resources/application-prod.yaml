@@ -52,3 +52,10 @@ management:
     tags:
       application: ${spring.application.name:core-service} # Lấy tên app tự động
       env: production # Phân biệt môi trường
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION:86400000} # 1 ngày
+      refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 ngày

@@ -9,10 +9,12 @@ dependencies {
     implementation ("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
+    implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+    testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-thymeleaf-test")

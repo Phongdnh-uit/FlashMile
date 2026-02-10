@@ -1,0 +1,36 @@
+package com.uit.se356.core.domain.exception;
+
+import com.uit.se356.common.exception.ErrorCode;
+
+public enum AuthErrorCode implements ErrorCode {
+  INVALID_CREDENTIALS("AUTH_001", "error.auth.invalid_credentials", 401),
+  CREDENTIAL_ID_INVALID("AUTH_002", "error.auth.credential_id_invalid", 400),
+  PASSWORD_INVALID("AUTH_003", "error.auth.password_invalid", 400),
+  TOKEN_GENERATION_FAILED("AUTH_004", "error.auth.token_generation_failed", 500),
+  UNCATEGORIZED_EXCEPTION("AUTH_005", "error.auth.uncategorized", 500),
+  ;
+  private final String code;
+  private final String messageKey;
+  private final int httpStatus;
+
+  AuthErrorCode(String code, String messageKey, int httpStatus) {
+    this.code = code;
+    this.messageKey = messageKey;
+    this.httpStatus = httpStatus;
+  }
+
+  @Override
+  public String getCode() {
+    return code;
+  }
+
+  @Override
+  public String getMessageKey() {
+    return messageKey;
+  }
+
+  @Override
+  public int getHttpStatus() {
+    return httpStatus;
+  }
+}
