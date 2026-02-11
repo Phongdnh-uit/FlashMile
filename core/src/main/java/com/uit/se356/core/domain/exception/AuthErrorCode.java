@@ -8,6 +8,9 @@ public enum AuthErrorCode implements ErrorCode {
   PASSWORD_INVALID("AUTH_003", "error.auth.password_invalid", 400),
   TOKEN_GENERATION_FAILED("AUTH_004", "error.auth.token_generation_failed", 500),
   UNCATEGORIZED_EXCEPTION("AUTH_005", "error.auth.uncategorized", 500),
+  PHONE_ALREADY_REGISTERED("AUTH_006", "error.auth.phone_already_registered", 400),
+  INVALID_VERIFICATION_CODE_REQUEST(
+      "AUTH_007", "error.auth.invalid_verification_code_request", 400),
   ;
   private final String code;
   private final String messageKey;

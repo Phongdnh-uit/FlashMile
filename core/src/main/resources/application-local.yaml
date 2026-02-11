@@ -21,6 +21,10 @@ spring:
       enabled: true
       lifecycle-management: start-and-stop # Tự động khởi động và dừng Docker Compose khi ứng dụng chạy và dừng
       file: docker/local/compose.yaml # Đường dẫn đến file Docker Compose cho môi trường local (tính từ thư mục gốc của dự án)
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:

@@ -26,6 +26,12 @@ spring:
   flyway:
     clean-disabled: true # Vô hiệu hóa lệnh clean trong môi trường production
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
 server:
   port: ${PORT:8080} # Lấy port từ biến môi trường, mặc định là 8080
 

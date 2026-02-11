@@ -26,6 +26,12 @@ spring:
   flyway:
     clean-disabled: true # Vô hiệu hóa lệnh clean trong môi trường production
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
 logging:
   level:
     root: WARN # Giảm mức log gốc để tránh quá tải log
