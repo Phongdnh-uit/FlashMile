@@ -1,10 +1,9 @@
-package com.uit.se356.core.application.authentication.strategies.verificationSender;
+package com.uit.se356.core.application.authentication.strategies;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.OtpGenerator;
 import com.uit.se356.core.application.authentication.port.CacheRepository;
 import com.uit.se356.core.application.authentication.port.VerificationSender;
-import com.uit.se356.core.application.authentication.strategies.SendVerificationStrategy;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SendPhoneVerification implements SendVerificationStrategy {
+public class PhoneVerificationSendingStrategy implements SendVerificationStrategy {
 
   private final UserRepository userRepository;
   private final CacheRepository cacheRepository;

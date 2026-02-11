@@ -11,6 +11,7 @@ public enum AuthErrorCode implements ErrorCode {
   PHONE_ALREADY_REGISTERED("AUTH_006", "error.auth.phone_already_registered", 400),
   INVALID_VERIFICATION_CODE_REQUEST(
       "AUTH_007", "error.auth.invalid_verification_code_request", 400),
+  INVALID_VERIFICATION_CODE("AUTH_008", "error.auth.invalid_verification_code", 400),
   ;
   private final String code;
   private final String messageKey;

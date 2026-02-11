@@ -23,3 +23,10 @@ logging:
     root: WARN
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+application:
+  security:
+    jwt:
+      secret-key: "mySuperSecretKeyForJwtSigningMustBeLongEnoughToSatisfyHS256Requirements"
+      expiration: 86400000 # 1 day
+      refresh-expiration: 604800000 # 7 days
