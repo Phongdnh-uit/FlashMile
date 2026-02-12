@@ -4,7 +4,7 @@ import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.core.application.authentication.query.ProcessVerificationQuery;
 import com.uit.se356.core.application.authentication.result.VerificationResult;
-import com.uit.se356.core.application.authentication.strategies.ProcessVerificationStrategy;
+import com.uit.se356.core.application.authentication.strategies.verification.process.ProcessVerificationStrategy;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

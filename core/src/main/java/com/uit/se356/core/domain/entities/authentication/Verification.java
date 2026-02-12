@@ -45,7 +45,7 @@ public class Verification {
     if (expiresAt.isBefore(Instant.now())) {
       throw new AppException(VerificationErrorCode.INVALID_EXPIRES_AT);
     }
-    AuditInfo audit = AuditInfo.created(by, Instant.now());
+    AuditInfo audit = AuditInfo.create(by);
     return new Verification(id, userId, type, code, expiresAt, audit);
   }
 

@@ -3,6 +3,7 @@ package com.uit.se356.core.infrastructure.config;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -38,7 +39,9 @@ public class AppSecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(
+                auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    .permitAll()
+                    .requestMatchers(
                         "/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
                     .permitAll()
                     .anyRequest()

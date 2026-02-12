@@ -12,7 +12,10 @@ public enum AuthErrorCode implements ErrorCode {
   INVALID_VERIFICATION_CODE_REQUEST(
       "AUTH_007", "error.auth.invalid_verification_code_request", 400),
   INVALID_VERIFICATION_CODE("AUTH_008", "error.auth.invalid_verification_code", 400),
-  ;
+  INVALID_REGISTER_COMMAND("AUTH_009", "error.auth.invalid_register_command", 400),
+  EMAIL_ALREADY_VERIFIED("AUTH_010", "error.auth.email_already_verified", 400),
+  USER_UNVERIFIED("AUTH_011", "error.auth.user_unverified", 403),
+  USER_BLOCKED("AUTH_012", "error.auth.user_blocked", 403);
   private final String code;
   private final String messageKey;
   private final int httpStatus;

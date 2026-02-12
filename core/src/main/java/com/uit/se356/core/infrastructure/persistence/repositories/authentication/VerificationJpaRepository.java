@@ -13,4 +13,3 @@ public interface VerificationJpaRepository extends CommonRepository<Verification
 
   void deleteByUserIdAndType(String userId, VerificationType type);
 }
-

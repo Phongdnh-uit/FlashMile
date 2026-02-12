@@ -6,4 +6,6 @@ public interface TokenProvider {
   String generateRefreshToken(String userId);
 
   Long getTokenExpiryDuration();
+
+  Long getRefreshTokenExpiryDuration();
 }

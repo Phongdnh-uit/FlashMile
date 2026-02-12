@@ -1,4 +1,4 @@
-package com.uit.se356.core.application.authentication.strategies;
+package com.uit.se356.core.application.authentication.strategies.verification.send;
 
 import com.uit.se356.core.application.authentication.port.VerificationSender;
 import com.uit.se356.core.domain.vo.authentication.CodePurpose;

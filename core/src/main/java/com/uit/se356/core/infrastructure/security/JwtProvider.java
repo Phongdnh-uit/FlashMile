@@ -10,7 +10,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.core.application.authentication.port.TokenProvider;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
-import com.uit.se356.core.infrastructure.config.JwtProperties;
+import com.uit.se356.core.infrastructure.config.AppProperties;
 import java.util.Date;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class JwtProvider implements TokenProvider {
 
-  private final JwtProperties jwtProperties;
+  private final AppProperties appProperties;
 
   public String generateToken(String userId, String email, String role) {
     try {
-      JWSSigner signer = new MACSigner(jwtProperties.getSecretKey());
+      JWSSigner signer = new MACSigner(appProperties.getSecurity().getJwt().getSecretKey());
 
       JWTClaimsSet claimsSet =
           new JWTClaimsSet.Builder()
@@ -35,7 +35,10 @@ public class JwtProvider implements TokenProvider {
               .claim("email", email)
               .claim("role", role)
               .issueTime(new Date())
-              .expirationTime(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
+              .expirationTime(
+                  new Date(
+                      System.currentTimeMillis()
+                          + appProperties.getSecurity().getJwt().getExpiration()))
               .jwtID(UUID.randomUUID().toString())
               .build();
 
@@ -52,14 +55,16 @@ public class JwtProvider implements TokenProvider {
 
   public String generateRefreshToken(String userId) {
     try {
-      JWSSigner signer = new MACSigner(jwtProperties.getSecretKey());
+      JWSSigner signer = new MACSigner(appProperties.getSecurity().getJwt().getSecretKey());
 
       JWTClaimsSet claimsSet =
           new JWTClaimsSet.Builder()
               .subject(userId)
               .issueTime(new Date())
               .expirationTime(
-                  new Date(System.currentTimeMillis() + jwtProperties.getRefreshExpiration()))
+                  new Date(
+                      System.currentTimeMillis()
+                          + appProperties.getSecurity().getJwt().getRefreshExpiration()))
               .jwtID(UUID.randomUUID().toString())
               .build();
 
@@ -76,6 +81,11 @@ public class JwtProvider implements TokenProvider {
 
   @Override
   public Long getTokenExpiryDuration() {
-    return jwtProperties.getExpiration();
+    return appProperties.getSecurity().getJwt().getExpiration();
+  }
+
+  @Override
+  public Long getRefreshTokenExpiryDuration() {
+    return appProperties.getSecurity().getJwt().getRefreshExpiration();
   }
 }

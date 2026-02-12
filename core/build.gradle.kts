@@ -11,6 +11,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    implementation ("com.fasterxml.uuid:java-uuid-generator:5.1.0")
+    implementation ("org.springframework.boot:spring-boot-starter-mail")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")

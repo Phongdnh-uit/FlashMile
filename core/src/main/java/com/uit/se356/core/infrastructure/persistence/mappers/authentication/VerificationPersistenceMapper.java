@@ -56,4 +56,3 @@ public class VerificationPersistenceMapper {
     return entity;
   }
 }
-

@@ -1,13 +1,16 @@
 package com.uit.se356.core.presentation.rest.auth;
 
 import com.uit.se356.common.dto.ApiResponse;
+import com.uit.se356.core.application.authentication.command.RegisterCommand;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
 import com.uit.se356.core.application.authentication.handler.ProcessVerificationHandler;
+import com.uit.se356.core.application.authentication.handler.RegisterCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
 import com.uit.se356.core.application.authentication.query.ProcessVerificationQuery;
 import com.uit.se356.core.application.authentication.query.SendVerificationCodeQuery;
 import com.uit.se356.core.application.authentication.result.LoginResult;
+import com.uit.se356.core.application.authentication.result.RegisterResult;
 import com.uit.se356.core.application.authentication.result.VerificationResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +30,7 @@ public class AuthController {
   private final LoginQueryHandler loginQueryHandler;
   private final SendVerificationCodeHandler sendVerificationCodeHandler;
   private final ProcessVerificationHandler processVerificationHandler;
+  private final RegisterCommandHandler registerCommandHandler;
 
   @Operation(summary = "User Login")
   @PostMapping("/login")
@@ -49,5 +53,13 @@ public class AuthController {
       @RequestBody ProcessVerificationQuery query) {
     VerificationResult result = processVerificationHandler.handle(query);
     return ResponseEntity.ok(ApiResponse.ok(result, "Verification successful"));
+  }
+
+  @Operation(summary = "Register User")
+  @PostMapping("/register")
+  public ResponseEntity<ApiResponse<RegisterResult>> registerUser(
+      @RequestBody RegisterCommand command) {
+    return ResponseEntity.ok(
+        ApiResponse.ok(registerCommandHandler.handle(command), "User registered successfully"));
   }
 }
