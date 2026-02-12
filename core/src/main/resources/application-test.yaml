@@ -17,6 +17,10 @@ spring:
   docker:
     compose:
       enabled: false        # Test không dùng Docker Compose
+  mail:
+    host: localhost
+    port: 1025
+    test-connection: false
 
 logging:
   level:
@@ -30,3 +34,12 @@ application:
       secret-key: "mySuperSecretKeyForJwtSigningMustBeLongEnoughToSatisfyHS256Requirements"
       expiration: 86400000 # 1 day
       refresh-expiration: 604800000 # 7 days
+  mail:
+    from: "test@flashmile.test"
+  frontend:
+    base-url: "http://test-frontend"
+    verify-email-path: "/verify-email-test"
+  verification:
+    email-link-expiration: 900 # 15 minutes
+    sms-otp-expiration: 300 # 5 minutes
+    phone-verified-token-expiration: 600 # 10 minutes
