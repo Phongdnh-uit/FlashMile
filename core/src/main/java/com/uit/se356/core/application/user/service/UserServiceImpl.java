@@ -24,14 +24,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getMyProfile(String userId) {
-        User user = findUserById(userId);
+        User user = userRepository.findById(new UserId(userId))
+                .orElseThrow(() -> new AppException(CommonErrorCode.RESOURCE_NOT_FOUND, "User not found"));
         return userMapper.toResponse(user);
     }
 
     @Override
     @Transactional
     public UserResponse updateProfile(String userId, UpdateUserRequest request) {
-        User user = findUserById(userId);
+        User user = userRepository.findById(new UserId(userId))
+                .orElseThrow(() -> new AppException(CommonErrorCode.RESOURCE_NOT_FOUND, "User not found"));;
         user.updateProfile(request.fullName(), request.email());
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
@@ -42,11 +44,5 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream()
                 .map(userMapper::toResponse)
                 .collect(Collectors.toList());
-    }
-
-    // ================ Helper method ================
-    private User findUserById(String userId) {
-        return userRepository.findById(new UserId(userId))
-                .orElseThrow(() -> new AppException(CommonErrorCode.USER_NOT_FOUND));
     }
 }

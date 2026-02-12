@@ -20,7 +20,6 @@ public class UserController {
     public ApiResponse<UserResponse> getMyProfile() {
         // TODO: Lấy userId từ Security Context (JWT)
         String currentUserId = "user-id-from-token";
-
         return ApiResponse.ok(userService.getMyProfile(currentUserId), "Get profile success");
     }
 
