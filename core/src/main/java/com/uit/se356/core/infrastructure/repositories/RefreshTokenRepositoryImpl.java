@@ -25,7 +25,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
   @Override
   public Optional<RefreshToken> findByToken(String token) {
     return refreshTokenJpaRepository
-        .findByTokenHash(token)
+        .findOne((root, query, builder) -> builder.equal(root.get("tokenHash"), token))
         .map(refreshTokenPersistenceMapper::toDomain);
   }
 }

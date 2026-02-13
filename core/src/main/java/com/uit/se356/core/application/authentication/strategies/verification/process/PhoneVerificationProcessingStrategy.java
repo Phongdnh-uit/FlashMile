@@ -26,6 +26,10 @@ public class PhoneVerificationProcessingStrategy implements ProcessVerificationS
 
   @Override
   public VerificationResult process(CodePurpose purpose, String recipient, String code) {
+    // Cần check recipient ở đây vì query có thể không hợp lệ
+    if (recipient == null || recipient.isBlank()) {
+      throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE_REQUEST);
+    }
     //  Kiểm tra mã xác minh từ cache
     StringBuilder cacheKey =
         new StringBuilder(CacheKey.PHONE_VERIFICATION_CODE_PREFIX).append(":").append(recipient);

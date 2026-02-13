@@ -15,7 +15,8 @@ public enum AuthErrorCode implements ErrorCode {
   INVALID_REGISTER_COMMAND("AUTH_009", "error.auth.invalid_register_command", 400),
   EMAIL_ALREADY_VERIFIED("AUTH_010", "error.auth.email_already_verified", 400),
   USER_UNVERIFIED("AUTH_011", "error.auth.user_unverified", 403),
-  USER_BLOCKED("AUTH_012", "error.auth.user_blocked", 403);
+  USER_BLOCKED("AUTH_012", "error.auth.user_blocked", 403),
+  ROLE_NOT_FOUND("AUTH_013", "error.auth.role_not_found", 500);
   private final String code;
   private final String messageKey;
   private final int httpStatus;

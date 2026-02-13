@@ -30,14 +30,21 @@ public class VerificationRepositoryImpl implements VerificationRepository {
   @Override
   public Optional<Verification> findByTokenAndType(String token, VerificationType type) {
     return verificationJpaRepository
-        .findByCodeAndType(token, type)
+        .findOne(
+            (root, query, builder) ->
+                builder.and(
+                    builder.equal(root.get("code"), token), builder.equal(root.get("type"), type)))
         .map(verificationPersistenceMapper::toDomain);
   }
 
   @Transactional
   @Override
   public void deleteByUserIdAndType(UserId id, VerificationType type) {
-    verificationJpaRepository.deleteByUserIdAndType(id.value(), type);
+    verificationJpaRepository.delete(
+        (root, query, builder) ->
+            builder.and(
+                builder.equal(root.get("userId"), id.value()),
+                builder.equal(root.get("type"), type)));
   }
 
   @Transactional

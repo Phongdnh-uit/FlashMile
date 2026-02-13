@@ -47,12 +47,10 @@ public class RefreshToken {
       Instant revokedAt,
       Instant createdAt) {
     Objects.requireNonNull(id);
-    Objects.requireNonNull(id);
     Objects.requireNonNull(userId);
     Objects.requireNonNull(tokenHash);
     Objects.requireNonNull(expiresAt);
     Objects.requireNonNull(createdAt);
-    Objects.requireNonNull(revokedAt);
     return new RefreshToken(id, userId, tokenHash, expiresAt, revokedAt, createdAt);
   }
 

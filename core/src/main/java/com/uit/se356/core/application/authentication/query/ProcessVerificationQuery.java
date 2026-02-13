@@ -6,11 +6,7 @@ import com.uit.se356.core.domain.vo.authentication.CodePurpose;
 
 public record ProcessVerificationQuery(CodePurpose purpose, String recipient, String code) {
   public ProcessVerificationQuery {
-    if (purpose == null
-        || recipient == null
-        || recipient.isBlank()
-        || code == null
-        || code.isBlank()) {
+    if (purpose == null || code == null || code.isBlank()) {
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE_REQUEST);
     }
   }

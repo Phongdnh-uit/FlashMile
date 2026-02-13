@@ -6,10 +6,12 @@ import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.RegisterCommand;
 import com.uit.se356.core.application.authentication.port.CacheRepository;
 import com.uit.se356.core.application.authentication.port.PasswordEncoder;
+import com.uit.se356.core.application.authentication.port.RoleRepository;
 import com.uit.se356.core.application.authentication.query.SendVerificationCodeQuery;
 import com.uit.se356.core.application.authentication.result.RegisterResult;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.constants.CacheKey;
+import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.CodePurpose;
@@ -30,6 +32,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
   private final PasswordEncoder passwordEncoder;
   private final IdGenerator idGenerator;
   private final SendVerificationCodeHandler sendVerificationCodeHandler;
+  private final RoleRepository roleRepository;
 
   @Override
   public RegisterResult handle(RegisterCommand command) {
@@ -44,6 +47,10 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
     }
     PhoneNumber phoneNumber = new PhoneNumber(phoneNumberOpt.get());
     Email email = new Email(command.email());
+    Role defaultRoleId =
+        roleRepository
+            .findDefault()
+            .orElseThrow(() -> new AppException(AuthErrorCode.ROLE_NOT_FOUND));
     UserId userId = new UserId(idGenerator.generate().toString());
     User user =
         User.create(
