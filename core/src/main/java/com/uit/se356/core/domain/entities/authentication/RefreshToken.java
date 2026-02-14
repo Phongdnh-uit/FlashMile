@@ -11,23 +11,16 @@ public class RefreshToken {
   private String tokenHash;
   private Instant expiresAt;
   private Instant revokedAt;
-  private Instant createdAt;
 
   // ============================ FACTORY ============================
 
   private RefreshToken(
-      RefreshTokenId id,
-      UserId userId,
-      String tokenHash,
-      Instant expiresAt,
-      Instant revokedAt,
-      Instant createdAt) {
+      RefreshTokenId id, UserId userId, String tokenHash, Instant expiresAt, Instant revokedAt) {
     this.id = id;
     this.userId = userId;
     this.tokenHash = tokenHash;
     this.expiresAt = expiresAt;
     this.revokedAt = revokedAt;
-    this.createdAt = createdAt;
   }
 
   public static RefreshToken create(
@@ -36,22 +29,16 @@ public class RefreshToken {
     Objects.requireNonNull(userId);
     Objects.requireNonNull(tokenHash);
     Objects.requireNonNull(expiresAt);
-    return new RefreshToken(id, userId, tokenHash, expiresAt, null, Instant.now());
+    return new RefreshToken(id, userId, tokenHash, expiresAt, null);
   }
 
   public static RefreshToken rehydrate(
-      RefreshTokenId id,
-      UserId userId,
-      String tokenHash,
-      Instant expiresAt,
-      Instant revokedAt,
-      Instant createdAt) {
+      RefreshTokenId id, UserId userId, String tokenHash, Instant expiresAt, Instant revokedAt) {
     Objects.requireNonNull(id);
     Objects.requireNonNull(userId);
     Objects.requireNonNull(tokenHash);
     Objects.requireNonNull(expiresAt);
-    Objects.requireNonNull(createdAt);
-    return new RefreshToken(id, userId, tokenHash, expiresAt, revokedAt, createdAt);
+    return new RefreshToken(id, userId, tokenHash, expiresAt, revokedAt);
   }
 
   // ============================ BEHAVIOR ============================
@@ -81,10 +68,6 @@ public class RefreshToken {
 
   public Instant getExpiresAt() {
     return expiresAt;
-  }
-
-  public Instant getCreatedAt() {
-    return createdAt;
   }
 
   public Instant getRevokedAt() {

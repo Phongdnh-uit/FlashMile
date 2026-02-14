@@ -17,8 +17,20 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
   @Override
   public RefreshToken save(RefreshToken refreshToken) {
-    RefreshTokenJpaEntity entity = refreshTokenPersistenceMapper.toEntity(refreshToken);
-    RefreshTokenJpaEntity savedEntity = refreshTokenJpaRepository.save(entity);
+    // Kiểm tra xem nó là trạng thái cập nhật hay update
+    Optional<RefreshTokenJpaEntity> existingEntityOpt =
+        refreshTokenJpaRepository.findById(refreshToken.getId().value());
+    // Nếu tồn tại, cập nhật entity, nếu không, tạo mới
+    RefreshTokenJpaEntity entityToSave =
+        existingEntityOpt
+            .map(
+                existingEntity -> {
+                  refreshTokenPersistenceMapper.updateEntityFromDomain(
+                      refreshToken, existingEntity);
+                  return existingEntity;
+                })
+            .orElseGet(() -> refreshTokenPersistenceMapper.toEntity(refreshToken));
+    RefreshTokenJpaEntity savedEntity = refreshTokenJpaRepository.save(entityToSave);
     return refreshTokenPersistenceMapper.toDomain(savedEntity);
   }
 

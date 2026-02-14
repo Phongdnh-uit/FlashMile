@@ -18,8 +18,7 @@ public class RefreshTokenPersistenceMapper {
         new UserId(entity.getUserId()),
         entity.getTokenHash(),
         entity.getExpiresAt(),
-        entity.getRevokedAt(),
-        entity.getCreatedAt());
+        entity.getRevokedAt());
   }
 
   public RefreshTokenJpaEntity toEntity(RefreshToken token) {
@@ -27,19 +26,20 @@ public class RefreshTokenPersistenceMapper {
       return null;
     }
     RefreshTokenJpaEntity entity = new RefreshTokenJpaEntity();
-    if (token.getId() != null) {
-      entity.setId(token.getId().value());
-    }
-    if (token.getUserId() != null) {
-      entity.setUserId(token.getUserId().value());
-    }
+    entity.setId(token.getId().value());
+    entity.setUserId(token.getUserId().value());
     entity.setTokenHash(token.getTokenHash());
     entity.setExpiresAt(token.getExpiresAt());
     entity.setRevokedAt(token.getRevokedAt());
-    entity.setCreatedAt(token.getCreatedAt());
-    // Since domain doesn't track updates, we set it to now on save.
-    entity.setUpdatedAt(java.time.Instant.now());
 
     return entity;
+  }
+
+  public void updateEntityFromDomain(
+      RefreshToken refreshToken, RefreshTokenJpaEntity existingEntity) {
+    existingEntity.setUserId(refreshToken.getUserId().value());
+    existingEntity.setTokenHash(refreshToken.getTokenHash());
+    existingEntity.setExpiresAt(refreshToken.getExpiresAt());
+    existingEntity.setRevokedAt(refreshToken.getRevokedAt());
   }
 }

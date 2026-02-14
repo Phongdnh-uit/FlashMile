@@ -1,7 +1,6 @@
 package com.uit.se356.core.domain.entities.authentication;
 
 import com.uit.se356.common.exception.AppException;
-import com.uit.se356.core.domain.entities.AuditInfo;
 import com.uit.se356.core.domain.exception.VerificationErrorCode;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.VerificationId;
@@ -16,22 +15,14 @@ public class Verification {
   private String code;
   private Instant expiresAt;
 
-  private AuditInfo audit;
-
   // ============================ FACTORY ============================
   private Verification(
-      VerificationId id,
-      UserId userId,
-      VerificationType type,
-      String code,
-      Instant expiresAt,
-      AuditInfo audit) {
+      VerificationId id, UserId userId, VerificationType type, String code, Instant expiresAt) {
     this.id = id;
     this.userId = userId;
     this.type = type;
     this.code = code;
     this.expiresAt = expiresAt;
-    this.audit = audit;
   }
 
   public static Verification create(
@@ -42,23 +33,23 @@ public class Verification {
       Instant expiresAt,
       UserId by) {
     Objects.requireNonNull(id);
+    Objects.requireNonNull(userId);
+    Objects.requireNonNull(type);
+    Objects.requireNonNull(code);
+    Objects.requireNonNull(expiresAt);
     if (expiresAt.isBefore(Instant.now())) {
       throw new AppException(VerificationErrorCode.INVALID_EXPIRES_AT);
     }
-    AuditInfo audit = AuditInfo.create(by);
-    return new Verification(id, userId, type, code, expiresAt, audit);
+    return new Verification(id, userId, type, code, expiresAt);
   }
 
   public static Verification rehydrate(
-      VerificationId id,
-      UserId userId,
-      VerificationType type,
-      String code,
-      Instant expiresAt,
-      AuditInfo audit) {
+      VerificationId id, UserId userId, VerificationType type, String code, Instant expiresAt) {
     Objects.requireNonNull(id);
-    Objects.requireNonNull(audit);
-    return new Verification(id, userId, type, code, expiresAt, audit);
+    Objects.requireNonNull(userId);
+    Objects.requireNonNull(type);
+    Objects.requireNonNull(code);
+    return new Verification(id, userId, type, code, expiresAt);
   }
 
   // ============================ BEHAVIOR ============================
@@ -85,9 +76,5 @@ public class Verification {
 
   public Instant getExpiresAt() {
     return expiresAt;
-  }
-
-  public AuditInfo getAudit() {
-    return audit;
   }
 }

@@ -1,7 +1,7 @@
 package com.uit.se356.core.infrastructure.persistence.entities.authentication;
 
+import com.uit.se356.common.entity.BaseEntity;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
-import com.uit.se356.core.infrastructure.persistence.entities.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class UserJpaEntity extends BaseEntity {
+public class UserJpaEntity extends BaseEntity<String> {
   private String fullName;
 
   @Column(unique = true, nullable = false)

@@ -3,6 +3,7 @@ package com.uit.se356.core.infrastructure.repositories;
 import com.uit.se356.core.application.authentication.port.RoleRepository;
 import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
+import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.RolePersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.RoleJpaRepository;
 import java.util.Optional;
@@ -18,8 +19,17 @@ public class RoleRepositoryImpl implements RoleRepository {
 
   @Override
   public Role save(Role role) {
-    var jpaEntity = roleMapper.toJpaEntity(role);
-    var savedEntity = roleJpaRepository.save(jpaEntity);
+    // Kiểm tra xem là tạo mới hay cập nhật
+    Optional<RoleJpaEntity> existingRoleOpt = roleJpaRepository.findById(role.getId().value());
+    RoleJpaEntity entityToSave =
+        existingRoleOpt
+            .map(
+                existingRole -> {
+                  roleMapper.updateEntityFromDomain(role, existingRole);
+                  return existingRole;
+                })
+            .orElseGet(() -> roleMapper.toEntity(role));
+    RoleJpaEntity savedEntity = roleJpaRepository.save(entityToSave);
     return roleMapper.toDomain(savedEntity);
   }
 
@@ -37,8 +47,7 @@ public class RoleRepositoryImpl implements RoleRepository {
 
   @Override
   public void delete(Role role) {
-    var jpaEntity = roleMapper.toJpaEntity(role);
-    roleJpaRepository.delete(jpaEntity);
+    roleJpaRepository.deleteById(role.getId().value());
   }
 
   @Override

@@ -2,23 +2,18 @@ package com.uit.se356.core.application.authentication.handler;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.QueryHandler;
-import com.uit.se356.common.utils.IdGenerator;
+import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
 import com.uit.se356.core.application.authentication.port.PasswordEncoder;
-import com.uit.se356.core.application.authentication.port.RefreshTokenRepository;
-import com.uit.se356.core.application.authentication.port.TokenProvider;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
 import com.uit.se356.core.application.authentication.result.LoginResult;
+import com.uit.se356.core.application.authentication.result.TokenPairResult;
 import com.uit.se356.core.application.user.port.UserRepository;
-import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
-import com.uit.se356.core.domain.vo.authentication.RefreshTokenId;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
-import java.time.Instant;
-import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,9 +22,7 @@ import org.springframework.stereotype.Component;
 public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final TokenProvider tokenProvider;
-  private final RefreshTokenRepository refreshTokenRepository;
-  private final IdGenerator idGenerator;
+  private final IssueTokenHander issueTokenHander;
 
   @Override
   public LoginResult handle(LoginQuery query) {
@@ -71,29 +64,28 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
       throw new AppException(AuthErrorCode.USER_BLOCKED);
     }
 
+    // Kiểm tra xem liệu passwordHash có null không, nếu có nghĩa là người dùng đăng ký bằng OAuth
+    // và không có mật khẩu
+    if (user.getPasswordHash() == null) {
+      throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
+    }
+
     // Xác thực mật khẩu
     if (!passwordEncoder.matches(query.password(), user.getPasswordHash())) {
       throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
     }
 
-    // Tạo token và lưu phiên đăng nhập
-    String refreshToken = tokenProvider.generateRefreshToken(user.getUserId().toString());
-    String tokenHash = Base64.getEncoder().encodeToString(refreshToken.getBytes());
-    RefreshToken rToken =
-        RefreshToken.create(
-            new RefreshTokenId(idGenerator.generate().toString()),
-            user.getUserId(),
-            tokenHash,
-            Instant.now().plusMillis(tokenProvider.getRefreshTokenExpiryDuration()));
-    rToken = refreshTokenRepository.save(rToken);
+    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getUserId());
 
-    String accessToken =
-        tokenProvider.generateToken(
-            user.getUserId().toString(),
-            user.getEmail().value(),
-            "USER"); // TODO: thêm bảng role và xử lý sau
+    TokenPairResult tokenPair = issueTokenHander.handle(issueTokenCommand);
 
-    return new LoginResult(
-        accessToken, refreshToken, tokenProvider.getTokenExpiryDuration(), "Bearer");
+    LoginResult loginResult =
+        new LoginResult(
+            tokenPair.accessToken(),
+            tokenPair.refreshToken(),
+            tokenPair.expiresIn(),
+            tokenPair.tokenType());
+
+    return loginResult;
   }
 }

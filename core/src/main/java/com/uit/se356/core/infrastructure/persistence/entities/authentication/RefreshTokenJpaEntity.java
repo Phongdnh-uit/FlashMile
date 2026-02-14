@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.persistence.entities.authentication;
 
-import com.uit.se356.core.infrastructure.persistence.entities.BaseEntity;
+import com.uit.se356.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "refresh_tokens")
-public class RefreshTokenJpaEntity extends BaseEntity {
+public class RefreshTokenJpaEntity extends BaseEntity<String> {
 
   @Column(nullable = false)
   private String userId;

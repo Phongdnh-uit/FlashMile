@@ -22,8 +22,18 @@ public class VerificationRepositoryImpl implements VerificationRepository {
   @Transactional
   @Override
   public Verification save(Verification verification) {
-    VerificationJpaEntity entity = verificationPersistenceMapper.toEntity(verification);
-    VerificationJpaEntity savedEntity = verificationJpaRepository.save(entity);
+    // Cần kiểm tra xem là trạng thái cập nhật hay tạo mới
+    Optional<VerificationJpaEntity> existingEntity =
+        verificationJpaRepository.findById(verification.getId().value());
+    VerificationJpaEntity entityToSave =
+        existingEntity
+            .map(
+                existing -> {
+                  verificationPersistenceMapper.updateEntityFromDomain(verification, existing);
+                  return existing;
+                })
+            .orElseGet(() -> verificationPersistenceMapper.toEntity(verification));
+    VerificationJpaEntity savedEntity = verificationJpaRepository.save(entityToSave);
     return verificationPersistenceMapper.toDomain(savedEntity);
   }
 

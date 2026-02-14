@@ -13,6 +13,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     implementation ("com.fasterxml.uuid:java-uuid-generator:5.1.0")
     implementation ("org.springframework.boot:spring-boot-starter-mail")
+    implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")

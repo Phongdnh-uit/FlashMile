@@ -16,7 +16,10 @@ public enum AuthErrorCode implements ErrorCode {
   EMAIL_ALREADY_VERIFIED("AUTH_010", "error.auth.email_already_verified", 400),
   USER_UNVERIFIED("AUTH_011", "error.auth.user_unverified", 403),
   USER_BLOCKED("AUTH_012", "error.auth.user_blocked", 403),
-  ROLE_NOT_FOUND("AUTH_013", "error.auth.role_not_found", 500);
+  ROLE_NOT_FOUND("AUTH_013", "error.auth.role_not_found", 500),
+  EMAIL_ALREADY_USED("AUTH_014", "error.auth.email_already_used", 400),
+  OAUTH2_AUTHORIZATION_REQUEST_FAILED(
+      "AUTH_015", "error.auth.oauth2_authorization_request_failed", 401);
   private final String code;
   private final String messageKey;
   private final int httpStatus;

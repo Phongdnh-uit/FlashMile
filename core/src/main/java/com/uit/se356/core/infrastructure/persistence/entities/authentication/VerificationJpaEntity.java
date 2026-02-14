@@ -1,7 +1,7 @@
 package com.uit.se356.core.infrastructure.persistence.entities.authentication;
 
+import com.uit.se356.common.entity.BaseEntity;
 import com.uit.se356.core.domain.vo.authentication.VerificationType;
-import com.uit.se356.core.infrastructure.persistence.entities.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "verifications")
-public class VerificationJpaEntity extends BaseEntity {
+public class VerificationJpaEntity extends BaseEntity<String> {
 
   @Column(nullable = false)
   private String userId;
