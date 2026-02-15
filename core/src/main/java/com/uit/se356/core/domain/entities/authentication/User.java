@@ -121,6 +121,33 @@ public class User {
         updatedBy);
   }
 
+  public static User createOAuthUser(
+      UserId userId,
+      String fullName,
+      Email email,
+      PhoneNumber phoneNumber,
+      Instant createdAt,
+      UserId createdBy) {
+    // Hàm kiểm tra null cho các tham số bắt buộc
+    Objects.requireNonNull(userId);
+    Objects.requireNonNull(fullName);
+    Objects.requireNonNull(email);
+    Objects.requireNonNull(phoneNumber);
+    return new User(
+        userId,
+        fullName,
+        email,
+        null, // OAuth user không có password hash
+        phoneNumber,
+        UserStatus.ACTIVE, // OAuth user mặc định là ACTIVE vì đã được xác thực qua provider
+        true, // OAuth user mặc định đã xác thực email
+        true, // OAuth user mặc định đã xác thực sđt
+        createdAt,
+        createdAt,
+        createdBy,
+        createdBy);
+  }
+
   // ============================ BEHAVIOR ============================
   public void changePassword(String newPasswordHash, UserId updatedBy) {
     Objects.requireNonNull(newPasswordHash);

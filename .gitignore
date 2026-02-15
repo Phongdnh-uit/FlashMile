@@ -46,3 +46,5 @@ node_modules
 .idea/
 !gradle/wrapper/gradle-wrapper.jar
 **/.env
+.mcphub/
+posting/
