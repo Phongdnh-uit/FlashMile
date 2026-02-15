@@ -24,4 +24,9 @@ public class VerificationConfigAdapter implements VerificationConfigPort {
   public long getPhoneVerifiedTokenExpiration() {
     return appProperties.getVerification().getPhoneVerifiedTokenExpiration();
   }
+
+  @Override
+  public long getForgotPasswordCodeExpiration() {
+    return appProperties.getVerification().getForgotPasswordCodeExpiration();
+  }
 }

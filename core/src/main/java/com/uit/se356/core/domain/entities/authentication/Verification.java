@@ -26,12 +26,7 @@ public class Verification {
   }
 
   public static Verification create(
-      VerificationId id,
-      UserId userId,
-      VerificationType type,
-      String code,
-      Instant expiresAt,
-      UserId by) {
+      VerificationId id, UserId userId, VerificationType type, String code, Instant expiresAt) {
     Objects.requireNonNull(id);
     Objects.requireNonNull(userId);
     Objects.requireNonNull(type);
