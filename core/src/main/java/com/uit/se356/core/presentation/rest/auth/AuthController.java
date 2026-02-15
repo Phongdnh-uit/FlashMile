@@ -2,10 +2,12 @@ package com.uit.se356.core.presentation.rest.auth;
 
 import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.core.application.authentication.command.RegisterCommand;
+import com.uit.se356.core.application.authentication.command.ResetPasswordCommand;
 import com.uit.se356.core.application.authentication.command.TokenRotationCommand;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
 import com.uit.se356.core.application.authentication.handler.ProcessVerificationHandler;
 import com.uit.se356.core.application.authentication.handler.RegisterCommandHandler;
+import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
@@ -41,6 +43,7 @@ public class AuthController {
   private final RegisterCommandHandler registerCommandHandler;
   private final TokenRotationHandler tokenRotationHandler;
   private final AppProperties appProperties;
+  private final ResetPasswordCommandHandler resetPasswordCommandHandler;
 
   @Operation(summary = "User Login")
   @PostMapping("/login")
@@ -92,7 +95,7 @@ public class AuthController {
   public ResponseEntity<ApiResponse<Void>> sendVerification(
       @RequestBody SendVerificationCodeQuery query) {
     sendVerificationCodeHandler.handle(query);
-    return ResponseEntity.ok(ApiResponse.ok(null, "Verification code sent"));
+    return ResponseEntity.ok(ApiResponse.noContent("Verification code sent"));
   }
 
   @Operation(summary = "Verify Code")
@@ -109,5 +112,13 @@ public class AuthController {
       @RequestBody RegisterCommand command) {
     return ResponseEntity.ok(
         ApiResponse.ok(registerCommandHandler.handle(command), "User registered successfully"));
+  }
+
+  @Operation(summary = "Reset Password")
+  @PostMapping("/reset-password")
+  public ResponseEntity<ApiResponse<Void>> resetPassword(
+      @RequestBody ResetPasswordCommand command) {
+    resetPasswordCommandHandler.handle(command);
+    return ResponseEntity.ok(ApiResponse.noContent("Password reset successful"));
   }
 }

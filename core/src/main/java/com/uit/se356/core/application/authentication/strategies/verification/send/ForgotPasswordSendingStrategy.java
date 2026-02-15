@@ -16,22 +16,22 @@ import com.uit.se356.core.domain.vo.authentication.VerificationId;
 import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
 @RequiredArgsConstructor
-public class EmailVerificationSendingStrategy implements SendVerificationStrategy {
-
+@Component
+public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
-  private final IdGenerator idGenerator;
   private final VerificationConfigPort verificationConfigPort;
+  private final IdGenerator idGenerator;
 
   @Override
   public boolean support(CodePurpose purpose) {
-    return purpose == CodePurpose.EMAIL_VERIFICATION;
+    return CodePurpose.FORGOT_PASSWORD.equals(purpose);
   }
 
   @Override
@@ -39,38 +39,29 @@ public class EmailVerificationSendingStrategy implements SendVerificationStrateg
       String recipient,
       CodePurpose purpose,
       VerificationChannel channel,
-      List<VerificationSender> senders) {
+      List<VerificationSender> verificationSender) {
+    // Để đơn giản, chỉ gửi OTP qua email
     Email email = new Email(recipient);
-    // Kiểm tra email đã tồn tại chưa
-    User user =
-        userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
+    // Kiểm tra tài khoản có tồn tại không
+    Optional<User> userOpt = userRepository.findByEmail(email);
+    if (userOpt.isEmpty()) {
+      throw new AppException(UserErrorCode.USER_NOT_FOUND);
+    }
 
-    // Xóa mã cũ nếu có
-    verificationRepository.deleteByUserIdAndType(
-        user.getUserId(), VerificationType.EMAIL_VERIFICATION);
-
-    // Tạo mã mới
-    // Sử dụng cấu hình expire
-    long expirationSeconds = verificationConfigPort.getEmailLinkExpiration();
-    Instant expiresAt = Instant.now().plusSeconds(expirationSeconds);
+    // Tạo mã và lưu
+    long expirySeconds = verificationConfigPort.getForgotPasswordCodeExpiration();
     Verification verification =
         Verification.create(
             new VerificationId(idGenerator.generate().toString()),
-            user.getUserId(),
-            VerificationType.EMAIL_VERIFICATION,
+            userOpt.get().getUserId(),
+            VerificationType.RESET_PASSWORD,
             UUID.randomUUID().toString(),
-            expiresAt);
+            Instant.now().plusSeconds(expirySeconds));
+    verificationRepository.save(verification);
 
-    Verification savedVerification = verificationRepository.save(verification);
-
-    // Gửi email
-    senders.stream()
+    // Gửi mã OTP qua email
+    verificationSender.stream()
         .filter(sender -> sender.support(VerificationChannel.EMAIL))
-        .forEach(
-            sender -> {
-              sender.send(recipient, savedVerification.getCode(), purpose);
-            });
+        .forEach(sender -> sender.send(recipient, verification.getCode(), purpose));
   }
 }
