@@ -1,0 +1,184 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xác thực Email</title>
+    <style>
+      /* CSS Reset cơ bản */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background-color: #f4f7fa;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      /* Button Style - Hiệu ứng Gradient và Shadow */
+      .btn-verify {
+        background: linear-gradient(135deg, #0061f2 0%, #00c6f7 100%);
+        color: #ffffff !important;
+        display: inline-block;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(0, 97, 242, 0.3);
+        transition: all 0.3s ease;
+      }
+      .btn-verify:hover {
+        box-shadow: 0 6px 20px rgba(0, 97, 242, 0.5);
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body style="background-color: #f4f7fa; padding: 40px 0">
+    <table
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      "
+    >
+      <!-- HEADER: Logo & Brand -->
+      <tr>
+        <td
+          align="center"
+          style="padding: 40px 0 30px 0; background-color: #ffffff"
+        >
+          <!-- Logo Image -->
+<!--          <img-->
+<!--            th:src="${logoUrl}"-->
+<!--            alt="Logo"-->
+<!--            style="-->
+<!--              display: block;-->
+<!--              width: 80px;-->
+<!--              height: auto;-->
+<!--              margin-bottom: 10px;-->
+<!--            "-->
+<!--          />-->
+
+          <!-- Brand Name (Dạng ảnh hoặc Text đều được, ở đây để Text style đẹp) -->
+          <h2
+            style="
+              margin: 0;
+              color: #0061f2;
+              font-size: 24px;
+              font-weight: 800;
+              letter-spacing: 1px;
+            "
+            th:text="${brandName}"
+          >
+            FLASHMILE
+          </h2>
+        </td>
+      </tr>
+
+      <!-- BODY CONTENT -->
+      <tr>
+        <td style="padding: 0 40px">
+          <h1
+            style="
+              color: #333333;
+              font-size: 22px;
+              margin-bottom: 20px;
+              text-align: center;
+            "
+          >
+            Xác thực địa chỉ Email của bạn
+          </h1>
+
+          <p
+            style="
+              color: #666666;
+              font-size: 16px;
+              line-height: 1.6;
+              margin-bottom: 20px;
+            "
+          >
+            Xin chào
+            <strong style="color: #333333" th:text="${name}">Người dùng</strong
+            >,
+          </p>
+
+          <p
+            style="
+              color: #666666;
+              font-size: 16px;
+              line-height: 1.6;
+              margin-bottom: 30px;
+            "
+          >
+            Cảm ơn bạn đã đăng ký tài khoản tại
+            <span th:text="${brandName}">FlashMile</span>. Để bắt đầu sử dụng
+            dịch vụ và đảm bảo an toàn cho tài khoản, vui lòng xác thực email
+            của bạn bằng cách nhấn vào nút bên dưới.
+          </p>
+
+          <!-- CALL TO ACTION BUTTON -->
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td align="center" style="padding-bottom: 30px">
+                <a th:href="${verifyLink}" class="btn-verify">
+                  XÁC THỰC NGAY
+                </a>
+              </td>
+            </tr>
+          </table>
+
+          <p
+            style="
+              color: #999999;
+              font-size: 14px;
+              line-height: 1.5;
+              border-top: 1px solid #eeeeee;
+              padding-top: 20px;
+            "
+          >
+            Nếu nút bấm không hoạt động, hãy copy đường dẫn bên dưới và dán vào
+            trình duyệt:
+          </p>
+          <p style="word-break: break-all">
+            <a
+              th:href="${verifyLink}"
+              style="color: #0061f2; font-size: 13px; text-decoration: none"
+              th:text="${verifyLink}"
+              >https://flashmile.com/verify...</a
+            >
+          </p>
+        </td>
+      </tr>
+
+      <!-- FOOTER -->
+      <tr>
+        <td
+          style="
+            background-color: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+          "
+        >
+          <p style="color: #999999; font-size: 12px; margin: 0">
+            &copy;
+            <span th:text="${brandName}">FlashMile</span>. All rights reserved.
+          </p>
+          <p style="color: #999999; font-size: 12px; margin: 5px 0 0 0">
+            Đây là email tự động, vui lòng không phản hồi email này.
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -21,6 +21,36 @@ spring:
       enabled: true
       lifecycle-management: start-and-stop # Tự động khởi động và dừng Docker Compose khi ứng dụng chạy và dừng
       file: docker/local/compose.yaml # Đường dẫn đến file Docker Compose cho môi trường local (tính từ thư mục gốc của dự án)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: dummy-google-client-id.apps.googleusercontent.com
+            client-secret: dummy-google-client-secret
+            scope: profile,email
+            redirect-uri: "{baseUrl}/oauth2/callback/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 
 logging:
   level:
@@ -36,3 +66,23 @@ management:
   metrics:
     tags:
       application: core-service
+
+application:
+  security:
+    jwt:
+      secret-key: "mySuperSecretKeyForJwtSigningMustBeLongEnoughToSatisfyHS256Requirements"
+      expiration: 86400000 # 1 day
+      refresh-expiration: 604800000 # 7 days
+  mail:
+    from: "noreply@flashmile.local"
+  frontend:
+    base-url: "http://localhost:3000"
+    verify-email-path: "/verify-email"
+  verification:
+    email-link-expiration: 900 # 15 minutes
+    sms-otp-expiration: 300 # 5 minutes
+    phone-verified-token-expiration: 600 # 10 minutes
+
+springdoc:
+  swagger-ui:
+    try-it-out-enabled: true
