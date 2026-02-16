@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum CommonErrorCode implements ErrorCode {
   EMAIL_SENDING_FAILED("COMMON-0001", "error.common.email.sending_failed", 500),
   INVALID_ID_FORMAT("COMMON-0000", "error.common.invalid_id_format", 400),
+  VALIDATION_ERROR("COMMON-0002", "error.common.validation_error", 400),
   ;
   private final String code;
   private final String messageKey;
