@@ -22,11 +22,7 @@ public class UserPersistenceMapper {
         new PhoneNumber(entity.getPhoneNumber()),
         entity.getStatus(),
         entity.isPhoneVerified(),
-        entity.isEmailVerified(),
-        entity.getCreatedAt(),
-        entity.getUpdatedAt(),
-        entity.getCreatedBy() != null ? new UserId(entity.getCreatedBy()) : null,
-        entity.getUpdatedBy() != null ? new UserId(entity.getUpdatedBy()) : null);
+        entity.isEmailVerified());
   }
 
   public UserJpaEntity toEntity(User user) {
@@ -34,28 +30,14 @@ public class UserPersistenceMapper {
       return null;
     }
     UserJpaEntity entity = new UserJpaEntity();
-    if (user.getUserId() != null) {
-      entity.setId(user.getUserId().value());
-    }
+    entity.setId(user.getUserId().value());
     entity.setFullName(user.getFullName());
-    if (user.getEmail() != null) {
-      entity.setEmail(user.getEmail().value());
-    }
+    entity.setEmail(user.getEmail().value());
     entity.setPasswordHash(user.getPasswordHash());
-    if (user.getPhoneNumber() != null) {
-      entity.setPhoneNumber(user.getPhoneNumber().value());
-    }
+    entity.setPhoneNumber(user.getPhoneNumber().value());
     entity.setStatus(user.getStatus());
     entity.setPhoneVerified(user.isPhoneVerified());
     entity.setEmailVerified(user.isEmailVerified());
-    entity.setCreatedAt(user.getCreatedAt());
-    entity.setUpdatedAt(user.getUpdatedAt());
-    if (user.getCreatedBy() != null) {
-      entity.setCreatedBy(user.getCreatedBy().value());
-    }
-    if (user.getUpdatedBy() != null) {
-      entity.setUpdatedBy(user.getUpdatedBy().value());
-    }
     return entity;
   }
 }

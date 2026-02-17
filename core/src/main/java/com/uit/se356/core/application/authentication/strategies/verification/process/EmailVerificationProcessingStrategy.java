@@ -41,7 +41,7 @@ public class EmailVerificationProcessingStrategy implements ProcessVerificationS
     }
     User user = userOpt.get();
     // Cập nhật trạng thái xác thực email của người dùng
-    user.verifyEmail(user.getUserId());
+    user.verifyEmail();
     user.updateStatus(UserStatus.ACTIVE, user.getUserId());
     userRepository.save(user);
     // Xoá mã xác thực sau khi sử dụng

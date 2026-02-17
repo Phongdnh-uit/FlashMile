@@ -13,7 +13,6 @@ import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.LinkedAccountId;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
-import java.time.Instant;
 import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,8 +56,7 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
     if (userRepository.existsByEmail(email)) {
       throw new AppException(AuthErrorCode.EMAIL_ALREADY_USED);
     }
-    User newUser =
-        User.createOAuthUser(userId, command.fullName(), email, phoneNumber, Instant.now(), userId);
+    User newUser = User.createOAuthUser(userId, command.fullName(), email, phoneNumber);
     newUser = userRepository.save(newUser);
 
     // Tạo liên kết tài khoản

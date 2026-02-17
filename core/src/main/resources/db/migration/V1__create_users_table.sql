@@ -5,7 +5,7 @@ CREATE TABLE users (
     full_name VARCHAR(255),
     phone_number VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255),
     phone_verified BOOLEAN DEFAULT FALSE NOT NULL,
     email_verified BOOLEAN DEFAULT FALSE NOT NULL,
     status VARCHAR(50) NOT NULL,

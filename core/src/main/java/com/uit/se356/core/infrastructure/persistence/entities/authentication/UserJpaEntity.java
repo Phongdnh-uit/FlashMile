@@ -7,29 +7,38 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserJpaEntity extends BaseEntity<String> {
+
+  @Column(name = "full_name", nullable = false)
   private String fullName;
 
-  @Column(unique = true, nullable = false)
+  @Column(name = "phone_number", nullable = false, unique = true)
   private String phoneNumber;
 
-  @Column(unique = true, nullable = false)
+  @Column(name = "email", nullable = false, unique = true)
   private String email;
 
-  @Column(nullable = false)
+  @Column(name = "password_hash")
   private String passwordHash;
 
+  @Column(name = "phone_verified", nullable = false)
   private boolean phoneVerified;
+
+  @Column(name = "email_verified", nullable = false)
   private boolean emailVerified;
 
-  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
+  @Column(name = "status", nullable = false)
   private UserStatus status;
 }

@@ -20,7 +20,6 @@ import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.VerificationChannel;
-import java.time.Instant;
 import java.util.Optional;
 
 public class RegisterCommandHandler implements CommandHandler<RegisterCommand, RegisterResult> {
@@ -70,10 +69,8 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
             command.fullName(),
             email,
             passwordEncoder.encode(command.password()),
-            phoneNumber,
-            Instant.now(),
-            userId);
-    user.verifyPhone(userId);
+            phoneNumber);
+    user.verifyPhone();
     user = userRepository.save(user);
     // Xóa verificationToken khỏi cache sau khi đăng ký thành công
     cacheRepository.delete(cacheKey.toString());
@@ -90,10 +87,6 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
         user.getEmail().value(),
         user.getPhoneNumber().value(),
         user.isEmailVerified(),
-        user.isPhoneVerified(),
-        user.getCreatedAt(),
-        user.getUpdatedAt(),
-        user.getCreatedBy().value(),
-        user.getUpdatedBy().value());
+        user.isPhoneVerified());
   }
 }
