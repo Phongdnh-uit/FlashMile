@@ -10,14 +10,16 @@ import com.uit.se356.core.domain.vo.authentication.CodePurpose;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class PhoneVerificationProcessingStrategy implements ProcessVerificationStrategy {
   private final CacheRepository cacheRepository;
   private final VerificationConfigPort verificationConfigPort;
+
+  public PhoneVerificationProcessingStrategy(
+      CacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
+    this.cacheRepository = cacheRepository;
+    this.verificationConfigPort = verificationConfigPort;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {

@@ -2,6 +2,7 @@ package com.uit.se356.core.application.authentication.handler;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.CommandHandler;
+import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.RegisterCommand;
 import com.uit.se356.core.application.authentication.port.CacheRepository;
@@ -21,18 +22,29 @@ import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.VerificationChannel;
 import java.time.Instant;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class RegisterCommandHandler implements CommandHandler<RegisterCommand, RegisterResult> {
   private final CacheRepository cacheRepository;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final IdGenerator idGenerator;
-  private final SendVerificationCodeHandler sendVerificationCodeHandler;
+  private final QueryBus queryBus;
   private final RoleRepository roleRepository;
+
+  public RegisterCommandHandler(
+      CacheRepository cacheRepository,
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      IdGenerator idGenerator,
+      QueryBus queryBus,
+      RoleRepository roleRepository) {
+    this.cacheRepository = cacheRepository;
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.idGenerator = idGenerator;
+    this.roleRepository = roleRepository;
+    this.queryBus = queryBus;
+  }
 
   @Override
   public RegisterResult handle(RegisterCommand command) {
@@ -69,7 +81,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
     SendVerificationCodeQuery sendEmailVerificationCodeQuery =
         new SendVerificationCodeQuery(
             CodePurpose.EMAIL_VERIFICATION, VerificationChannel.EMAIL, email.value());
-    sendVerificationCodeHandler.handle(sendEmailVerificationCodeQuery);
+    queryBus.dispatch(sendEmailVerificationCodeQuery);
 
     // Trả về kết quả đăng ký
     return new RegisterResult(

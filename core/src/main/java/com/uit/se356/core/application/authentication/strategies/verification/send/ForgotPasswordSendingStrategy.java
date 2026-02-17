@@ -18,16 +18,23 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
   private final VerificationConfigPort verificationConfigPort;
   private final IdGenerator idGenerator;
+
+  public ForgotPasswordSendingStrategy(
+      UserRepository userRepository,
+      VerificationRepository verificationRepository,
+      VerificationConfigPort verificationConfigPort,
+      IdGenerator idGenerator) {
+    this.userRepository = userRepository;
+    this.verificationRepository = verificationRepository;
+    this.verificationConfigPort = verificationConfigPort;
+    this.idGenerator = idGenerator;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {

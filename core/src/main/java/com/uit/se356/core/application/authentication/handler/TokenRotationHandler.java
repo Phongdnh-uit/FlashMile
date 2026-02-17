@@ -10,14 +10,16 @@ import com.uit.se356.core.application.authentication.result.TokenPairResult;
 import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import java.util.Base64;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class TokenRotationHandler implements CommandHandler<TokenRotationCommand, LoginResult> {
   private final RefreshTokenRepository refreshTokenRepository;
-  private final IssueTokenHander issueTokenHander;
+  private final IssueTokenService issueTokenHander;
+
+  public TokenRotationHandler(
+      RefreshTokenRepository refreshTokenRepository, IssueTokenService issueTokenHander) {
+    this.refreshTokenRepository = refreshTokenRepository;
+    this.issueTokenHander = issueTokenHander;
+  }
 
   @Override
   public LoginResult handle(TokenRotationCommand command) {

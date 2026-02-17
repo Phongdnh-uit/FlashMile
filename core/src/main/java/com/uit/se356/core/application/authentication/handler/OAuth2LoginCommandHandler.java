@@ -15,16 +15,21 @@ import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.time.Instant;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
-@Component
 public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginCommand, User> {
   private final LinkedAccountRepository linkedAccountRepository;
   private final UserRepository userRepository;
   private final IdGenerator idGenerator;
+
+  public OAuth2LoginCommandHandler(
+      LinkedAccountRepository linkedAccountRepository,
+      UserRepository userRepository,
+      IdGenerator idGenerator) {
+    this.linkedAccountRepository = linkedAccountRepository;
+    this.userRepository = userRepository;
+    this.idGenerator = idGenerator;
+  }
 
   @Transactional
   @Override

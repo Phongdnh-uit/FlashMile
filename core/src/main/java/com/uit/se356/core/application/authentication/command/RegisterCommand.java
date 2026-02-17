@@ -1,12 +1,15 @@
 package com.uit.se356.core.application.authentication.command;
 
+import com.uit.se356.common.dto.Command;
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.core.application.authentication.result.RegisterResult;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import java.util.HashMap;
 import java.util.Map;
 
 public record RegisterCommand(
-    String verificationToken, String email, String fullName, String password) {
+    String verificationToken, String email, String fullName, String password)
+    implements Command<RegisterResult> {
   public RegisterCommand {
     Map<String, String> errors = new HashMap<>();
     if (verificationToken == null || verificationToken.isBlank()) {

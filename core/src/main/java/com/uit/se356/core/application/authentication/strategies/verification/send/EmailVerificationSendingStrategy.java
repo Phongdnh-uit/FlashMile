@@ -17,17 +17,24 @@ import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class EmailVerificationSendingStrategy implements SendVerificationStrategy {
 
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
   private final IdGenerator idGenerator;
   private final VerificationConfigPort verificationConfigPort;
+
+  public EmailVerificationSendingStrategy(
+      UserRepository userRepository,
+      VerificationRepository verificationRepository,
+      IdGenerator idGenerator,
+      VerificationConfigPort verificationConfigPort) {
+    this.userRepository = userRepository;
+    this.verificationRepository = verificationRepository;
+    this.idGenerator = idGenerator;
+    this.verificationConfigPort = verificationConfigPort;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {

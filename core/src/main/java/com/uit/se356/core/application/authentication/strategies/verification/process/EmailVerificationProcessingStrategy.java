@@ -11,14 +11,16 @@ import com.uit.se356.core.domain.vo.authentication.CodePurpose;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
 import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class EmailVerificationProcessingStrategy implements ProcessVerificationStrategy {
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
+
+  public EmailVerificationProcessingStrategy(
+      UserRepository userRepository, VerificationRepository verificationRepository) {
+    this.userRepository = userRepository;
+    this.verificationRepository = verificationRepository;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {

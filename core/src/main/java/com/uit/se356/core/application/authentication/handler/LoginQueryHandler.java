@@ -14,15 +14,20 @@ import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final IssueTokenHander issueTokenHander;
+  private final IssueTokenService issueTokenService;
+
+  public LoginQueryHandler(
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      IssueTokenService issueTokenService) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.issueTokenService = issueTokenService;
+  }
 
   @Override
   public LoginResult handle(LoginQuery query) {
@@ -77,7 +82,7 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
 
     IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getUserId());
 
-    TokenPairResult tokenPair = issueTokenHander.handle(issueTokenCommand);
+    TokenPairResult tokenPair = issueTokenService.handle(issueTokenCommand);
 
     LoginResult loginResult =
         new LoginResult(

@@ -1,12 +1,15 @@
 package com.uit.se356.core.application.authentication.command;
 
+import com.uit.se356.common.dto.Command;
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import java.util.HashMap;
 import java.util.Map;
 
 public record OAuth2LoginCommand(
-    String provider, String providerUserId, String email, String fullName, String verifiedPhone) {
+    String provider, String providerUserId, String email, String fullName, String verifiedPhone)
+    implements Command<User> {
   public OAuth2LoginCommand {
     Map<String, Object> errors = new HashMap<>();
     if (provider == null || provider.isBlank()) {

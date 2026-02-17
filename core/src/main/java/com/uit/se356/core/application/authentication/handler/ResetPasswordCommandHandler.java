@@ -12,15 +12,20 @@ import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class ResetPasswordCommandHandler implements CommandHandler<ResetPasswordCommand, Void> {
   private final VerificationRepository verificationRepository;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+
+  public ResetPasswordCommandHandler(
+      VerificationRepository verificationRepository,
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder) {
+    this.verificationRepository = verificationRepository;
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   @Override
   public Void handle(ResetPasswordCommand command) {

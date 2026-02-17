@@ -13,16 +13,21 @@ import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.VerificationChannel;
 import java.time.Duration;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class PhoneVerificationSendingStrategy implements SendVerificationStrategy {
 
   private final UserRepository userRepository;
   private final CacheRepository cacheRepository;
   private final VerificationConfigPort verificationConfigPort;
+
+  public PhoneVerificationSendingStrategy(
+      UserRepository userRepository,
+      CacheRepository cacheRepository,
+      VerificationConfigPort verificationConfigPort) {
+    this.userRepository = userRepository;
+    this.cacheRepository = cacheRepository;
+    this.verificationConfigPort = verificationConfigPort;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {

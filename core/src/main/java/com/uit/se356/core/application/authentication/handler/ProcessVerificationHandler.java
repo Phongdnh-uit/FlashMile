@@ -7,14 +7,14 @@ import com.uit.se356.core.application.authentication.result.VerificationResult;
 import com.uit.se356.core.application.authentication.strategies.verification.process.ProcessVerificationStrategy;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class ProcessVerificationHandler
     implements QueryHandler<ProcessVerificationQuery, VerificationResult> {
   private final List<ProcessVerificationStrategy> strategies;
+
+  public ProcessVerificationHandler(List<ProcessVerificationStrategy> strategies) {
+    this.strategies = strategies;
+  }
 
   @Override
   public VerificationResult handle(ProcessVerificationQuery query) {

@@ -1,6 +1,5 @@
 package com.uit.se356.core.application.authentication.handler;
 
-import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
 import com.uit.se356.core.application.authentication.port.RefreshTokenRepository;
@@ -10,18 +9,22 @@ import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.domain.vo.authentication.RefreshTokenId;
 import java.time.Instant;
 import java.util.Base64;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
-public class IssueTokenHander implements CommandHandler<IssueTokenCommand, TokenPairResult> {
+public class IssueTokenService {
 
   private final TokenProvider tokenProvider;
   private final RefreshTokenRepository refreshTokenRepository;
   private final IdGenerator idGenerator;
 
-  @Override
+  public IssueTokenService(
+      TokenProvider tokenProvider,
+      RefreshTokenRepository refreshTokenRepository,
+      IdGenerator idGenerator) {
+    this.tokenProvider = tokenProvider;
+    this.refreshTokenRepository = refreshTokenRepository;
+    this.idGenerator = idGenerator;
+  }
+
   public TokenPairResult handle(IssueTokenCommand command) {
     // Tạo token và lưu phiên đăng nhập
     String refreshToken = tokenProvider.generateToken(command.userId());
