@@ -80,7 +80,7 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
       throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
     }
 
-    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getUserId());
+    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getId());
 
     TokenPairResult tokenPair = issueTokenService.handle(issueTokenCommand);
 

@@ -42,7 +42,7 @@ public class ResetPasswordCommandHandler implements CommandHandler<ResetPassword
       throw new AppException(UserErrorCode.USER_NOT_FOUND);
     }
     User user = userOpt.get();
-    user.changePassword(passwordEncoder.encode(command.newPassword()), user.getUserId());
+    user.changePassword(passwordEncoder.encode(command.newPassword()), user.getId());
     userRepository.save(user);
     // Xóa mã xác thực sau khi sử dụng
     verificationRepository.delete(verificationOpt.get());

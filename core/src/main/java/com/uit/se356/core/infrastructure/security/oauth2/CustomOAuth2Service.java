@@ -34,7 +34,7 @@ public class CustomOAuth2Service extends DefaultOAuth2UserService {
         new OAuth2LoginCommand(provider, providerUserId, email, fullName, verifiedPhone);
     User user = oAuth2LoginCommandHandler.handle(command);
 
-    return CustomUserPrincipal.builder().id(user.getUserId()).build();
+    return CustomUserPrincipal.builder().id(user.getId()).build();
   }
 
   private String getVerifiedPhoneFromSession() {

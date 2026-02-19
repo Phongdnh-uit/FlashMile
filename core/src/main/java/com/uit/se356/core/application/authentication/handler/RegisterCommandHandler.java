@@ -58,7 +58,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
     }
     PhoneNumber phoneNumber = new PhoneNumber(phoneNumberOpt.get());
     Email email = new Email(command.email());
-    Role defaultRoleId =
+    Role defaultRole =
         roleRepository
             .findDefault()
             .orElseThrow(() -> new AppException(AuthErrorCode.ROLE_NOT_FOUND));
@@ -69,7 +69,8 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
             command.fullName(),
             email,
             passwordEncoder.encode(command.password()),
-            phoneNumber);
+            phoneNumber,
+            defaultRole.getId());
     user.verifyPhone();
     user = userRepository.save(user);
     // Xóa verificationToken khỏi cache sau khi đăng ký thành công
@@ -82,7 +83,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
 
     // Trả về kết quả đăng ký
     return new RegisterResult(
-        user.getUserId().value(),
+        user.getId().value(),
         user.getFullName(),
         user.getEmail().value(),
         user.getPhoneNumber().value(),

@@ -60,7 +60,7 @@ public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
     Verification verification =
         Verification.create(
             new VerificationId(idGenerator.generate().toString()),
-            userOpt.get().getUserId(),
+            userOpt.get().getId(),
             VerificationType.RESET_PASSWORD,
             UUID.randomUUID().toString(),
             Instant.now().plusSeconds(expirySeconds));

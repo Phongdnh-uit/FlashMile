@@ -104,8 +104,10 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> oAuth2LoginCommandHandler(
       LinkedAccountRepository linkedAccountRepository,
       UserRepository userRepository,
-      IdGenerator idGenerator) {
-    return new OAuth2LoginCommandHandler(linkedAccountRepository, userRepository, idGenerator);
+      IdGenerator idGenerator,
+      RoleRepository roleRepository) {
+    return new OAuth2LoginCommandHandler(
+        linkedAccountRepository, userRepository, idGenerator, roleRepository);
   }
 
   @Bean

@@ -55,8 +55,7 @@ public class EmailVerificationSendingStrategy implements SendVerificationStrateg
             .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 
     // Xóa mã cũ nếu có
-    verificationRepository.deleteByUserIdAndType(
-        user.getUserId(), VerificationType.EMAIL_VERIFICATION);
+    verificationRepository.deleteByUserIdAndType(user.getId(), VerificationType.EMAIL_VERIFICATION);
 
     // Tạo mã mới
     // Sử dụng cấu hình expire
@@ -65,7 +64,7 @@ public class EmailVerificationSendingStrategy implements SendVerificationStrateg
     Verification verification =
         Verification.create(
             new VerificationId(idGenerator.generate().toString()),
-            user.getUserId(),
+            user.getId(),
             VerificationType.EMAIL_VERIFICATION,
             UUID.randomUUID().toString(),
             expiresAt);

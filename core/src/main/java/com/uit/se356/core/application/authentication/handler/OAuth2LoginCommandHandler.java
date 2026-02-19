@@ -5,8 +5,10 @@ import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.OAuth2LoginCommand;
 import com.uit.se356.core.application.authentication.port.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.RoleRepository;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.LinkedAccount;
+import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
@@ -20,14 +22,17 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
   private final LinkedAccountRepository linkedAccountRepository;
   private final UserRepository userRepository;
   private final IdGenerator idGenerator;
+  private final RoleRepository roleRepository;
 
   public OAuth2LoginCommandHandler(
       LinkedAccountRepository linkedAccountRepository,
       UserRepository userRepository,
-      IdGenerator idGenerator) {
+      IdGenerator idGenerator,
+      RoleRepository roleRepository) {
     this.linkedAccountRepository = linkedAccountRepository;
     this.userRepository = userRepository;
     this.idGenerator = idGenerator;
+    this.roleRepository = roleRepository;
   }
 
   @Transactional
@@ -56,7 +61,13 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
     if (userRepository.existsByEmail(email)) {
       throw new AppException(AuthErrorCode.EMAIL_ALREADY_USED);
     }
-    User newUser = User.createOAuthUser(userId, command.fullName(), email, phoneNumber);
+    // Lấy vai trò mặc định
+    Role defaultRole =
+        roleRepository
+            .findDefault()
+            .orElseThrow(() -> new AppException(AuthErrorCode.ROLE_NOT_FOUND));
+    User newUser =
+        User.createOAuthUser(userId, command.fullName(), email, phoneNumber, defaultRole.getId());
     newUser = userRepository.save(newUser);
 
     // Tạo liên kết tài khoản
