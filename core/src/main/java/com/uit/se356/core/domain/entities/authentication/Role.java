@@ -1,7 +1,6 @@
 package com.uit.se356.core.domain.entities.authentication;
 
 import com.uit.se356.core.domain.vo.authentication.RoleId;
-import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.Objects;
 
 public class Role {
@@ -18,8 +17,7 @@ public class Role {
     this.isDefault = isDefault;
   }
 
-  public static Role create(
-      RoleId id, String name, String description, boolean isDefault, UserId by) {
+  public static Role create(RoleId id, String name, String description, boolean isDefault) {
     Objects.requireNonNull(id);
     Objects.requireNonNull(name);
     return new Role(id, name, description, isDefault);
@@ -31,14 +29,14 @@ public class Role {
   }
 
   // ============================ BEHAVIORS ============================
-  public void update(String name, String description, boolean isDefault, UserId by) {
+  public void update(String name, String description, boolean isDefault) {
     Objects.requireNonNull(name);
     this.name = name;
     this.description = description;
     this.isDefault = isDefault;
   }
 
-  public void markAsDefault(UserId by) {
+  public void markAsDefault() {
     this.isDefault = true;
   }
 

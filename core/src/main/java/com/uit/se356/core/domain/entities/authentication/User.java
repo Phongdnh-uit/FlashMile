@@ -190,4 +190,8 @@ public class User {
   public UserStatus getStatus() {
     return status;
   }
+
+  public RoleId getRoleId() {
+    return roleId;
+  }
 }

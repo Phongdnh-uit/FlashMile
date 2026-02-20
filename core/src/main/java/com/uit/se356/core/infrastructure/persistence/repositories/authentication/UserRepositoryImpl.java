@@ -18,12 +18,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserRepositoryImpl implements UserRepository {
   private final UserJpaRepository userJpaRepository;
+  private final RoleJpaRepository roleJpaRepository;
   private final UserPersistenceMapper userPersistenceMapper;
 
   @Override
   public User save(User user) {
-    UserJpaEntity entity = userPersistenceMapper.toEntity(user);
-    UserJpaEntity savedEntity = userJpaRepository.save(entity);
+    // Kiểm tra xem là cập nhật hay tạo mới
+    Optional<UserJpaEntity> userOpt = userJpaRepository.findById(user.getId().value());
+    UserJpaEntity entityToSave =
+        userOpt
+            .map(
+                existing -> {
+                  userPersistenceMapper.updateFromDomain(user, existing);
+                  return existing;
+                })
+            .orElseGet(() -> userPersistenceMapper.toEntity(user));
+    // Gắn lại tham chiếu Role
+    entityToSave.setRole(roleJpaRepository.getReferenceById(user.getRoleId().value()));
+    UserJpaEntity savedEntity = userJpaRepository.save(entityToSave);
     return userPersistenceMapper.toDomain(savedEntity);
   }
 

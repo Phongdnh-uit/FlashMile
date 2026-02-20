@@ -51,7 +51,11 @@ public class SecurityConfig {
                 auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                     .permitAll()
                     .requestMatchers(
-                        "/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
+                        "/api/v1/auth/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/actuator/**",
+                        "/internal/debug-otp")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

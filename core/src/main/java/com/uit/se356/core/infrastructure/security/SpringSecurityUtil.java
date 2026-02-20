@@ -2,6 +2,7 @@ package com.uit.se356.core.infrastructure.security;
 
 import com.uit.se356.common.security.UserPrincipal;
 import com.uit.se356.common.utils.SecurityUtil;
+import com.uit.se356.core.domain.constants.SystemActor;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;
@@ -50,6 +51,8 @@ public class SpringSecurityUtil implements SecurityUtil<UserId>, AuditorAware<St
 
   @Override
   public Optional<String> getCurrentAuditor() {
-    return getCurrentUserPrincipal().map(userPrincipal -> userPrincipal.getId().toString());
+    return getCurrentUserPrincipal()
+        .map(v -> v.getId().value())
+        .or(() -> Optional.of(SystemActor.ID.value()));
   }
 }

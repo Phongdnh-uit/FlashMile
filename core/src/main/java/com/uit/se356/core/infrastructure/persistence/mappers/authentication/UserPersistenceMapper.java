@@ -42,4 +42,17 @@ public class UserPersistenceMapper {
     entity.setEmailVerified(user.isEmailVerified());
     return entity;
   }
+
+  public void updateFromDomain(User user, UserJpaEntity entity) {
+    if (user == null || entity == null) {
+      return;
+    }
+    entity.setFullName(user.getFullName());
+    entity.setEmail(user.getEmail().value());
+    entity.setPasswordHash(user.getPasswordHash());
+    entity.setPhoneNumber(user.getPhoneNumber().value());
+    entity.setStatus(user.getStatus());
+    entity.setPhoneVerified(user.isPhoneVerified());
+    entity.setEmailVerified(user.isEmailVerified());
+  }
 }

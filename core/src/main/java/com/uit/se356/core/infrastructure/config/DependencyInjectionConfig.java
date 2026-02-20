@@ -1,5 +1,6 @@
 package com.uit.se356.core.infrastructure.config;
 
+import com.uit.se356.common.security.PermissionScanner;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.services.QueryHandler;
@@ -15,6 +16,7 @@ import com.uit.se356.core.application.authentication.handler.TokenRotationHandle
 import com.uit.se356.core.application.authentication.port.CacheRepository;
 import com.uit.se356.core.application.authentication.port.LinkedAccountRepository;
 import com.uit.se356.core.application.authentication.port.PasswordEncoder;
+import com.uit.se356.core.application.authentication.port.PermissionRepository;
 import com.uit.se356.core.application.authentication.port.RefreshTokenRepository;
 import com.uit.se356.core.application.authentication.port.RoleRepository;
 import com.uit.se356.core.application.authentication.port.TokenProvider;
@@ -28,6 +30,8 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.ForgotPasswordSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.PhoneVerificationSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
+import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
+import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -138,5 +142,18 @@ public class DependencyInjectionConfig {
       UserRepository userRepository,
       PasswordEncoder passwordEncoder) {
     return new ResetPasswordCommandHandler(verificationRepository, userRepository, passwordEncoder);
+  }
+
+  @Bean
+  CommandHandler<?, ?> syncPermissionCommandHandler(
+      PermissionScanner permissionScanner,
+      PermissionRepository permissionRepository,
+      IdGenerator idGenerator) {
+    return new SyncPermissionHandler(permissionScanner, permissionRepository, idGenerator);
+  }
+
+  @Bean
+  QueryHandler<?, ?> debugOtpHandler(CacheRepository cacheRepository) {
+    return new DebugOtpHandler(cacheRepository);
   }
 }
