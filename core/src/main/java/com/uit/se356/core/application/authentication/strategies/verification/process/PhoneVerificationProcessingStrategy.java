@@ -7,6 +7,7 @@ import com.uit.se356.core.application.authentication.result.VerificationResult;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.CodePurpose;
+import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,9 +33,12 @@ public class PhoneVerificationProcessingStrategy implements ProcessVerificationS
     if (recipient == null || recipient.isBlank()) {
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE_REQUEST);
     }
+    PhoneNumber phoneNumber = new PhoneNumber(recipient);
     //  Kiểm tra mã xác minh từ cache
     StringBuilder cacheKey =
-        new StringBuilder(CacheKey.PHONE_VERIFICATION_CODE_PREFIX).append(":").append(recipient);
+        new StringBuilder(CacheKey.PHONE_VERIFICATION_CODE_PREFIX)
+            .append(":")
+            .append(phoneNumber.value());
     Optional<String> cachedCode = cacheRepository.get(cacheKey.toString());
     if (cachedCode.isEmpty() || !cachedCode.get().equals(code)) {
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE);
