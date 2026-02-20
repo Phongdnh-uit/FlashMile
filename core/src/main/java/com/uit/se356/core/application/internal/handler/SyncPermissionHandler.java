@@ -40,7 +40,7 @@ public class SyncPermissionHandler implements CommandHandler<SyncPermissionComma
     for (String permission : permissions) {
       Permission perm =
           Permission.create(new PermissionId(idGenerator.generate().toString()), permission, "");
-      permissionRepository.save(perm);
+      permissionRepository.create(perm);
     }
     return null;
   }

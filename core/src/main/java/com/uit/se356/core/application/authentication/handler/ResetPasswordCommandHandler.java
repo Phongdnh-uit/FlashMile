@@ -43,7 +43,7 @@ public class ResetPasswordCommandHandler implements CommandHandler<ResetPassword
     }
     User user = userOpt.get();
     user.changePassword(passwordEncoder.encode(command.newPassword()), user.getId());
-    userRepository.save(user);
+    userRepository.update(user);
     // Xóa mã xác thực sau khi sử dụng
     verificationRepository.delete(verificationOpt.get());
     return null;

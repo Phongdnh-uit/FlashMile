@@ -68,7 +68,7 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
             .orElseThrow(() -> new AppException(AuthErrorCode.ROLE_NOT_FOUND));
     User newUser =
         User.createOAuthUser(userId, command.fullName(), email, phoneNumber, defaultRole.getId());
-    newUser = userRepository.save(newUser);
+    newUser = userRepository.create(newUser);
 
     // Tạo liên kết tài khoản
     LinkedAccount newLinkedAccount =
@@ -77,7 +77,7 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
             userId,
             command.provider(),
             command.providerUserId());
-    linkedAccountRepository.save(newLinkedAccount);
+    linkedAccountRepository.create(newLinkedAccount);
     // Trả về user mới tạo
     return newUser;
   }

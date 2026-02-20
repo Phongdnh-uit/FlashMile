@@ -1,4 +1,4 @@
-package com.uit.se356.core.infrastructure.repositories;
+package com.uit.se356.core.infrastructure.repositories.authentication;
 
 import com.uit.se356.core.application.authentication.port.VerificationRepository;
 import com.uit.se356.core.domain.entities.authentication.Verification;
@@ -7,34 +7,46 @@ import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.VerificationJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.VerificationPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.VerificationJpaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Component
+@Repository
+@Transactional(readOnly = true)
 public class VerificationRepositoryImpl implements VerificationRepository {
 
   private final VerificationJpaRepository verificationJpaRepository;
   private final VerificationPersistenceMapper verificationPersistenceMapper;
 
-  @Transactional
   @Override
-  public Verification save(Verification verification) {
-    // Cần kiểm tra xem là trạng thái cập nhật hay tạo mới
-    Optional<VerificationJpaEntity> existingEntity =
-        verificationJpaRepository.findById(verification.getId().value());
-    VerificationJpaEntity entityToSave =
-        existingEntity
-            .map(
-                existing -> {
-                  verificationPersistenceMapper.updateEntityFromDomain(verification, existing);
-                  return existing;
-                })
-            .orElseGet(() -> verificationPersistenceMapper.toEntity(verification));
-    VerificationJpaEntity savedEntity = verificationJpaRepository.save(entityToSave);
+  @Transactional
+  public Verification create(Verification newVerification) {
+    VerificationJpaEntity entityToCreate = verificationPersistenceMapper.toEntity(newVerification);
+    VerificationJpaEntity savedEntity = verificationJpaRepository.save(entityToCreate);
     return verificationPersistenceMapper.toDomain(savedEntity);
+  }
+
+  @Override
+  @Transactional
+  public Verification update(Verification verificationToUpdate) {
+    // 1. Lấy entity hiện tại
+    VerificationJpaEntity existingEntity =
+        verificationJpaRepository
+            .findById(verificationToUpdate.getId().value())
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "Verification not found with id: "
+                            + verificationToUpdate.getId().value()));
+
+    // 2. Cập nhật entity với dữ liệu mới từ domain object
+    verificationPersistenceMapper.updateEntityFromDomain(verificationToUpdate, existingEntity);
+
+    // 3. Không cần gọi save vì entity tự flush khi hết transaction
+    return verificationPersistenceMapper.toDomain(existingEntity);
   }
 
   @Override

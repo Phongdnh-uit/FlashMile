@@ -6,7 +6,9 @@ import java.util.Optional;
 
 public interface RoleRepository {
 
-  Role save(Role role);
+  Role create(Role newRole);
+
+  Role update(Role roleToUpdate);
 
   Optional<Role> findById(RoleId roleId);
 

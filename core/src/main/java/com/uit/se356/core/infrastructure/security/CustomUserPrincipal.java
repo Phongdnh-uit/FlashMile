@@ -29,7 +29,6 @@ public class CustomUserPrincipal implements UserPrincipal<UserId>, OAuth2User {
 
   @Override
   public String getName() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    return id.value();
   }
 }

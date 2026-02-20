@@ -72,7 +72,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
             phoneNumber,
             defaultRole.getId());
     user.verifyPhone();
-    user = userRepository.save(user);
+    user = userRepository.create(user);
     // Xóa verificationToken khỏi cache sau khi đăng ký thành công
     cacheRepository.delete(cacheKey.toString());
     // Gửi email xác nhận

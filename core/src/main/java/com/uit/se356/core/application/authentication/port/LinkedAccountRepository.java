@@ -4,7 +4,9 @@ import com.uit.se356.core.domain.entities.authentication.LinkedAccount;
 import java.util.Optional;
 
 public interface LinkedAccountRepository {
-  LinkedAccount save(LinkedAccount linkedAccount);
+  LinkedAccount create(LinkedAccount newLinkedAccount);
+
+  LinkedAccount update(LinkedAccount linkedAccountToUpdate);
 
   Optional<LinkedAccount> findByProviderAndProviderId(String provider, String providerId);
 

@@ -64,7 +64,7 @@ public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
             VerificationType.RESET_PASSWORD,
             UUID.randomUUID().toString(),
             Instant.now().plusSeconds(expirySeconds));
-    verificationRepository.save(verification);
+    verificationRepository.create(verification);
 
     // Gửi mã OTP qua email
     verificationSender.stream()

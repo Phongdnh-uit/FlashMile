@@ -36,7 +36,7 @@ public class TokenRotationHandler implements CommandHandler<TokenRotationCommand
     // Không xóa refresh token mà revoke nó để đánh dấu là không còn hợp lệ, sau 1 tuần sẽ cronjob
     // xóa hoàn toàn
     refreshToken.revoke();
-    refreshTokenRepository.save(refreshToken);
+    refreshTokenRepository.update(refreshToken);
 
     // Issue token mới
     IssueTokenCommand issueTokenCommand = new IssueTokenCommand(refreshToken.getUserId());

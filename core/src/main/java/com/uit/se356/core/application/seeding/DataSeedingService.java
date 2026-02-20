@@ -29,7 +29,7 @@ public class DataSeedingService {
         if (!isDefaultRoleExists && roleName == RoleName.USER) {
           role.markAsDefault();
         }
-        roleRepository.save(role);
+        roleRepository.create(role);
       }
     }
   }

@@ -35,7 +35,7 @@ public class IssueTokenService {
             command.userId(),
             tokenHash,
             Instant.now().plusMillis(tokenProvider.getRefreshTokenExpiryDuration()));
-    rToken = refreshTokenRepository.save(rToken);
+    rToken = refreshTokenRepository.create(rToken);
 
     String accessToken = tokenProvider.generateToken(command.userId());
 

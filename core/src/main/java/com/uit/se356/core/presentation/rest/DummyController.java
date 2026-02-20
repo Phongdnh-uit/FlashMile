@@ -1,5 +1,6 @@
 package com.uit.se356.core.presentation.rest;
 
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.utils.SecurityUtil;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DummyController {
   private final SecurityUtil<UserId> securityUtil;
 
+  @HasPermission("dummy:read")
   @GetMapping("/dummy")
   public String getDummy() {
     UserId userId = securityUtil.getCurrentUserPrincipal().get().getId();

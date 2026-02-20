@@ -69,7 +69,7 @@ public class EmailVerificationSendingStrategy implements SendVerificationStrateg
             UUID.randomUUID().toString(),
             expiresAt);
 
-    Verification savedVerification = verificationRepository.save(verification);
+    Verification savedVerification = verificationRepository.create(verification);
 
     // Gửi email
     senders.stream()

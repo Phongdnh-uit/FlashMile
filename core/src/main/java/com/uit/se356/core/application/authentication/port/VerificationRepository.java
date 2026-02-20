@@ -6,7 +6,9 @@ import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import java.util.Optional;
 
 public interface VerificationRepository {
-  Verification save(Verification verification);
+  Verification create(Verification newVerification);
+
+  Verification update(Verification verificationToUpdate);
 
   Optional<Verification> findByTokenAndType(String token, VerificationType type);
 
