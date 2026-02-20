@@ -29,29 +29,21 @@ public interface UserJpaRepository extends CommonRepository<UserJpaEntity, Strin
 
   boolean existsByPhoneNumber(String phoneNumber);
 
-  /**
-   * Tìm tất cả User kèm Role (JOIN FETCH) để tránh N+1 khi map sang domain.
-   */
+  /** Tìm tất cả User kèm Role (JOIN FETCH) để tránh N+1 khi map sang domain. */
   @Query("SELECT u FROM UserJpaEntity u JOIN FETCH u.role")
   List<UserJpaEntity> findAllWithRole();
 
-  /**
-   * Tìm User theo ID kèm Role (JOIN FETCH) để tránh lazy load khi map sang domain.
-   */
+  /** Tìm User theo ID kèm Role (JOIN FETCH) để tránh lazy load khi map sang domain. */
   @EntityGraph(attributePaths = "role")
   @Query("SELECT u FROM UserJpaEntity u WHERE u.id = :id")
   Optional<UserJpaEntity> findByIdWithRole(@Param("id") String id);
 
-  /**
-   * Phân trang: Tìm tất cả User kèm Role.
-   */
+  /** Phân trang: Tìm tất cả User kèm Role. */
   @EntityGraph(attributePaths = "role")
   @Query("SELECT u FROM UserJpaEntity u")
   Page<UserJpaEntity> findAllWithRole(Pageable pageable);
 
-  /**
-   * Phân trang: Tìm User theo status kèm Role.
-   */
+  /** Phân trang: Tìm User theo status kèm Role. */
   @EntityGraph(attributePaths = "role")
   @Query("SELECT u FROM UserJpaEntity u WHERE u.status = :status")
   Page<UserJpaEntity> findByStatus(@Param("status") UserStatus status, Pageable pageable);

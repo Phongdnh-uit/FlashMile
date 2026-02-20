@@ -6,6 +6,7 @@ import com.uit.se356.core.infrastructure.persistence.entities.authentication.Ref
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.RefreshTokenPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.RefreshTokenJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -53,5 +54,15 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     return refreshTokenJpaRepository
         .findOne((root, query, builder) -> builder.equal(root.get("tokenHash"), token))
         .map(refreshTokenPersistenceMapper::toDomain);
+  }
+
+  @Override
+  public void cleanupExpiredTokens(long expirationInMillis) {
+    Instant timeThreshold = Instant.now().minusMillis(expirationInMillis);
+    refreshTokenJpaRepository.delete(
+        (root, query, builder) ->
+            builder.and(
+                builder.isNotNull(root.get("expiresAt")),
+                builder.lessThan(root.get("expiresAt"), (timeThreshold))));
   }
 }

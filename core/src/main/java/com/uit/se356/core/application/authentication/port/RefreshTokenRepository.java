@@ -9,4 +9,7 @@ public interface RefreshTokenRepository {
   RefreshToken update(RefreshToken refreshTokenToUpdate);
 
   Optional<RefreshToken> findByToken(String token);
+
+  /** Xóa tất cả refresh token đã hết hạn và quá expirationInMilis kể từ thời điểm hết hạn. */
+  void cleanupExpiredTokens(long expirationInMillis);
 }

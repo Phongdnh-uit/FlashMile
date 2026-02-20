@@ -8,7 +8,6 @@ import com.uit.se356.core.application.authentication.result.TokenPairResult;
 import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.domain.vo.authentication.RefreshTokenId;
 import java.time.Instant;
-import java.util.Base64;
 
 public class IssueTokenService {
 
@@ -27,8 +26,8 @@ public class IssueTokenService {
 
   public TokenPairResult handle(IssueTokenCommand command) {
     // Tạo token và lưu phiên đăng nhập
-    String refreshToken = tokenProvider.generateToken(command.userId());
-    String tokenHash = Base64.getEncoder().encodeToString(refreshToken.getBytes());
+    String refreshToken = tokenProvider.generateSecureToken();
+    String tokenHash = tokenProvider.hashToken(refreshToken);
     RefreshToken rToken =
         RefreshToken.create(
             new RefreshTokenId(idGenerator.generate().toString()),
@@ -41,5 +40,9 @@ public class IssueTokenService {
 
     return new TokenPairResult(
         accessToken, refreshToken, tokenProvider.getTokenExpiryDuration(), "Bearer");
+  }
+
+  public String hashToken(String token) {
+    return tokenProvider.hashToken(token);
   }
 }

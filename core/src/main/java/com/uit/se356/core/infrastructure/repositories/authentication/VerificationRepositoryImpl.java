@@ -39,8 +39,7 @@ public class VerificationRepositoryImpl implements VerificationRepository {
             .orElseThrow(
                 () ->
                     new EntityNotFoundException(
-                        "Verification not found with id: "
-                            + verificationToUpdate.getId().value()));
+                        "Verification not found with id: " + verificationToUpdate.getId().value()));
 
     // 2. Cập nhật entity với dữ liệu mới từ domain object
     verificationPersistenceMapper.updateEntityFromDomain(verificationToUpdate, existingEntity);

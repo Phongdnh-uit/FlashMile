@@ -8,4 +8,8 @@ public interface TokenProvider {
   Long getTokenExpiryDuration();
 
   Long getRefreshTokenExpiryDuration();
+
+  String generateSecureToken();
+
+  String hashToken(String token);
 }

@@ -9,7 +9,6 @@ import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
 import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
-import java.util.Base64;
 
 public class TokenRotationHandler implements CommandHandler<TokenRotationCommand, LoginResult> {
   private final RefreshTokenRepository refreshTokenRepository;
@@ -24,7 +23,7 @@ public class TokenRotationHandler implements CommandHandler<TokenRotationCommand
   @Override
   public LoginResult handle(TokenRotationCommand command) {
     // Kiểm tra xem refresh token có tồn tại và hợp lệ không
-    String tokenHash = Base64.getEncoder().encodeToString(command.refreshToken().getBytes());
+    String tokenHash = issueTokenHander.hashToken(command.refreshToken());
     RefreshToken refreshToken =
         refreshTokenRepository
             .findByToken(tokenHash)

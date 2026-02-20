@@ -7,6 +7,7 @@ import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.handler.IssueTokenService;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
+import com.uit.se356.core.application.authentication.handler.LogoutHandler;
 import com.uit.se356.core.application.authentication.handler.OAuth2LoginCommandHandler;
 import com.uit.se356.core.application.authentication.handler.ProcessVerificationHandler;
 import com.uit.se356.core.application.authentication.handler.RegisterCommandHandler;
@@ -155,5 +156,11 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> debugOtpHandler(CacheRepository cacheRepository) {
     return new DebugOtpHandler(cacheRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> logoutCommandHandler(
+      RefreshTokenRepository refreshTokenRepository, TokenProvider tokenProvider) {
+    return new LogoutHandler(refreshTokenRepository, tokenProvider);
   }
 }
