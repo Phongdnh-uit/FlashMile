@@ -14,6 +14,8 @@ public interface RoleRepository {
 
   Optional<Role> findDefault();
 
+  Optional<Role> findByName(String name);
+
   boolean existsByName(String name);
 
   void delete(Role role);

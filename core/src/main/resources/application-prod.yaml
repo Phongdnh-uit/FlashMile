@@ -107,3 +107,8 @@ application:
     sms-otp-expiration: ${SMS_OTP_EXPIRATION:300}
     phone-verified-token-expiration: ${PHONE_VERIFIED_TOKEN_EXPIRATION:600}
     forgot-password-code-expiration: ${FORGOT_PASSWORD_CODE_EXPIRATION:300}
+  bootstrap:
+    admin-email: ${ADMIN_EMAIL}
+    admin-full-name: ${ADMIN_FULL_NAME}
+    admin-password: ${ADMIN_PASSWORD}
+    admin-phone-number: ${ADMIN_PHONE_NUMBER}

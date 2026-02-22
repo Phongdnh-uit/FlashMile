@@ -4,6 +4,7 @@ import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.UserJpaEntity;
@@ -125,5 +126,12 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public boolean existsById(UserId id) {
     return userJpaRepository.existsById(id.value());
+  }
+
+  @Override
+  public List<User> findByRoleId(RoleId roleId) {
+    return userJpaRepository.findByRoleId(roleId.value()).stream()
+        .map(userPersistenceMapper::toDomain)
+        .collect(Collectors.toList());
   }
 }

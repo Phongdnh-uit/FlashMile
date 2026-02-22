@@ -3,6 +3,7 @@ package com.uit.se356.core.application.user.port;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
 import java.util.List;
@@ -30,6 +31,8 @@ public interface UserRepository {
 
   /** Phiên bản phân trang của findAll. */
   Page<User> findAll(Pageable pageable);
+
+  List<User> findByRoleId(RoleId roleId);
 
   void delete(UserId id);
 

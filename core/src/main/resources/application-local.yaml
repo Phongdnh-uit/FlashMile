@@ -85,6 +85,11 @@ application:
     sms-otp-expiration: 300 # 5 minutes
     phone-verified-token-expiration: 600 # 10 minutes
     forgot-password-code-expiration: 300 # 5 minutes
+  bootstrap:
+    admin-email: admin@example.com
+    admin-full-name: Admin Local
+    admin-password: password
+    admin-phone-number: "+84912345678"
 
 springdoc:
   swagger-ui:

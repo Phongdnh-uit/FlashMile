@@ -63,6 +63,15 @@ public class RoleRepositoryImpl implements RoleRepository {
   }
 
   @Override
+  public Optional<Role> findByName(String name) {
+    return roleJpaRepository
+        .findOne(
+            (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(criteriaBuilder.lower(root.get("name")), name.toLowerCase()))
+        .map(roleMapper::toDomain);
+  }
+
+  @Override
   @Transactional
   public void delete(Role role) {
     roleJpaRepository.deleteById(role.getId().value());

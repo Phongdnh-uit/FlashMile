@@ -122,12 +122,12 @@ public class User {
   }
 
   // ============================ BEHAVIOR ============================
-  public void changePassword(String newPasswordHash, UserId updatedBy) {
+  public void changePassword(String newPasswordHash) {
     Objects.requireNonNull(newPasswordHash);
     this.passwordHash = newPasswordHash;
   }
 
-  public void updateStatus(UserStatus next, UserId updatedBy) {
+  public void updateStatus(UserStatus next) {
     // Sơ đồ trạng thái người dùng
     // UNVERIFIED -> ACTIVE
     // ACTIVE -> DELETED, BLOCKED

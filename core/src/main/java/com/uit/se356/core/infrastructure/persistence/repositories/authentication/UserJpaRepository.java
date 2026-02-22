@@ -47,4 +47,7 @@ public interface UserJpaRepository extends CommonRepository<UserJpaEntity, Strin
   @EntityGraph(attributePaths = "role")
   @Query("SELECT u FROM UserJpaEntity u WHERE u.status = :status")
   Page<UserJpaEntity> findByStatus(@Param("status") UserStatus status, Pageable pageable);
+
+  @Query("SELECT u FROM UserJpaEntity u JOIN FETCH u.role WHERE u.role.id = :roleId")
+  List<UserJpaEntity> findByRoleId(@Param("roleId") String value);
 }
