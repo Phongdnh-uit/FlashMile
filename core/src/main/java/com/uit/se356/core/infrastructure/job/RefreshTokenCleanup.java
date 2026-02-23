@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.job;
 
-import com.uit.se356.core.application.authentication.port.RefreshTokenRepository;
+import com.uit.se356.core.application.authentication.port.out.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

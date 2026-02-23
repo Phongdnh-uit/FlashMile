@@ -2,10 +2,10 @@ package com.uit.se356.core.application.authentication.services;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.SecurityUtil;
-import com.uit.se356.core.application.authentication.port.AuthCacheRepository;
-import com.uit.se356.core.application.authentication.port.PermissionRepository;
-import com.uit.se356.core.application.authentication.port.RoleRepository;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
+import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
+import com.uit.se356.core.application.authentication.port.out.RoleRepository;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.constants.RoleName;
 import com.uit.se356.core.domain.entities.authentication.Permission;

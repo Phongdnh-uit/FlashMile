@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.security;
 
-import com.uit.se356.core.application.authentication.port.PasswordEncoder;
+import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.cache;
 
-import com.uit.se356.core.application.authentication.port.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.Set;

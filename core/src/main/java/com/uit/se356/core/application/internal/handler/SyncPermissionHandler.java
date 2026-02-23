@@ -5,7 +5,7 @@ import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.security.PermissionScanner;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.port.PermissionRepository;
+import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
 import com.uit.se356.core.application.internal.command.SyncPermissionCommand;
 import com.uit.se356.core.domain.entities.authentication.Permission;
 import com.uit.se356.core.domain.vo.authentication.PermissionId;

@@ -1,7 +1,7 @@
 package com.uit.se356.core.application.authentication.strategies.verification.process;
 
 import com.uit.se356.common.exception.AppException;
-import com.uit.se356.core.application.authentication.port.VerificationRepository;
+import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
 import com.uit.se356.core.application.authentication.result.VerificationResult;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.User;

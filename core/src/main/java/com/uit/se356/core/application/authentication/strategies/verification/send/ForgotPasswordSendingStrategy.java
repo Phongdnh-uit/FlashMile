@@ -2,9 +2,9 @@ package com.uit.se356.core.application.authentication.strategies.verification.se
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.port.VerificationConfigPort;
-import com.uit.se356.core.application.authentication.port.VerificationRepository;
-import com.uit.se356.core.application.authentication.port.VerificationSender;
+import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
+import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.entities.authentication.Verification;

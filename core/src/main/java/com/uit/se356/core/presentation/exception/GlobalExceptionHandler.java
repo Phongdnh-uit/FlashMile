@@ -1,4 +1,4 @@
-package com.uit.se356.core.presentation.rest.exception;
+package com.uit.se356.core.presentation.exception;
 
 import com.uit.se356.common.dto.ErrorResponse;
 import com.uit.se356.common.exception.AppException;

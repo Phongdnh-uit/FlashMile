@@ -2,7 +2,7 @@ package com.uit.se356.core.application.authentication.handler;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.QueryHandler;
-import com.uit.se356.core.application.authentication.port.VerificationSender;
+import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.authentication.query.SendVerificationCodeQuery;
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.domain.exception.AuthErrorCode;

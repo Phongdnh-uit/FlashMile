@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
-import com.uit.se356.core.application.authentication.port.RefreshTokenRepository;
+import com.uit.se356.core.application.authentication.port.out.RefreshTokenRepository;
 import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.RefreshTokenJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.RefreshTokenPersistenceMapper;

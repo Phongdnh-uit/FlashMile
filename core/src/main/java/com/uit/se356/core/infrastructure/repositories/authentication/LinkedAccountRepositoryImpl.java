@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
-import com.uit.se356.core.application.authentication.port.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
 import com.uit.se356.core.domain.entities.authentication.LinkedAccount;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.LinkedAccountJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.LinkedAccountPersistenceMapper;

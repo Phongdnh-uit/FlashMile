@@ -8,7 +8,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.uit.se356.common.exception.AppException;
-import com.uit.se356.core.application.authentication.port.TokenProvider;
+import com.uit.se356.core.application.authentication.port.out.TokenProvider;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;

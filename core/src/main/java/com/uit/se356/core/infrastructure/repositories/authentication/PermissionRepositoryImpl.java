@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
-import com.uit.se356.core.application.authentication.port.PermissionRepository;
+import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
 import com.uit.se356.core.domain.entities.authentication.Permission;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.PermissionJpaEntity;

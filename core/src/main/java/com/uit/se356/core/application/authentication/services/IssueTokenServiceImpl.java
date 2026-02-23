@@ -2,9 +2,9 @@ package com.uit.se356.core.application.authentication.services;
 
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
-import com.uit.se356.core.application.authentication.port.RefreshTokenRepository;
-import com.uit.se356.core.application.authentication.port.TokenProvider;
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
+import com.uit.se356.core.application.authentication.port.out.RefreshTokenRepository;
+import com.uit.se356.core.application.authentication.port.out.TokenProvider;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
 import com.uit.se356.core.domain.entities.authentication.RefreshToken;
 import com.uit.se356.core.domain.vo.authentication.RefreshTokenId;

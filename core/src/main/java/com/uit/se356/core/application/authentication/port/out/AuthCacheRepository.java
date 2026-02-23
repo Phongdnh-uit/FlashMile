@@ -1,4 +1,4 @@
-package com.uit.se356.core.application.authentication.port;
+package com.uit.se356.core.application.authentication.port.out;
 
 import java.time.Duration;
 import java.util.Optional;

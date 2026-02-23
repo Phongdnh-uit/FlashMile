@@ -22,6 +22,7 @@ public enum AuthErrorCode implements ErrorCode {
       "AUTH_015", "error.auth.oauth2_authorization_request_failed", 401),
   INVALID_TOKEN("AUTH_016", "error.auth.invalid_token", 401),
   ACCESS_DENIED("AUTH_017", "error.auth.access_denied", 403),
+  TOO_MANY_REQUESTS("AUTH_018", "error.auth.too_many_requests", 429),
   ;
   private final String code;
   private final String messageKey;

@@ -2,8 +2,8 @@ package com.uit.se356.core.application.seeding;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.port.PasswordEncoder;
-import com.uit.se356.core.application.authentication.port.RoleRepository;
+import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
+import com.uit.se356.core.application.authentication.port.out.RoleRepository;
 import com.uit.se356.core.application.seeding.port.BootstrapConfigPort;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.constants.RoleName;

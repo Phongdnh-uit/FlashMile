@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @Tag(name = "Internal")
-@RequestMapping("/internal")
+@RequestMapping("/api/v1/internal")
 @RestController
 public class InternalController {
   private final QueryBus queryBus;
