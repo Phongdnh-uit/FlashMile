@@ -33,8 +33,8 @@ public class CustomOAuth2Service extends DefaultOAuth2UserService {
     OAuth2LoginCommand command =
         new OAuth2LoginCommand(provider, providerUserId, email, fullName, verifiedPhone);
     User user = oAuth2LoginCommandHandler.handle(command);
-
-    return CustomUserPrincipal.builder().id(user.getUserId()).build();
+    // Cần gán roleId vào role của UserPrincipal để xử lý ở bước sau
+    return CustomUserPrincipal.builder().id(user.getId()).role(user.getRoleId().value()).build();
   }
 
   private String getVerifiedPhoneFromSession() {

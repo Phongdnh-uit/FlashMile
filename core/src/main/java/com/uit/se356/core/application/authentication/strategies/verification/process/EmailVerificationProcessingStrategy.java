@@ -1,7 +1,7 @@
 package com.uit.se356.core.application.authentication.strategies.verification.process;
 
 import com.uit.se356.common.exception.AppException;
-import com.uit.se356.core.application.authentication.port.VerificationRepository;
+import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
 import com.uit.se356.core.application.authentication.result.VerificationResult;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.User;
@@ -11,14 +11,16 @@ import com.uit.se356.core.domain.vo.authentication.CodePurpose;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
 import com.uit.se356.core.domain.vo.authentication.VerificationType;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class EmailVerificationProcessingStrategy implements ProcessVerificationStrategy {
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
+
+  public EmailVerificationProcessingStrategy(
+      UserRepository userRepository, VerificationRepository verificationRepository) {
+    this.userRepository = userRepository;
+    this.verificationRepository = verificationRepository;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {
@@ -39,9 +41,9 @@ public class EmailVerificationProcessingStrategy implements ProcessVerificationS
     }
     User user = userOpt.get();
     // Cập nhật trạng thái xác thực email của người dùng
-    user.verifyEmail(user.getUserId());
-    user.updateStatus(UserStatus.ACTIVE, user.getUserId());
-    userRepository.save(user);
+    user.verifyEmail();
+    user.updateStatus(UserStatus.ACTIVE);
+    userRepository.update(user);
     // Xoá mã xác thực sau khi sử dụng
     verificationRepository.delete(verificationOpt.get());
 

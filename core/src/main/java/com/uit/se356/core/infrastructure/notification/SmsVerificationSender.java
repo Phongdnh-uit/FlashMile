@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.notification;
 
-import com.uit.se356.core.application.authentication.port.VerificationSender;
+import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.domain.vo.authentication.CodePurpose;
 import com.uit.se356.core.domain.vo.authentication.VerificationChannel;
 import lombok.extern.slf4j.Slf4j;

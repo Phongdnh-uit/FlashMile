@@ -3,7 +3,8 @@ package com.uit.se356.core.application.authentication.handler;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
-import com.uit.se356.core.application.authentication.port.PasswordEncoder;
+import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
+import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
 import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
@@ -14,15 +15,20 @@ import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final IssueTokenHander issueTokenHander;
+  private final IssueTokenService issueTokenService;
+
+  public LoginQueryHandler(
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      IssueTokenService issueTokenService) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.issueTokenService = issueTokenService;
+  }
 
   @Override
   public LoginResult handle(LoginQuery query) {
@@ -75,9 +81,9 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
       throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
     }
 
-    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getUserId());
+    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getId(), user.getRoleId());
 
-    TokenPairResult tokenPair = issueTokenHander.handle(issueTokenCommand);
+    TokenPairResult tokenPair = issueTokenService.issueToken(issueTokenCommand);
 
     LoginResult loginResult =
         new LoginResult(

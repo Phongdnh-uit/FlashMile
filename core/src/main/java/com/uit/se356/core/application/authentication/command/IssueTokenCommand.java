@@ -1,12 +1,18 @@
 package com.uit.se356.core.application.authentication.command;
 
+import com.uit.se356.common.dto.Command;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.core.application.authentication.result.TokenPairResult;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 
-public record IssueTokenCommand(UserId userId) {
+public record IssueTokenCommand(UserId userId, RoleId roleId) implements Command<TokenPairResult> {
   public IssueTokenCommand {
     if (userId == null) {
+      throw new AppException(CommonErrorCode.INVALID_ID_FORMAT);
+    }
+    if (roleId == null) {
       throw new AppException(CommonErrorCode.INVALID_ID_FORMAT);
     }
   }

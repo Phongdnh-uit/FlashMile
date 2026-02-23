@@ -1,6 +1,6 @@
 package com.uit.se356.core.infrastructure.config;
 
-import com.uit.se356.core.application.authentication.port.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

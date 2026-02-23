@@ -4,9 +4,9 @@ import com.uit.se356.common.exception.AppException;
 import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
-import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -18,7 +18,7 @@ public class User {
           UserStatus.ACTIVE, Set.of(UserStatus.DELETED, UserStatus.BLOCKED),
           UserStatus.BLOCKED, Set.of(UserStatus.ACTIVE));
 
-  private final UserId userId;
+  private final UserId id;
   private String fullName;
   private PhoneNumber phoneNumber;
   private Email email;
@@ -26,10 +26,7 @@ public class User {
   private boolean phoneVerified;
   private boolean emailVerified;
   private UserStatus status;
-  private Instant createdAt;
-  private Instant updatedAt;
-  private UserId createdBy;
-  private UserId updatedBy;
+  private RoleId roleId;
 
   // Hàm khởi tạo đầy đủ
   // Note: private nhằm chắc chắn User luôn ở trạng thái đúng
@@ -42,11 +39,8 @@ public class User {
       UserStatus status,
       boolean phoneVerified,
       boolean emailVerified,
-      Instant createdAt,
-      Instant updatedAt,
-      UserId createdBy,
-      UserId updatedBy) {
-    this.userId = userId;
+      RoleId roleId) {
+    this.id = userId;
     this.fullName = fullName;
     this.email = email;
     this.passwordHash = passwordHash;
@@ -54,10 +48,7 @@ public class User {
     this.phoneVerified = phoneVerified;
     this.emailVerified = emailVerified;
     this.status = status;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.createdBy = createdBy;
-    this.updatedBy = updatedBy;
+    this.roleId = roleId;
   }
 
   // ============================ FACTORY ============================
@@ -67,17 +58,16 @@ public class User {
       Email email,
       String passwordHash,
       PhoneNumber phoneNumber,
-      Instant createdAt,
-      UserId createdBy) {
+      RoleId roleId) {
     // Hàm kiểm tra null cho các tham số bắt buộc
     Objects.requireNonNull(userId);
     Objects.requireNonNull(fullName);
     Objects.requireNonNull(email);
     Objects.requireNonNull(passwordHash);
     Objects.requireNonNull(phoneNumber);
+    Objects.requireNonNull(roleId);
 
     // Trạng thái ban đầu của người dùng là UNVERIFIED, chưa xác thực email và sđt
-    Instant now = Instant.now();
     return new User(
         userId,
         fullName,
@@ -87,10 +77,7 @@ public class User {
         UserStatus.UNVERIFIED,
         false,
         false,
-        now,
-        now,
-        createdBy,
-        createdBy);
+        roleId);
   }
 
   public static User rehydrate(
@@ -102,10 +89,7 @@ public class User {
       UserStatus status,
       boolean phoneVerified,
       boolean emailVerified,
-      Instant createdAt,
-      Instant updatedAt,
-      UserId createdBy,
-      UserId updatedBy) {
+      RoleId roleId) {
     return new User(
         userId,
         fullName,
@@ -115,19 +99,11 @@ public class User {
         status,
         phoneVerified,
         emailVerified,
-        createdAt,
-        updatedAt,
-        createdBy,
-        updatedBy);
+        roleId);
   }
 
   public static User createOAuthUser(
-      UserId userId,
-      String fullName,
-      Email email,
-      PhoneNumber phoneNumber,
-      Instant createdAt,
-      UserId createdBy) {
+      UserId userId, String fullName, Email email, PhoneNumber phoneNumber, RoleId roleId) {
     // Hàm kiểm tra null cho các tham số bắt buộc
     Objects.requireNonNull(userId);
     Objects.requireNonNull(fullName);
@@ -142,20 +118,16 @@ public class User {
         UserStatus.ACTIVE, // OAuth user mặc định là ACTIVE vì đã được xác thực qua provider
         true, // OAuth user mặc định đã xác thực email
         true, // OAuth user mặc định đã xác thực sđt
-        createdAt,
-        createdAt,
-        createdBy,
-        createdBy);
+        roleId);
   }
 
   // ============================ BEHAVIOR ============================
-  public void changePassword(String newPasswordHash, UserId updatedBy) {
+  public void changePassword(String newPasswordHash) {
     Objects.requireNonNull(newPasswordHash);
     this.passwordHash = newPasswordHash;
-    touch(updatedBy);
   }
 
-  public void updateStatus(UserStatus next, UserId updatedBy) {
+  public void updateStatus(UserStatus next) {
     // Sơ đồ trạng thái người dùng
     // UNVERIFIED -> ACTIVE
     // ACTIVE -> DELETED, BLOCKED
@@ -176,22 +148,19 @@ public class User {
     }
 
     this.status = next;
-    touch(updatedBy);
   }
 
-  public void verifyEmail(UserId updatedBy) {
+  public void verifyEmail() {
     this.emailVerified = true;
-    touch(updatedBy);
   }
 
-  public void verifyPhone(UserId updatedBy) {
+  public void verifyPhone() {
     this.phoneVerified = true;
-    touch(updatedBy);
   }
 
   // ============================ GETTERS ============================
-  public UserId getUserId() {
-    return userId;
+  public UserId getId() {
+    return id;
   }
 
   public String getFullName() {
@@ -222,25 +191,7 @@ public class User {
     return status;
   }
 
-  public Instant getCreatedAt() {
-    return createdAt;
-  }
-
-  public Instant getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public UserId getCreatedBy() {
-    return createdBy;
-  }
-
-  public UserId getUpdatedBy() {
-    return updatedBy;
-  }
-
-  // ============================ HELPERS ============================
-  private void touch(UserId userId) {
-    this.updatedAt = Instant.now();
-    this.updatedBy = userId;
+  public RoleId getRoleId() {
+    return roleId;
   }
 }

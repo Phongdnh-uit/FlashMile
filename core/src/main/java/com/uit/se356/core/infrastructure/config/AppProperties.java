@@ -15,6 +15,7 @@ public class AppProperties {
   private Mail mail;
   private Frontend frontend;
   private Verification verification;
+  private Bootstrap bootstrap;
 
   @Getter
   @Setter
@@ -52,5 +53,14 @@ public class AppProperties {
     private String verifyEmailPath;
     private String resetPasswordPath;
     private String logoUrl;
+  }
+
+  @Getter
+  @Setter
+  public static class Bootstrap {
+    private String adminFullName;
+    private String adminEmail;
+    private String adminPhoneNumber;
+    private String adminPassword;
   }
 }

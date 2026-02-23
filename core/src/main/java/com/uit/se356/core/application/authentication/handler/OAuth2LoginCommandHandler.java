@@ -4,27 +4,36 @@ import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.OAuth2LoginCommand;
-import com.uit.se356.core.application.authentication.port.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.out.RoleRepository;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.LinkedAccount;
+import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.LinkedAccountId;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
-import java.time.Instant;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
-@Component
 public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginCommand, User> {
   private final LinkedAccountRepository linkedAccountRepository;
   private final UserRepository userRepository;
   private final IdGenerator idGenerator;
+  private final RoleRepository roleRepository;
+
+  public OAuth2LoginCommandHandler(
+      LinkedAccountRepository linkedAccountRepository,
+      UserRepository userRepository,
+      IdGenerator idGenerator,
+      RoleRepository roleRepository) {
+    this.linkedAccountRepository = linkedAccountRepository;
+    this.userRepository = userRepository;
+    this.idGenerator = idGenerator;
+    this.roleRepository = roleRepository;
+  }
 
   @Transactional
   @Override
@@ -52,9 +61,14 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
     if (userRepository.existsByEmail(email)) {
       throw new AppException(AuthErrorCode.EMAIL_ALREADY_USED);
     }
+    // Lấy vai trò mặc định
+    Role defaultRole =
+        roleRepository
+            .findDefault()
+            .orElseThrow(() -> new AppException(AuthErrorCode.ROLE_NOT_FOUND));
     User newUser =
-        User.createOAuthUser(userId, command.fullName(), email, phoneNumber, Instant.now(), userId);
-    newUser = userRepository.save(newUser);
+        User.createOAuthUser(userId, command.fullName(), email, phoneNumber, defaultRole.getId());
+    newUser = userRepository.create(newUser);
 
     // Tạo liên kết tài khoản
     LinkedAccount newLinkedAccount =
@@ -63,7 +77,7 @@ public class OAuth2LoginCommandHandler implements CommandHandler<OAuth2LoginComm
             userId,
             command.provider(),
             command.providerUserId());
-    linkedAccountRepository.save(newLinkedAccount);
+    linkedAccountRepository.create(newLinkedAccount);
     // Trả về user mới tạo
     return newUser;
   }

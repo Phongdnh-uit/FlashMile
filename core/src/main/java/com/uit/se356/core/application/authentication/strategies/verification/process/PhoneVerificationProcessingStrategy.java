@@ -1,23 +1,26 @@
 package com.uit.se356.core.application.authentication.strategies.verification.process;
 
 import com.uit.se356.common.exception.AppException;
-import com.uit.se356.core.application.authentication.port.CacheRepository;
-import com.uit.se356.core.application.authentication.port.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
 import com.uit.se356.core.application.authentication.result.VerificationResult;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.CodePurpose;
+import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class PhoneVerificationProcessingStrategy implements ProcessVerificationStrategy {
-  private final CacheRepository cacheRepository;
+  private final AuthCacheRepository cacheRepository;
   private final VerificationConfigPort verificationConfigPort;
+
+  public PhoneVerificationProcessingStrategy(
+      AuthCacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
+    this.cacheRepository = cacheRepository;
+    this.verificationConfigPort = verificationConfigPort;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {
@@ -30,9 +33,12 @@ public class PhoneVerificationProcessingStrategy implements ProcessVerificationS
     if (recipient == null || recipient.isBlank()) {
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE_REQUEST);
     }
+    PhoneNumber phoneNumber = new PhoneNumber(recipient);
     //  Kiểm tra mã xác minh từ cache
     StringBuilder cacheKey =
-        new StringBuilder(CacheKey.PHONE_VERIFICATION_CODE_PREFIX).append(":").append(recipient);
+        new StringBuilder(CacheKey.PHONE_VERIFICATION_CODE_PREFIX)
+            .append(":")
+            .append(phoneNumber.value());
     Optional<String> cachedCode = cacheRepository.get(cacheKey.toString());
     if (cachedCode.isEmpty() || !cachedCode.get().equals(code)) {
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE);

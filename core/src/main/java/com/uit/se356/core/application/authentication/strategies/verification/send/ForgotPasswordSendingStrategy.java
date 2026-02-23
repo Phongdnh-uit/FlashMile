@@ -2,9 +2,9 @@ package com.uit.se356.core.application.authentication.strategies.verification.se
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.port.VerificationConfigPort;
-import com.uit.se356.core.application.authentication.port.VerificationRepository;
-import com.uit.se356.core.application.authentication.port.VerificationSender;
+import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
+import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.entities.authentication.Verification;
@@ -18,16 +18,23 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
-@Component
 public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
   private final VerificationConfigPort verificationConfigPort;
   private final IdGenerator idGenerator;
+
+  public ForgotPasswordSendingStrategy(
+      UserRepository userRepository,
+      VerificationRepository verificationRepository,
+      VerificationConfigPort verificationConfigPort,
+      IdGenerator idGenerator) {
+    this.userRepository = userRepository;
+    this.verificationRepository = verificationRepository;
+    this.verificationConfigPort = verificationConfigPort;
+    this.idGenerator = idGenerator;
+  }
 
   @Override
   public boolean support(CodePurpose purpose) {
@@ -53,11 +60,11 @@ public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
     Verification verification =
         Verification.create(
             new VerificationId(idGenerator.generate().toString()),
-            userOpt.get().getUserId(),
+            userOpt.get().getId(),
             VerificationType.RESET_PASSWORD,
             UUID.randomUUID().toString(),
             Instant.now().plusSeconds(expirySeconds));
-    verificationRepository.save(verification);
+    verificationRepository.create(verification);
 
     // Gửi mã OTP qua email
     verificationSender.stream()
