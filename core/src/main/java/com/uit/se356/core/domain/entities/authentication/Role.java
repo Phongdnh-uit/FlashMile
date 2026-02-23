@@ -8,24 +8,34 @@ public class Role {
   private String name;
   private String description;
   private boolean isDefault;
+  private boolean
+      systemRole; // Flag để phân biệt role hệ thống (không thể xóa/sửa) và role người dùng
 
   // ============================ FACTORY ============================
-  private Role(RoleId id, String name, String description, boolean isDefault) {
+  private Role(RoleId id, String name, String description, boolean isDefault, boolean systemRole) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.isDefault = isDefault;
+    this.systemRole = systemRole;
   }
 
-  public static Role create(RoleId id, String name, String description, boolean isDefault) {
+  public static Role create(RoleId id, String name, String description) {
     Objects.requireNonNull(id);
     Objects.requireNonNull(name);
-    return new Role(id, name, description, isDefault);
+    return new Role(id, name, description, false, false);
   }
 
-  public static Role rehydrate(RoleId id, String name, String description, boolean isDefault) {
+  public static Role rehydrate(
+      RoleId id, String name, String description, boolean isDefault, boolean systemRole) {
     Objects.requireNonNull(id);
-    return new Role(id, name, description, isDefault);
+    return new Role(id, name, description, isDefault, systemRole);
+  }
+
+  public static Role createSystemRole(RoleId id, String name, String description) {
+    Objects.requireNonNull(id);
+    Objects.requireNonNull(name);
+    return new Role(id, name, description, false, true);
   }
 
   // ============================ BEHAVIORS ============================
@@ -55,5 +65,9 @@ public class Role {
 
   public boolean isDefault() {
     return isDefault;
+  }
+
+  public boolean isSystemRole() {
+    return systemRole;
   }
 }

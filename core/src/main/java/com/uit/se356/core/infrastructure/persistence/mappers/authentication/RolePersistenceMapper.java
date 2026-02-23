@@ -14,7 +14,11 @@ public class RolePersistenceMapper {
     }
 
     return Role.rehydrate(
-        new RoleId(entity.getId()), entity.getName(), entity.getDescription(), entity.isDefault());
+        new RoleId(entity.getId()),
+        entity.getName(),
+        entity.getDescription(),
+        entity.isDefault(),
+        entity.isSystemRole());
   }
 
   public RoleJpaEntity toEntity(Role domain) {
@@ -27,6 +31,7 @@ public class RolePersistenceMapper {
     entity.setName(domain.getName());
     entity.setDescription(domain.getDescription());
     entity.setDefault(domain.isDefault());
+    entity.setSystemRole(domain.isSystemRole());
     return entity;
   }
 
@@ -34,5 +39,6 @@ public class RolePersistenceMapper {
     existingRole.setName(role.getName());
     existingRole.setDescription(role.getDescription());
     existingRole.setDefault(role.isDefault());
+    existingRole.setSystemRole(role.isSystemRole());
   }
 }

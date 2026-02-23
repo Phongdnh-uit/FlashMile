@@ -1,15 +1,16 @@
-package com.uit.se356.core.infrastructure.persistence.redis;
+package com.uit.se356.core.infrastructure.cache;
 
-import com.uit.se356.core.application.authentication.port.CacheRepository;
+import com.uit.se356.core.application.authentication.port.AuthCacheRepository;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisCacheRepository implements CacheRepository {
+public class RedisAuthCacheRepository implements AuthCacheRepository {
 
   private final StringRedisTemplate redisTemplate;
 
@@ -41,5 +42,17 @@ public class RedisCacheRepository implements CacheRepository {
   @Override
   public void expire(String key, Duration ttl) {
     redisTemplate.expire(key, ttl);
+  }
+
+  @Override
+  public void setSet(String key, Set<String> values, Duration ttl) {
+    redisTemplate.opsForSet().add(key, values.toArray(new String[0]));
+    redisTemplate.expire(key, ttl);
+  }
+
+  @Override
+  public Optional<Set<String>> getSet(String key) {
+    Set<String> members = redisTemplate.opsForSet().members(key);
+    return Optional.ofNullable(members);
   }
 }

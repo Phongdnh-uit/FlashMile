@@ -1,5 +1,7 @@
 package com.uit.se356.core.application.internal.handler;
 
+import com.uit.se356.common.dto.PermissionDefinition;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.security.PermissionScanner;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
@@ -24,6 +26,7 @@ public class SyncPermissionHandler implements CommandHandler<SyncPermissionComma
     this.idGenerator = idGenerator;
   }
 
+  @HasPermission(value = "permission:sync", description = "Sync permissions from code annotations")
   @Override
   public Void handle(SyncPermissionCommand command) {
     // Xóa tất cả quyền hiện có
@@ -36,10 +39,13 @@ public class SyncPermissionHandler implements CommandHandler<SyncPermissionComma
         command.packageName() == null || command.packageName().isBlank()
             ? "com.uit.se356"
             : command.packageName();
-    List<String> permissions = permissionScanner.scan(packageToScan);
-    for (String permission : permissions) {
+    List<PermissionDefinition> permissions = permissionScanner.scan(packageToScan);
+    for (PermissionDefinition permission : permissions) {
       Permission perm =
-          Permission.create(new PermissionId(idGenerator.generate().toString()), permission, "");
+          Permission.create(
+              new PermissionId(idGenerator.generate().toString()),
+              permission.name(),
+              permission.description());
       permissionRepository.create(perm);
     }
     return null;

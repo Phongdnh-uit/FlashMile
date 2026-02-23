@@ -5,7 +5,7 @@ import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.handler.IssueTokenService;
+import com.uit.se356.common.utils.SecurityUtil;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
 import com.uit.se356.core.application.authentication.handler.LogoutHandler;
 import com.uit.se356.core.application.authentication.handler.OAuth2LoginCommandHandler;
@@ -14,7 +14,7 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
-import com.uit.se356.core.application.authentication.port.CacheRepository;
+import com.uit.se356.core.application.authentication.port.AuthCacheRepository;
 import com.uit.se356.core.application.authentication.port.LinkedAccountRepository;
 import com.uit.se356.core.application.authentication.port.PasswordEncoder;
 import com.uit.se356.core.application.authentication.port.PermissionRepository;
@@ -24,6 +24,10 @@ import com.uit.se356.core.application.authentication.port.TokenProvider;
 import com.uit.se356.core.application.authentication.port.VerificationConfigPort;
 import com.uit.se356.core.application.authentication.port.VerificationRepository;
 import com.uit.se356.core.application.authentication.port.VerificationSender;
+import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
+import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
+import com.uit.se356.core.application.authentication.services.IssueTokenServiceImpl;
+import com.uit.se356.core.application.authentication.services.PermissionCheckerImpl;
 import com.uit.se356.core.application.authentication.strategies.verification.process.EmailVerificationProcessingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.process.PhoneVerificationProcessingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.process.ProcessVerificationStrategy;
@@ -34,6 +38,7 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
+import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,7 +49,7 @@ public class DependencyInjectionConfig {
   @Bean
   PhoneVerificationSendingStrategy phoneVerificationSendingStrategy(
       UserRepository userRepository,
-      CacheRepository cacheRepository,
+      AuthCacheRepository cacheRepository,
       VerificationConfigPort verificationConfigPort) {
     return new PhoneVerificationSendingStrategy(
         userRepository, cacheRepository, verificationConfigPort);
@@ -72,7 +77,7 @@ public class DependencyInjectionConfig {
 
   @Bean
   PhoneVerificationProcessingStrategy phoneVerificationProcessingStrategy(
-      CacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
+      AuthCacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
     return new PhoneVerificationProcessingStrategy(cacheRepository, verificationConfigPort);
   }
 
@@ -95,7 +100,7 @@ public class DependencyInjectionConfig {
 
   @Bean
   CommandHandler<?, ?> registerCommandHandler(
-      CacheRepository cacheRepository,
+      AuthCacheRepository cacheRepository,
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
       IdGenerator idGenerator,
@@ -120,7 +125,7 @@ public class DependencyInjectionConfig {
       TokenProvider tokenProvider,
       RefreshTokenRepository refreshTokenRepository,
       IdGenerator idGenerator) {
-    return new IssueTokenService(tokenProvider, refreshTokenRepository, idGenerator);
+    return new IssueTokenServiceImpl(tokenProvider, refreshTokenRepository, idGenerator);
   }
 
   @Bean
@@ -133,8 +138,10 @@ public class DependencyInjectionConfig {
 
   @Bean
   CommandHandler<?, ?> tokenRotationHandler(
-      RefreshTokenRepository refreshTokenRepository, IssueTokenService issueTokenHander) {
-    return new TokenRotationHandler(refreshTokenRepository, issueTokenHander);
+      RefreshTokenRepository refreshTokenRepository,
+      IssueTokenService issueTokenHander,
+      UserRepository userRepository) {
+    return new TokenRotationHandler(refreshTokenRepository, issueTokenHander, userRepository);
   }
 
   @Bean
@@ -154,7 +161,7 @@ public class DependencyInjectionConfig {
   }
 
   @Bean
-  QueryHandler<?, ?> debugOtpHandler(CacheRepository cacheRepository) {
+  QueryHandler<?, ?> debugOtpHandler(AuthCacheRepository cacheRepository) {
     return new DebugOtpHandler(cacheRepository);
   }
 
@@ -162,5 +169,15 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> logoutCommandHandler(
       RefreshTokenRepository refreshTokenRepository, TokenProvider tokenProvider) {
     return new LogoutHandler(refreshTokenRepository, tokenProvider);
+  }
+
+  @Bean
+  PermissionChecker permissionChecker(
+      PermissionRepository permissionRepository,
+      AuthCacheRepository cacheRepository,
+      SecurityUtil<UserId> securityUtil,
+      RoleRepository roleRepository) {
+    return new PermissionCheckerImpl(
+        cacheRepository, permissionRepository, securityUtil, roleRepository);
   }
 }

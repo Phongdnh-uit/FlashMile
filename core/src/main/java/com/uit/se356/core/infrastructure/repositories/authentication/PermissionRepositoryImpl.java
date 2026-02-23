@@ -2,10 +2,14 @@ package com.uit.se356.core.infrastructure.repositories.authentication;
 
 import com.uit.se356.core.application.authentication.port.PermissionRepository;
 import com.uit.se356.core.domain.entities.authentication.Permission;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.PermissionJpaEntity;
+import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.PermissionPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.PermissionJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Join;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +63,16 @@ public class PermissionRepositoryImpl implements PermissionRepository {
   @Transactional
   public void deleteAll() {
     permissionJpaRepository.deleteAll();
+  }
+
+  @Override
+  public List<Permission> findAllByRoleId(RoleId roleId) {
+    List<PermissionJpaEntity> entities =
+        permissionJpaRepository.findAll(
+            (root, query, builder) -> {
+              Join<PermissionJpaEntity, RoleJpaEntity> roleJoin = root.join("roles");
+              return builder.equal(roleJoin.get("id"), roleId.value());
+            });
+    return entities.stream().map(permissionPersistenceMapper::toDomain).toList();
   }
 }

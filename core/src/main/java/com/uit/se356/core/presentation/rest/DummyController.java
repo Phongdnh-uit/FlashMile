@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DummyController {
   private final SecurityUtil<UserId> securityUtil;
 
-  @HasPermission("dummy:read")
+  @HasPermission(value = "dummy:read")
   @GetMapping("/dummy")
   public String getDummy() {
     UserId userId = securityUtil.getCurrentUserPrincipal().get().getId();

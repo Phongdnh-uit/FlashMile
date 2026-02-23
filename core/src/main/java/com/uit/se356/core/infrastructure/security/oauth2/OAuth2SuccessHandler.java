@@ -2,9 +2,10 @@ package com.uit.se356.core.infrastructure.security.oauth2;
 
 import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
-import com.uit.se356.core.application.authentication.handler.IssueTokenService;
+import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.config.AppProperties;
 import com.uit.se356.core.infrastructure.security.CustomUserPrincipal;
 import jakarta.servlet.ServletException;
@@ -29,8 +30,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
       HttpServletRequest request, HttpServletResponse response, Authentication authentication)
       throws IOException, ServletException {
     CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
-    IssueTokenCommand command = new IssueTokenCommand(principal.getId());
-    TokenPairResult tokenPair = issueTokenHander.handle(command);
+    // Cần lấy được roleId từ role của UserPrincipal để issue token, bước chuyển đổi OAuth2 cần map
+    // được role, role trong UserPrincipal là roleId
+    IssueTokenCommand command =
+        new IssueTokenCommand(principal.getId(), new RoleId(principal.getRole()));
+    TokenPairResult tokenPair = issueTokenHander.issueToken(command);
 
     LoginResult loginResult =
         new LoginResult(

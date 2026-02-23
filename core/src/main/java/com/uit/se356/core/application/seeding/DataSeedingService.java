@@ -39,7 +39,8 @@ public class DataSeedingService {
     for (RoleName roleName : RoleName.values()) {
       if (!roleRepository.existsByName(roleName.name())) {
         Role role =
-            Role.create(new RoleId(idGenerator.generate().toString()), roleName.name(), "", false);
+            Role.createSystemRole(
+                new RoleId(idGenerator.generate().toString()), roleName.name(), "");
         if (!isDefaultRoleExists && roleName == RoleName.USER) {
           role.markAsDefault();
         }

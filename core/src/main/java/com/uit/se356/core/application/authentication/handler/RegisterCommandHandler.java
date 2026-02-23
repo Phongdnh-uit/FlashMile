@@ -5,7 +5,7 @@ import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.RegisterCommand;
-import com.uit.se356.core.application.authentication.port.CacheRepository;
+import com.uit.se356.core.application.authentication.port.AuthCacheRepository;
 import com.uit.se356.core.application.authentication.port.PasswordEncoder;
 import com.uit.se356.core.application.authentication.port.RoleRepository;
 import com.uit.se356.core.application.authentication.query.SendVerificationCodeQuery;
@@ -23,7 +23,7 @@ import com.uit.se356.core.domain.vo.authentication.VerificationChannel;
 import java.util.Optional;
 
 public class RegisterCommandHandler implements CommandHandler<RegisterCommand, RegisterResult> {
-  private final CacheRepository cacheRepository;
+  private final AuthCacheRepository cacheRepository;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final IdGenerator idGenerator;
@@ -31,7 +31,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
   private final RoleRepository roleRepository;
 
   public RegisterCommandHandler(
-      CacheRepository cacheRepository,
+      AuthCacheRepository cacheRepository,
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
       IdGenerator idGenerator,

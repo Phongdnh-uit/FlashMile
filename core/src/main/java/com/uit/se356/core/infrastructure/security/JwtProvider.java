@@ -10,6 +10,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.core.application.authentication.port.TokenProvider;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.infrastructure.config.AppProperties;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +34,7 @@ public class JwtProvider implements TokenProvider {
 
   private final AppProperties appProperties;
 
-  public String generateToken(UserId userId) {
+  public String generateToken(UserId userId, RoleId roleId) {
     try {
       JWSSigner signer = new MACSigner(appProperties.getSecurity().getJwt().getSecretKey());
 
@@ -42,6 +43,8 @@ public class JwtProvider implements TokenProvider {
               .subject(userId.value())
               .issuer("flashmile")
               .issueTime(new Date())
+              // Sử dụng roleId thay vì roleName vì role có thể thay đổi tên, nhưng ID sẽ cố định
+              .claim("role", roleId.value())
               .expirationTime(
                   new Date(
                       System.currentTimeMillis()

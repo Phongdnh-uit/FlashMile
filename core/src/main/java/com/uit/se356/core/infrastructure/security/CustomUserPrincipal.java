@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 public class CustomUserPrincipal implements UserPrincipal<UserId>, OAuth2User {
 
   private final UserId id;
+  private final String role;
 
   @Override
   public Map<String, Object> getAttributes() {

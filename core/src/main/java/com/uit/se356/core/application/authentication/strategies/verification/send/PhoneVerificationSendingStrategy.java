@@ -2,7 +2,7 @@ package com.uit.se356.core.application.authentication.strategies.verification.se
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.OtpGenerator;
-import com.uit.se356.core.application.authentication.port.CacheRepository;
+import com.uit.se356.core.application.authentication.port.AuthCacheRepository;
 import com.uit.se356.core.application.authentication.port.VerificationConfigPort;
 import com.uit.se356.core.application.authentication.port.VerificationSender;
 import com.uit.se356.core.application.user.port.UserRepository;
@@ -17,12 +17,12 @@ import java.util.List;
 public class PhoneVerificationSendingStrategy implements SendVerificationStrategy {
 
   private final UserRepository userRepository;
-  private final CacheRepository cacheRepository;
+  private final AuthCacheRepository cacheRepository;
   private final VerificationConfigPort verificationConfigPort;
 
   public PhoneVerificationSendingStrategy(
       UserRepository userRepository,
-      CacheRepository cacheRepository,
+      AuthCacheRepository cacheRepository,
       VerificationConfigPort verificationConfigPort) {
     this.userRepository = userRepository;
     this.cacheRepository = cacheRepository;

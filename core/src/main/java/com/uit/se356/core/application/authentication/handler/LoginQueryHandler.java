@@ -4,6 +4,7 @@ import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
 import com.uit.se356.core.application.authentication.port.PasswordEncoder;
+import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
 import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
@@ -80,9 +81,9 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
       throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
     }
 
-    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getId());
+    IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getId(), user.getRoleId());
 
-    TokenPairResult tokenPair = issueTokenService.handle(issueTokenCommand);
+    TokenPairResult tokenPair = issueTokenService.issueToken(issueTokenCommand);
 
     LoginResult loginResult =
         new LoginResult(

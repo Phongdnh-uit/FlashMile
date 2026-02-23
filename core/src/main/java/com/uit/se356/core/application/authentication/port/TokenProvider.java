@@ -1,9 +1,10 @@
 package com.uit.se356.core.application.authentication.port;
 
+import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 
 public interface TokenProvider {
-  String generateToken(UserId userId);
+  String generateToken(UserId userId, RoleId roleId);
 
   Long getTokenExpiryDuration();
 
