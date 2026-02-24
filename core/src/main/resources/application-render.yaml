@@ -30,7 +30,11 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true # Bật SSL cho Redis nếu được hỗ trợ bởi provider
+      
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
