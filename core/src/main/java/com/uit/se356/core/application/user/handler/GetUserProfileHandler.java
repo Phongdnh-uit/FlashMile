@@ -13,17 +13,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class GetUserProfileHandler implements QueryHandler<GetUserProfileQuery, UserProfileResult> {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public GetUserProfileHandler(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+  public GetUserProfileHandler(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-    @Override
-    public UserProfileResult handle(GetUserProfileQuery query) {
-        User user = userRepository.findById(new UserId(query.userId()))
-                .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
+  @Override
+  public UserProfileResult handle(GetUserProfileQuery query) {
+    User user =
+        userRepository
+            .findById(new UserId(query.userId()))
+            .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 
-        return UserProfileResult.fromUser(user);
-    }
+    return UserProfileResult.fromUser(user);
+  }
 }

@@ -2,7 +2,6 @@ package com.uit.se356.core.presentation.rest.user;
 
 import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.common.exception.AppException;
-import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.common.services.CommandBus;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.utils.SecurityUtil;
@@ -24,40 +23,41 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final QueryBus queryBus;
-    private final CommandBus commandBus;
-    private final SecurityUtil<UserId> securityUtil;
+  private final QueryBus queryBus;
+  private final CommandBus commandBus;
+  private final SecurityUtil<UserId> securityUtil;
 
-    @Operation(summary = "Get My Profile")
-    @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserProfileResult>> getMyProfile() {
-        String currentUserId = securityUtil.getCurrentUserPrincipal()
-                .map(principal -> principal.getId().value())
-                .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+  @Operation(summary = "Get My Profile")
+  @GetMapping("/me")
+  public ResponseEntity<ApiResponse<UserProfileResult>> getMyProfile() {
+    String currentUserId =
+        securityUtil
+            .getCurrentUserPrincipal()
+            .map(principal -> principal.getId().value())
+            .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
 
-        GetUserProfileQuery query = new GetUserProfileQuery(currentUserId);
-        UserProfileResult result = queryBus.dispatch(query);
+    GetUserProfileQuery query = new GetUserProfileQuery(currentUserId);
+    UserProfileResult result = queryBus.dispatch(query);
 
-        return ResponseEntity.ok(ApiResponse.ok(result, "Profile retrieved successfully"));
-    }
+    return ResponseEntity.ok(ApiResponse.ok(result, "Profile retrieved successfully"));
+  }
 
-    @Operation(summary = "Update My Profile")
-    @PutMapping("/me")
-    public ResponseEntity<ApiResponse<UserProfileResult>> updateMyProfile(
-            @RequestBody UpdateProfileRequest request) {
+  @Operation(summary = "Update My Profile")
+  @PutMapping("/me")
+  public ResponseEntity<ApiResponse<UserProfileResult>> updateMyProfile(
+      @RequestBody UpdateProfileRequest request) {
 
-        String currentUserId = securityUtil.getCurrentUserPrincipal()
-                .map(principal -> principal.getId().value())
-                .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+    String currentUserId =
+        securityUtil
+            .getCurrentUserPrincipal()
+            .map(principal -> principal.getId().value())
+            .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
 
-        UpdateUserProfileCommand command = new UpdateUserProfileCommand(
-                currentUserId,
-                request.fullName(),
-                request.email()
-        );
+    UpdateUserProfileCommand command =
+        new UpdateUserProfileCommand(currentUserId, request.fullName(), request.email());
 
-        UserProfileResult result = commandBus.dispatch(command);
+    UserProfileResult result = commandBus.dispatch(command);
 
-        return ResponseEntity.ok(ApiResponse.ok(result, "Profile updated successfully"));
-    }
+    return ResponseEntity.ok(ApiResponse.ok(result, "Profile updated successfully"));
+  }
 }

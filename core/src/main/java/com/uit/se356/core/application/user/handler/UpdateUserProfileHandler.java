@@ -11,31 +11,33 @@ import com.uit.se356.core.domain.vo.authentication.UserId;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UpdateUserProfileHandler implements CommandHandler<UpdateUserProfileCommand, UserProfileResult> {
+public class UpdateUserProfileHandler
+    implements CommandHandler<UpdateUserProfileCommand, UserProfileResult> {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public UpdateUserProfileHandler(UserRepository userRepository) {
-        this.userRepository = userRepository;
+  public UpdateUserProfileHandler(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
+  @Override
+  public UserProfileResult handle(UpdateUserProfileCommand command) {
+    // Fetch User Data
+    User user =
+        userRepository
+            .findById(new UserId(command.userId()))
+            .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
+
+    // BR: Check for Changes (MSG5)
+    boolean isNameUnchanged = command.fullName().equals(user.getFullName());
+    boolean isEmailUnchanged = command.email().equals(user.getEmail().value());
+
+    if (isNameUnchanged && isEmailUnchanged) {
+      throw new AppException(UserErrorCode.NO_CHANGE_DETECTED);
     }
 
-    @Override
-    public UserProfileResult handle(UpdateUserProfileCommand command) {
-        // Fetch User Data
-        User user = userRepository.findById(new UserId(command.userId()))
-                .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
-
-        // BR: Check for Changes (MSG5)
-        boolean isNameUnchanged = command.fullName().equals(user.getFullName());
-        boolean isEmailUnchanged = command.email().equals(user.getEmail().value());
-
-        if (isNameUnchanged && isEmailUnchanged) {
-            throw new AppException(UserErrorCode.NO_CHANGE_DETECTED);
-        }
-
-        user.updateProfile(command.fullName(), command.email());
-        User updatedUser = userRepository.update(user);
-        return UserProfileResult.fromUser(updatedUser);
-    }
-
+    user.updateProfile(command.fullName(), command.email());
+    User updatedUser = userRepository.update(user);
+    return UserProfileResult.fromUser(updatedUser);
+  }
 }
