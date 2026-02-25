@@ -10,7 +10,8 @@ public enum UserErrorCode implements ErrorCode {
   USER_NOT_FOUND("USER_005", "error.user.not_found", 404),
   USER_ALREADY_EXISTS("USER_006", "error.user.exists", 409),
   INVALID_USER_STATUS_TRANSITION("USER_007", "error.user.status.transition.invalid", 400),
-  CANNOT_ACTIVATE_UNVERIFIED_USER("USER_008", "error.user.cannot_activate_unverified", 400);
+  CANNOT_ACTIVATE_UNVERIFIED_USER("USER_008", "error.user.cannot_activate_unverified", 400),
+  NO_CHANGE_DETECTED("USER_009", "error.user.no_change_detected", 400);
 
   private final String code;
   private final String messageKey;

@@ -158,6 +158,15 @@ public class User {
     this.phoneVerified = true;
   }
 
+  public void updateProfile(String newFullName, String newEmail) {
+    if (newFullName != null && !newFullName.isBlank()) {
+      this.fullName = newFullName;
+    }
+    if (newEmail != null && !newEmail.isBlank()) {
+      this.email = new Email(newEmail);
+    }
+  }
+
   // ============================ GETTERS ============================
   public UserId getId() {
     return id;
