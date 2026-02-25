@@ -8,9 +8,7 @@ import com.uit.se356.core.application.user.result.UserProfileResult;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.UserId;
-import org.springframework.stereotype.Component;
 
-@Component
 public class UpdateUserProfileHandler
     implements CommandHandler<UpdateUserProfileCommand, UserProfileResult> {
 
