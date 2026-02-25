@@ -14,6 +14,8 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
+import com.uit.se356.core.application.authentication.handler.role.UpdateRoleHandler;
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
@@ -179,5 +181,17 @@ public class DependencyInjectionConfig {
       RoleRepository roleRepository) {
     return new PermissionCheckerImpl(
         cacheRepository, permissionRepository, securityUtil, roleRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createRoleCommandHandler(
+      RoleRepository roleRepository, IdGenerator idGenerator) {
+    return new CreateRoleHandler(roleRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateRoleCommandHandler(
+      RoleRepository roleRepository, IdGenerator idGenerator) {
+    return new UpdateRoleHandler(roleRepository, idGenerator);
   }
 }
