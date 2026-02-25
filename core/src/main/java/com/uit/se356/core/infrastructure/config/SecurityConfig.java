@@ -9,6 +9,7 @@ import com.uit.se356.core.infrastructure.security.oauth2.OAuth2SuccessHandler;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,8 +51,9 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                     .permitAll()
-                    .requestMatchers(
-                        "/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**")
+                    .requestMatchers(EndpointRequest.to("health", "info"))
+                    .permitAll()
+                    .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
