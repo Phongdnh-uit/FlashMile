@@ -1,38 +1,63 @@
 package com.uit.se356.core.presentation.rest.user;
 
 import com.uit.se356.common.dto.ApiResponse;
-import com.uit.se356.core.application.user.dto.UpdateUserRequest;
-import com.uit.se356.core.application.user.dto.UserResponse;
-import com.uit.se356.core.application.user.service.UserService;
+import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.common.services.CommandBus;
+import com.uit.se356.common.services.QueryBus;
+import com.uit.se356.common.utils.SecurityUtil;
+import com.uit.se356.core.application.user.command.UpdateUserProfileCommand;
+import com.uit.se356.core.application.user.query.GetUserProfileQuery;
+import com.uit.se356.core.application.user.result.UserProfileResult;
+import com.uit.se356.core.domain.exception.AuthErrorCode;
+import com.uit.se356.core.domain.vo.authentication.UserId;
+import com.uit.se356.core.presentation.dto.user.UpdateProfileRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Tag(name = "User Profile")
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final QueryBus queryBus;
+    private final CommandBus commandBus;
+    private final SecurityUtil<UserId> securityUtil;
 
+    @Operation(summary = "Get My Profile")
     @GetMapping("/me")
-    public ApiResponse<UserResponse> getMyProfile() {
-        // TODO: Lấy userId từ Security Context (JWT)
-        String currentUserId = "user-id-from-token";
+    public ResponseEntity<ApiResponse<UserProfileResult>> getMyProfile() {
+        String currentUserId = securityUtil.getCurrentUserPrincipal()
+                .map(principal -> principal.getId().value())
+                .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
 
-        return ApiResponse.ok(userService.getMyProfile(currentUserId), "Get profile success");
+        GetUserProfileQuery query = new GetUserProfileQuery(currentUserId);
+        UserProfileResult result = queryBus.dispatch(query);
+
+        return ResponseEntity.ok(ApiResponse.ok(result, "Profile retrieved successfully"));
     }
 
+    @Operation(summary = "Update My Profile")
     @PutMapping("/me")
-    public ApiResponse<UserResponse> updateProfile(@RequestBody UpdateUserRequest request) {
-        String currentUserId = "user-id-from-token";
-        return ApiResponse.ok(userService.updateProfile(currentUserId, request), "Update profile success");
-    }
+    public ResponseEntity<ApiResponse<UserProfileResult>> updateMyProfile(
+            @RequestBody UpdateProfileRequest request) {
 
-    // API cho Admin
-    @GetMapping
-    public ApiResponse<List<UserResponse>> getAllUsers() {
-        return ApiResponse.ok(userService.getAllUsers(), "Get all users success");
+        String currentUserId = securityUtil.getCurrentUserPrincipal()
+                .map(principal -> principal.getId().value())
+                .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+
+        UpdateUserProfileCommand command = new UpdateUserProfileCommand(
+                currentUserId,
+                request.fullName(),
+                request.email()
+        );
+
+        UserProfileResult result = commandBus.dispatch(command);
+
+        return ResponseEntity.ok(ApiResponse.ok(result, "Profile updated successfully"));
     }
 }

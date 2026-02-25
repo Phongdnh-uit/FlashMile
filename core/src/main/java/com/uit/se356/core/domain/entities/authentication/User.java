@@ -165,7 +165,6 @@ public class User {
       if (newEmail != null && !newEmail.isBlank()) {
           this.email = new Email(newEmail);
       }
-      this.updatedAt = Instant.now();
   }
 
   // ============================ GETTERS ============================

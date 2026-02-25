@@ -40,7 +40,7 @@ public class LinkedAccountRepositoryImpl implements LinkedAccountRepository {
                     new EntityNotFoundException(
                         "LinkedAccount not found with id: "
                             + linkedAccountToUpdate.getId().value()));
-    // Hard-code exception do đã validate ở service layer rồi, nếu
+    // Hard-code exception do đã validate ở services layer rồi, nếu
     // không tìm thấy thì có thể throw exception hoặc handle
     // theo cách khác tùy nhu cầu
 

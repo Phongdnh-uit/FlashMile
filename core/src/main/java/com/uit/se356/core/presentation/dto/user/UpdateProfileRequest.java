@@ -1,0 +1,7 @@
+package com.uit.se356.core.presentation.dto.user;
+
+public record UpdateProfileRequest(
+        String fullName,
+        String email
+) {
+}
