@@ -19,9 +19,9 @@ public final class AuditInfo {
     this.updatedBy = updatedBy;
   }
 
-  public static AuditInfo created(UserId by, Instant at) {
+  public static AuditInfo create(UserId by) {
     Objects.requireNonNull(by);
-    Objects.requireNonNull(at);
+    Instant at = Instant.now();
     return new AuditInfo(at, at, by, by);
   }
 
@@ -34,10 +34,9 @@ public final class AuditInfo {
     return new AuditInfo(createdAt, updatedAt, createdBy, updatedBy);
   }
 
-  public AuditInfo touched(UserId by, Instant at) {
+  public AuditInfo touched(UserId by) {
     Objects.requireNonNull(by);
-    Objects.requireNonNull(at);
-    return new AuditInfo(this.createdAt, at, this.createdBy, by);
+    return new AuditInfo(this.createdAt, Instant.now(), this.createdBy, by);
   }
 
   public Instant getCreatedAt() {

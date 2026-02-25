@@ -6,12 +6,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum CommonErrorCode implements ErrorCode {
-    USER_NOT_FOUND(
-            "USER_NOT_FOUND",
-            "error.user.not_found",
-            404
-    );
-
+  EMAIL_SENDING_FAILED("COMMON-0001", "error.common.email.sending_failed", 500),
+  INVALID_ID_FORMAT("COMMON-0000", "error.common.invalid_id_format", 400),
+  VALIDATION_ERROR("COMMON-0002", "error.common.validation_error", 400),
+  INTERNAL_ERROR("COMMON-0003", "error.common.internal_error", 500);
   private final String code;
   private final String messageKey;
   private final int httpStatus;
