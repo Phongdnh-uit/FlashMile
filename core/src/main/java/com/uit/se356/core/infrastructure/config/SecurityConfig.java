@@ -1,6 +1,7 @@
 package com.uit.se356.core.infrastructure.config;
 
 import com.uit.se356.core.domain.constants.SystemConstant;
+import com.uit.se356.core.infrastructure.security.CustomAuthEntryPoint;
 import com.uit.se356.core.infrastructure.security.jwt.CustomJwtConverter;
 import com.uit.se356.core.infrastructure.security.oauth2.CustomOAuth2AuthRequestResolver;
 import com.uit.se356.core.infrastructure.security.oauth2.CustomOAuth2Service;
@@ -42,7 +43,10 @@ public class SecurityConfig {
 
   @Bean
   @Order(2)
-  SecurityFilterChain securityFilterChain(HttpSecurity http, CustomJwtConverter customJwtConverter)
+  SecurityFilterChain securityFilterChain(
+      HttpSecurity http,
+      CustomJwtConverter customJwtConverter,
+      CustomAuthEntryPoint customAuthEntryPoint)
       throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
@@ -58,7 +62,8 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .oauth2ResourceServer(
-            oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtConverter)));
+            oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtConverter)))
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthEntryPoint));
 
     return http.build();
   }
