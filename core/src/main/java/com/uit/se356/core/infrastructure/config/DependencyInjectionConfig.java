@@ -41,6 +41,8 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
+import com.uit.se356.core.application.user.handler.GetUserProfileHandler;
+import com.uit.se356.core.application.user.handler.UpdateUserProfileHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.List;
@@ -183,6 +185,16 @@ public class DependencyInjectionConfig {
       RoleRepository roleRepository) {
     return new PermissionCheckerImpl(
         cacheRepository, permissionRepository, securityUtil, roleRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> getUserProfileHandler(UserRepository userRepository) {
+    return new GetUserProfileHandler(userRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateUserProfileHandler(UserRepository userRepository) {
+    return new UpdateUserProfileHandler(userRepository);
   }
 
   @Bean
