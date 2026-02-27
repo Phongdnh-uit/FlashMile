@@ -54,7 +54,7 @@ public class UserController {
             .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
 
     UpdateUserProfileCommand command =
-        new UpdateUserProfileCommand(currentUserId, request.fullName(), request.email());
+        new UpdateUserProfileCommand(currentUserId, request.fullName());
 
     UserProfileResult result = commandBus.dispatch(command);
 
