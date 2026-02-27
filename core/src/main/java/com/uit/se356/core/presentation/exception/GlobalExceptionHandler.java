@@ -3,6 +3,9 @@ package com.uit.se356.core.presentation.exception;
 import com.uit.se356.common.dto.ErrorResponse;
 import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +23,13 @@ public class GlobalExceptionHandler {
 
   private final MessageSource messageSource;
 
+  @ApiResponse(
+      responseCode = "400",
+      description = "Bad Request",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ErrorResponse.class)))
   @ExceptionHandler(AppException.class)
   public ResponseEntity<ErrorResponse> handleAppException(
       AppException ex, HttpServletRequest request) {
