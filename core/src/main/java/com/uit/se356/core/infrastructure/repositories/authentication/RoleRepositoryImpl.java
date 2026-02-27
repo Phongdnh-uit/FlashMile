@@ -1,14 +1,21 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
+import com.uit.se356.common.dto.PageResponse;
+import com.uit.se356.common.dto.SearchPageable;
+import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.authentication.port.out.RoleRepository;
+import com.uit.se356.core.application.authentication.projections.RoleSummaryProjection;
 import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.RolePersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.RoleJpaRepository;
+import io.github.perplexhub.rsql.RSQLJPASupport;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,5 +89,16 @@ public class RoleRepositoryImpl implements RoleRepository {
     return roleJpaRepository.exists(
         (root, query, criteriaBuilder) ->
             criteriaBuilder.equal(criteriaBuilder.lower(root.get("name")), name.toLowerCase()));
+  }
+
+  @Override
+  public PageResponse<RoleSummaryProjection> findAll(SearchPageable searchCriteria) {
+    // 1. Chuyển đổi filter sang RSQL
+    Specification<RoleJpaEntity> spec = RSQLJPASupport.toSpecification(searchCriteria.filter());
+    // 2. Tạo pageable với sort
+    Pageable pageable = PageableUtil.createPageable(searchCriteria);
+    var page =
+        roleJpaRepository.findBy(spec, q -> q.as(RoleSummaryProjection.class).page(pageable));
+    return PageResponse.from(page);
   }
 }

@@ -94,3 +94,4 @@ application:
 springdoc:
   swagger-ui:
     try-it-out-enabled: true
+  default-produces-media-type: application/json
