@@ -22,16 +22,20 @@ public interface UserRepository {
 
   Optional<User> findByPhoneNumber(PhoneNumber phoneNumber);
 
+  // Cần tối ưu, nếu load hết sẽ gây tràn bộ nhớ
   List<User> findByStatus(UserStatus status);
 
+  // Vẫn đang dùng framework, cần sửa lại
   /** Phiên bản phân trang của findByStatus. */
   Page<User> findByStatus(UserStatus status, Pageable pageable);
 
+  // Cần tối ưu, nếu load hết sẽ gây tràn bộ nhớ
   List<User> findAll();
 
   /** Phiên bản phân trang của findAll. */
   Page<User> findAll(Pageable pageable);
 
+  // Cần tối ưu, nếu load hết sẽ gây tràn bộ nhớ
   List<User> findByRoleId(RoleId roleId);
 
   void delete(UserId id);

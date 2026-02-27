@@ -16,6 +16,7 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation ("com.bucket4j:bucket4j-core:8.10.1")
     implementation ("com.github.ben-manes.caffeine:caffeine:3.2.3")
+    implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:6.0.33")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
