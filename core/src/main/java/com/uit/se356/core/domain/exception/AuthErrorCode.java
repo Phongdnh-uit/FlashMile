@@ -23,7 +23,7 @@ public enum AuthErrorCode implements ErrorCode {
   INVALID_TOKEN("AUTH_016", "error.auth.invalid_token", 401),
   ACCESS_DENIED("AUTH_017", "error.auth.access_denied", 403),
   TOO_MANY_REQUESTS("AUTH_018", "error.auth.too_many_requests", 429),
-  ;
+  ROLE_CANNOT_BE_DELETED("AUTH_019", "error.auth.role_cannot_be_deleted", 400);
   private final String code;
   private final String messageKey;
   private final int httpStatus;

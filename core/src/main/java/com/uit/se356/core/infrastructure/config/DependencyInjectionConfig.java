@@ -14,6 +14,10 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
+import com.uit.se356.core.application.authentication.handler.role.DeleteRoleHandler;
+import com.uit.se356.core.application.authentication.handler.role.RoleSummaryQueryHandler;
+import com.uit.se356.core.application.authentication.handler.role.UpdateRoleHandler;
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
@@ -37,6 +41,8 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
+import com.uit.se356.core.application.user.handler.GetUserProfileHandler;
+import com.uit.se356.core.application.user.handler.UpdateUserProfileHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.List;
@@ -179,5 +185,38 @@ public class DependencyInjectionConfig {
       RoleRepository roleRepository) {
     return new PermissionCheckerImpl(
         cacheRepository, permissionRepository, securityUtil, roleRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> getUserProfileHandler(UserRepository userRepository) {
+    return new GetUserProfileHandler(userRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateUserProfileHandler(UserRepository userRepository) {
+    return new UpdateUserProfileHandler(userRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createRoleCommandHandler(
+      RoleRepository roleRepository, IdGenerator idGenerator) {
+    return new CreateRoleHandler(roleRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateRoleCommandHandler(
+      RoleRepository roleRepository, IdGenerator idGenerator) {
+    return new UpdateRoleHandler(roleRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteRoleCommandHandler(
+      RoleRepository roleRepository, UserRepository userRepository) {
+    return new DeleteRoleHandler(roleRepository, userRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> roleSummaryQueryHandler(RoleRepository roleRepository) {
+    return new RoleSummaryQueryHandler(roleRepository);
   }
 }
