@@ -7,7 +7,7 @@ import com.uit.se356.core.application.user.result.UserProfileResult;
 import java.util.HashMap;
 import java.util.Map;
 
-public record UpdateUserProfileCommand(String userId, String fullName, String email)
+public record UpdateUserProfileCommand(String userId, String fullName)
     implements Command<UserProfileResult> {
   public UpdateUserProfileCommand {
     Map<String, Object> errors = new HashMap<>();
@@ -18,9 +18,6 @@ public record UpdateUserProfileCommand(String userId, String fullName, String em
     }
     if (fullName == null || fullName.isBlank()) {
       errors.put("fullName", "Full name is required");
-    }
-    if (email == null || email.isBlank()) {
-      errors.put("email", "Email is required");
     }
 
     if (!errors.isEmpty()) {

@@ -28,13 +28,12 @@ public class UpdateUserProfileHandler
 
     // BR: Check for Changes (MSG5)
     boolean isNameUnchanged = command.fullName().equals(user.getFullName());
-    boolean isEmailUnchanged = command.email().equals(user.getEmail().value());
 
-    if (isNameUnchanged && isEmailUnchanged) {
+    if (isNameUnchanged) {
       throw new AppException(UserErrorCode.NO_CHANGE_DETECTED);
     }
 
-    user.updateProfile(command.fullName(), command.email());
+    user.updateProfile(command.fullName());
     User updatedUser = userRepository.update(user);
     return UserProfileResult.fromUser(updatedUser);
   }
