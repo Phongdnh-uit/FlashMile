@@ -1,5 +1,8 @@
 package com.uit.se356.core.application.authentication.port.out;
 
+import com.uit.se356.common.dto.PageResponse;
+import com.uit.se356.common.dto.SearchPageable;
+import com.uit.se356.core.application.authentication.projections.PermissionSummaryProjection;
 import com.uit.se356.core.domain.entities.authentication.Permission;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import java.util.List;
@@ -14,4 +17,6 @@ public interface PermissionRepository {
   void deleteAll();
 
   List<Permission> findAllByRoleId(RoleId roleId);
+
+  PageResponse<PermissionSummaryProjection> findAll(SearchPageable pageable);
 }
