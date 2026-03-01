@@ -14,6 +14,7 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
 import com.uit.se356.core.application.authentication.handler.permission.PermissionSummaryQueryHandler;
 import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
 import com.uit.se356.core.application.authentication.handler.role.DeleteRoleHandler;
@@ -223,5 +224,11 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> permissionSummaryQueryHandler(PermissionRepository permissionRepository) {
     return new PermissionSummaryQueryHandler(permissionRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> assignPermissionHandler(
+      RoleRepository roleRepository, PermissionRepository permissionRepository) {
+    return new AssignPermissionHandler(roleRepository, permissionRepository);
   }
 }

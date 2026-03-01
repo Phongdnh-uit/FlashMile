@@ -25,7 +25,9 @@ public enum AuthErrorCode implements ErrorCode {
   TOO_MANY_REQUESTS("AUTH_018", "error.auth.too_many_requests", 429),
   ROLE_CANNOT_BE_DELETED("AUTH_019", "error.auth.role_cannot_be_deleted", 400),
   TOKEN_EXPIRED("AUTH_020", "error.auth.token_expired", 401),
-  AUTHENTICATION_REQUIRED("AUTH_021", "error.auth.authentication_required", 401);
+  AUTHENTICATION_REQUIRED("AUTH_021", "error.auth.authentication_required", 401),
+  SYSTEM_ROLE_MODIFICATION("AUTH_022", "error.auth.system_role_modification", 400),
+  PERMISSION_NOT_FOUND("AUTH_023", "error.auth.permission_not_found", 400);
   private final String code;
   private final String messageKey;
   private final int httpStatus;
