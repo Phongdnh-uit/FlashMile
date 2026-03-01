@@ -6,6 +6,7 @@ import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
 import com.uit.se356.core.application.authentication.projections.PermissionSummaryProjection;
 import com.uit.se356.core.domain.entities.authentication.Permission;
+import com.uit.se356.core.domain.vo.authentication.PermissionId;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.PermissionJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
@@ -15,6 +16,8 @@ import io.github.perplexhub.rsql.RSQLJPASupport;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -92,5 +95,13 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         permissionJpaRepository.findBy(
             spec, q -> q.as(PermissionSummaryProjection.class).page(pageable));
     return PageResponse.from(page);
+  }
+
+  @Override
+  public Set<PermissionId> findExistingIds(Set<PermissionId> permissionIds) {
+    var existingIds =
+        permissionJpaRepository.findExistingIds(
+            permissionIds.stream().map(PermissionId::value).collect(Collectors.toSet()));
+    return existingIds.stream().map(PermissionId::new).collect(Collectors.toSet());
   }
 }
