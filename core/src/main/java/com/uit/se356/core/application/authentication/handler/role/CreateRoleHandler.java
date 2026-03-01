@@ -2,6 +2,7 @@ package com.uit.se356.core.application.authentication.handler.role;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.authentication.command.role.CreateRoleCommand;
@@ -21,6 +22,7 @@ public class CreateRoleHandler implements CommandHandler<CreateRoleCommand, Role
     this.idGenerator = idGenerator;
   }
 
+  @HasPermission("role:create")
   @Override
   public RoleResult handle(CreateRoleCommand command) {
     Map<String, Object> errors = new HashMap<>();
