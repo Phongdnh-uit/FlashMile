@@ -1,16 +1,23 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
+import com.uit.se356.common.dto.PageResponse;
+import com.uit.se356.common.dto.SearchPageable;
+import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
+import com.uit.se356.core.application.authentication.projections.PermissionSummaryProjection;
 import com.uit.se356.core.domain.entities.authentication.Permission;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.PermissionJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.PermissionPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.PermissionJpaRepository;
+import io.github.perplexhub.rsql.RSQLJPASupport;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,5 +81,16 @@ public class PermissionRepositoryImpl implements PermissionRepository {
               return builder.equal(roleJoin.get("id"), roleId.value());
             });
     return entities.stream().map(permissionPersistenceMapper::toDomain).toList();
+  }
+
+  @Override
+  public PageResponse<PermissionSummaryProjection> findAll(SearchPageable searchPageable) {
+    Specification<PermissionJpaEntity> spec =
+        RSQLJPASupport.toSpecification(searchPageable.filter());
+    Pageable pageable = PageableUtil.createPageable(searchPageable);
+    var page =
+        permissionJpaRepository.findBy(
+            spec, q -> q.as(PermissionSummaryProjection.class).page(pageable));
+    return PageResponse.from(page);
   }
 }
