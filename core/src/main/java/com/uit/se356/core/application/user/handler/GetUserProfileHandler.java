@@ -21,7 +21,7 @@ public class GetUserProfileHandler implements QueryHandler<GetUserProfileQuery, 
   public UserProfileResult handle(GetUserProfileQuery query) {
     User user =
         userRepository
-            .findById(new UserId(query.userId()))
+            .findById(new UserId(query.userId().value()))
             .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 
     return UserProfileResult.fromUser(user);

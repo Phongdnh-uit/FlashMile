@@ -23,7 +23,7 @@ public class UpdateUserProfileHandler
     // Fetch User Data
     User user =
         userRepository
-            .findById(new UserId(command.userId()))
+            .findById(new UserId(command.userId().value()))
             .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 
     // BR: Check for Changes (MSG5)
