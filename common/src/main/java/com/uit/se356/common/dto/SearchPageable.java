@@ -7,13 +7,13 @@ public record SearchPageable(
         filter // Sử dụng biểu thức RSQL để lọc dữ liệu nâng cao, cần có kiểm tra các field nhạy cảm
         ,
     List<String>
-        sorts, // Truyền danh sách các trường cần sắp xếp, truyền theo dạng "field,asc" hoặc
-    // "field,desc"
+        sorts, // Truyền danh sách các trường cần sắp xếp, truyền theo dạng "field:asc" hoặc
+    // "field:desc"
     Integer page,
     Integer size) {
   public SearchPageable {
     filter = filter == null ? "" : filter;
-    sorts = (sorts == null || sorts.isEmpty()) ? List.of("id,asc") : sorts;
+    sorts = (sorts == null || sorts.isEmpty()) ? List.of("id:asc") : sorts;
     page = (page == null || page < 0) ? 0 : page;
     int defaultSize = (size == null || size <= 0) ? 10 : size;
     // Ngưỡng trên cho size tránh việc client lạm dụng
@@ -22,6 +22,10 @@ public record SearchPageable(
 
   public static SearchPageable defaultSearch() {
     return new SearchPageable("", null, 0, 10);
+  }
+
+  public static SearchPageable defaultSearchWithFilter(String filter) {
+    return new SearchPageable(filter, null, 0, 10);
   }
 
   public static SearchPageable of(String filter, List<String> sorts, int page, int size) {
