@@ -37,7 +37,7 @@ public class UserController {
         securityUtil
             .getCurrentUserPrincipal()
             .map(UserPrincipal::getId)
-            .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+            .orElseThrow(() -> new AppException(AuthErrorCode.AUTHENTICATION_REQUIRED));
 
     GetUserProfileQuery query = new GetUserProfileQuery(currentUserId);
     UserProfileResult result = queryBus.dispatch(query);
@@ -54,7 +54,7 @@ public class UserController {
         securityUtil
             .getCurrentUserPrincipal()
             .map(UserPrincipal::getId)
-            .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+            .orElseThrow(() -> new AppException(AuthErrorCode.AUTHENTICATION_REQUIRED));
 
     UpdateUserProfileCommand command =
         new UpdateUserProfileCommand(currentUserId, request.fullName());

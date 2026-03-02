@@ -4,9 +4,7 @@ import com.uit.se356.common.exception.ErrorCode;
 
 public enum ContactErrorCode implements ErrorCode {
   CONTACT_NOT_FOUND("CONTACT_001", "error.contact.not_found", 404),
-  DUPLICATE_PHONE_NUMBER("CONTACT_002", "error.contact.duplicate_phone", 400), // MSG2
-  INVALID_MANDATORY_FIELDS(
-      "CONTACT_003", "error.contact.mandatory_fields", 400); // Tương ứng MSG1/MSG2 missing field
+  DUPLICATE_PHONE_NUMBER("CONTACT_002", "error.contact.duplicate_phone", 400);
 
   private final String code;
   private final String messageKey;

@@ -81,6 +81,6 @@ public class RecipientContactController {
     return securityUtil
         .getCurrentUserPrincipal()
         .map(UserPrincipal::getId)
-        .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+        .orElseThrow(() -> new AppException(AuthErrorCode.AUTHENTICATION_REQUIRED));
   }
 }
