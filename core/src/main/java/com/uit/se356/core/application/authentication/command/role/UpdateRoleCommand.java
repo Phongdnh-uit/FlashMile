@@ -13,10 +13,14 @@ public record UpdateRoleCommand(String id, String name, String description, bool
   public UpdateRoleCommand {
     List<FieldError> errors = new ArrayList<>();
     if (id == null || id.isBlank()) {
-      errors.add(new FieldError("id", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"id"}));
+      errors.add(
+          new FieldError(
+              "id", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"id"}));
     }
     if (name == null || name.isBlank()) {
-      errors.add(new FieldError("name", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"name"}));
+      errors.add(
+          new FieldError(
+              "name", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"name"}));
     }
     if (!errors.isEmpty()) {
       throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);

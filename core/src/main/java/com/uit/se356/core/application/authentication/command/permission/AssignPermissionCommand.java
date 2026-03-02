@@ -14,7 +14,9 @@ public record AssignPermissionCommand(RoleId roleId, Set<PermissionId> permissio
   public AssignPermissionCommand {
     List<FieldError> errors = new ArrayList<>();
     if (roleId == null) {
-      errors.add(new FieldError("roleId", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"roleId"}));
+      errors.add(
+          new FieldError(
+              "roleId", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"roleId"}));
     }
   }
 }
