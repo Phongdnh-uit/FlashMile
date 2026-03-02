@@ -13,7 +13,9 @@ public record CreateRoleCommand(String name, String description, boolean isDefau
   public CreateRoleCommand {
     List<FieldError> errors = new ArrayList<>();
     if (name == null || name.isBlank()) {
-      errors.add(new FieldError("name", "validation.field.required", new Object[] {"name"}));
+      errors.add(
+          new FieldError(
+              "name", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"name"}));
     }
     if (!errors.isEmpty()) {
       throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);

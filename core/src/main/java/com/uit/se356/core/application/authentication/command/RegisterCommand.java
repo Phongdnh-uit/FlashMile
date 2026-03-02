@@ -17,19 +17,19 @@ public record RegisterCommand(
       errors.add(
           new FieldError(
               "verificationToken",
-              "validation.field.required",
+              CommonErrorCode.FIELD_REQUIRED.getMessageKey(),
               new Object[] {"verification token"}));
     }
     if (email == null || email.isBlank()) {
-      errors.add(new FieldError("email", "validation.field.required", new Object[] {"email"}));
+      errors.add(new FieldError("email", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"email"}));
     }
     if (fullName == null || fullName.isBlank()) {
       errors.add(
-          new FieldError("fullName", "validation.field.required", new Object[] {"full name"}));
+          new FieldError("fullName", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"full name"}));
     }
     if (password == null || password.isBlank()) {
       errors.add(
-          new FieldError("password", "validation.field.required", new Object[] {"password"}));
+          new FieldError("password", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"password"}));
     }
     if (!errors.isEmpty()) {
       throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);

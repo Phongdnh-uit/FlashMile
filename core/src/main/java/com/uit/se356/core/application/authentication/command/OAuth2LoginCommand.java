@@ -15,19 +15,19 @@ public record OAuth2LoginCommand(
     List<FieldError> errors = new ArrayList<>();
     if (provider == null || provider.isBlank()) {
       errors.add(
-          new FieldError("provider", "validation.field.required", new Object[] {"provider"}));
+          new FieldError("provider", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"provider"}));
     }
     if (providerUserId == null || providerUserId.isBlank()) {
       errors.add(
           new FieldError(
-              "providerUserId", "validation.field.required", new Object[] {"provider user ID"}));
+              "providerUserId", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"provider user ID"}));
     }
     if (email == null || email.isBlank()) {
-      errors.add(new FieldError("email", "validation.field.required", new Object[] {"email"}));
+      errors.add(new FieldError("email", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"email"}));
     }
     if (fullName == null || fullName.isBlank()) {
       errors.add(
-          new FieldError("fullName", "validation.field.required", new Object[] {"full name"}));
+          new FieldError("fullName", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"full name"}));
     }
     // Bỏ qua kiểm tra verifiedPhone vì nó có thể là null hoặc blank nếu không được cung cấp, nó chỉ
     // cần khi lần đầu đăng nhập bằng OAuth2 và không có số điện thoại nào được liên kết với tài
