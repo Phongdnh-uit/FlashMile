@@ -1,6 +1,8 @@
 package com.uit.se356.core.presentation.rest.contact;
 
 import com.uit.se356.common.dto.ApiResponse;
+import com.uit.se356.common.dto.PageResponse;
+import com.uit.se356.common.dto.SearchPageable;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.security.UserPrincipal;
 import com.uit.se356.common.services.CommandBus;
@@ -12,10 +14,11 @@ import com.uit.se356.core.application.contact.query.GetMyContactsQuery;
 import com.uit.se356.core.application.contact.result.ContactResult;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.UserId;
+import com.uit.se356.core.presentation.dto.contact.CreateContactRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,18 +27,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/contacts")
 @RequiredArgsConstructor
 public class RecipientContactController {
-
   private final QueryBus queryBus;
   private final CommandBus commandBus;
   private final SecurityUtil<UserId> securityUtil;
 
   @Operation(summary = "Get my address book")
   @GetMapping
-  public ResponseEntity<ApiResponse<List<ContactResult>>> getMyContacts() {
+  public ResponseEntity<ApiResponse<PageResponse<ContactResult>>> getMyContacts(
+      @ParameterObject @ModelAttribute SearchPageable query) {
     UserId currentUserId = getCurrentUserId();
 
-    GetMyContactsQuery query = new GetMyContactsQuery(currentUserId);
-    List<ContactResult> results = queryBus.dispatch(query);
+    GetMyContactsQuery myContactsQuery = new GetMyContactsQuery(currentUserId, query);
+    PageResponse<ContactResult> results = queryBus.dispatch(myContactsQuery);
 
     return ResponseEntity.ok(ApiResponse.ok(results, "Contacts retrieved successfully"));
   }
@@ -57,7 +60,7 @@ public class RecipientContactController {
   @Operation(summary = "Add a new contact to address book")
   @PostMapping
   public ResponseEntity<ApiResponse<ContactResult>> createContact(
-      @RequestBody CreateContactCommand request) {
+      @RequestBody CreateContactRequest request) {
 
     UserId currentUserId = getCurrentUserId();
 

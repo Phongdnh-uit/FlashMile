@@ -3,11 +3,7 @@ package com.uit.se356.core.domain.entities.contact;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
 public class RecipientContact {
   private final String id;
   private final UserId ownerId;
@@ -15,8 +11,17 @@ public class RecipientContact {
   private PhoneNumber phoneNumber;
   private String address;
   private String note;
-  private Instant createdAt;
-  private Instant updatedAt;
+
+  // Private constructor for rehydration
+  private RecipientContact(
+      Object o, UserId ownerId, String name, PhoneNumber phoneNumber, String address, String note) {
+    this.id = (String) o;
+    this.ownerId = ownerId;
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.address = address;
+    this.note = note;
+  }
 
   // Update contact information
   public void updateInfo(String name, PhoneNumber phoneNumber, String address, String note) {
@@ -24,7 +29,6 @@ public class RecipientContact {
     this.phoneNumber = phoneNumber;
     this.address = address;
     this.note = note;
-    this.updatedAt = Instant.now();
   }
 
   // Factory method to create a new contact
@@ -37,9 +41,7 @@ public class RecipientContact {
         name,
         phoneNumber,
         address,
-        note,
-        now,
-        now);
+        note);
   }
 
   public static RecipientContact rehydrate(
@@ -48,10 +50,32 @@ public class RecipientContact {
       String name,
       PhoneNumber phoneNumber,
       String address,
-      String note,
-      Instant createdAt,
-      Instant updatedAt) {
-    return new RecipientContact(
-        id, ownerId, name, phoneNumber, address, note, createdAt, updatedAt);
+      String note) {
+    return new RecipientContact(id, ownerId, name, phoneNumber, address, note);
+  }
+
+  // ============================ GETTERS ============================
+  public String getId() {
+    return id;
+  }
+
+  public UserId getOwnerId() {
+    return ownerId;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public PhoneNumber getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public String getNote() {
+    return note;
   }
 }

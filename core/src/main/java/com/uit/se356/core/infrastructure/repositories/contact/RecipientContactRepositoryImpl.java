@@ -1,58 +1,91 @@
 package com.uit.se356.core.infrastructure.repositories.contact;
 
+import com.uit.se356.common.dto.PageResponse;
+import com.uit.se356.common.dto.SearchPageable;
+import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.contact.port.RecipientContactRepository;
 import com.uit.se356.core.domain.entities.contact.RecipientContact;
+import com.uit.se356.core.domain.exception.ContactErrorCode;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.infrastructure.persistence.entities.contact.RecipientContactJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.contact.RecipientContactPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.contact.RecipientContactJpaRepository;
-import java.util.List;
+import io.github.perplexhub.rsql.RSQLJPASupport;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
 public class RecipientContactRepositoryImpl implements RecipientContactRepository {
-
-  private final RecipientContactJpaRepository jpaRepository;
+  private final RecipientContactJpaRepository recipientContactJpaRepository;
   private final RecipientContactPersistenceMapper mapper;
 
   @Override
-  public RecipientContact save(RecipientContact contact) {
+  public RecipientContact create(RecipientContact contact) {
     RecipientContactJpaEntity entity = mapper.toEntity(contact);
-    RecipientContactJpaEntity savedEntity = jpaRepository.save(entity);
+    RecipientContactJpaEntity savedEntity = recipientContactJpaRepository.save(entity);
     return mapper.toDomain(savedEntity);
   }
 
   @Override
-  public List<RecipientContact> findAllByOwnerId(UserId ownerId) {
-    return jpaRepository.findByUserIdOrderByNameAsc(ownerId.value()).stream()
-        .map(mapper::toDomain)
-        .collect(Collectors.toList());
+  public RecipientContact update(RecipientContact contact) {
+    RecipientContactJpaEntity existingEntity =
+        recipientContactJpaRepository
+            .findById(contact.getId())
+            .orElseThrow(
+                () -> new AppException(ContactErrorCode.CONTACT_NOT_FOUND, contact.getId()));
+    mapper.updateEntityFromDomain(contact, existingEntity);
+    return mapper.toDomain(existingEntity);
+  }
+
+  @Override
+  public PageResponse<RecipientContact> findAll(UserId ownerId, SearchPageable searchCriteria) {
+    Specification<RecipientContactJpaEntity> ownerSpec =
+        (root, query, criteriaBuilder) ->
+            criteriaBuilder.equal(root.get("userId"), ownerId.value());
+
+    Specification<RecipientContactJpaEntity> rsqlSpec = null;
+    if (searchCriteria.filter() != null && !searchCriteria.filter().isBlank()) {
+      rsqlSpec = RSQLJPASupport.toSpecification(searchCriteria.filter());
+    }
+
+    Specification<RecipientContactJpaEntity> finalSpec =
+        Specification.where(ownerSpec).and(rsqlSpec);
+
+    Pageable pageable = PageableUtil.createPageable(searchCriteria);
+
+    Page<RecipientContactJpaEntity> entityPage =
+        recipientContactJpaRepository.findAll(finalSpec, pageable);
+
+    return PageResponse.from(entityPage, mapper::toDomain);
   }
 
   @Override
   public Optional<RecipientContact> findByOwnerIdAndPhone(UserId ownerId, PhoneNumber phoneNumber) {
-    return jpaRepository
+    return recipientContactJpaRepository
         .findByUserIdAndPhoneNumber(ownerId.value(), phoneNumber.value())
         .map(mapper::toDomain);
   }
 
   @Override
   public Optional<RecipientContact> findById(String id) {
-    return jpaRepository.findById(id).map(mapper::toDomain);
+    return recipientContactJpaRepository.findById(id).map(mapper::toDomain);
   }
 
   @Override
   public void delete(String id) {
-    jpaRepository.deleteById(id);
+    recipientContactJpaRepository.deleteById(id);
   }
 
   @Override
   public boolean existsByOwnerIdAndPhone(UserId ownerId, PhoneNumber phoneNumber) {
-    return jpaRepository.existsByUserIdAndPhoneNumber(ownerId.value(), phoneNumber.value());
+    return recipientContactJpaRepository.existsByUserIdAndPhoneNumber(
+        ownerId.value(), phoneNumber.value());
   }
 }

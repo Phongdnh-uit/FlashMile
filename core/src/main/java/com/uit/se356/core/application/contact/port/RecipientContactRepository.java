@@ -1,15 +1,18 @@
 package com.uit.se356.core.application.contact.port;
 
+import com.uit.se356.common.dto.PageResponse;
+import com.uit.se356.common.dto.SearchPageable;
 import com.uit.se356.core.domain.entities.contact.RecipientContact;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
-import java.util.List;
 import java.util.Optional;
 
 public interface RecipientContactRepository {
-  RecipientContact save(RecipientContact contact);
+  RecipientContact create(RecipientContact contact);
 
-  List<RecipientContact> findAllByOwnerId(UserId ownerId);
+  RecipientContact update(RecipientContact contact);
+
+  PageResponse<RecipientContact> findAll(UserId ownerId, SearchPageable pageable);
 
   Optional<RecipientContact> findByOwnerIdAndPhone(UserId ownerId, PhoneNumber phoneNumber);
 

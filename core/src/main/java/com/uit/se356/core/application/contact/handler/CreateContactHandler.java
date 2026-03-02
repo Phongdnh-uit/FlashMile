@@ -8,9 +8,9 @@ import com.uit.se356.core.application.contact.result.ContactResult;
 import com.uit.se356.core.domain.entities.contact.RecipientContact;
 import com.uit.se356.core.domain.exception.ContactErrorCode;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
-import com.uit.se356.core.domain.vo.authentication.UserId;
 
 public class CreateContactHandler implements CommandHandler<CreateContactCommand, ContactResult> {
+
   private final RecipientContactRepository repository;
 
   public CreateContactHandler(RecipientContactRepository repository) {
@@ -19,19 +19,18 @@ public class CreateContactHandler implements CommandHandler<CreateContactCommand
 
   @Override
   public ContactResult handle(CreateContactCommand command) {
-    UserId ownerId = new UserId(command.userId().value());
     PhoneNumber phone = new PhoneNumber(command.phoneNumber());
 
     // BR: Check Duplicate (Only for New Creation)
-    if (repository.existsByOwnerIdAndPhone(ownerId, phone)) {
+    if (repository.existsByOwnerIdAndPhone(command.userId(), phone)) {
       throw new AppException(ContactErrorCode.DUPLICATE_PHONE_NUMBER);
     }
 
     RecipientContact newContact =
         RecipientContact.createNewContact(
-            ownerId, command.name(), phone, command.address(), command.note());
+            command.userId(), command.name(), phone, command.address(), command.note());
 
-    RecipientContact savedContact = repository.save(newContact);
+    RecipientContact savedContact = repository.create(newContact);
     return ContactResult.fromEntity(savedContact);
   }
 }

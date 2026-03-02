@@ -7,7 +7,6 @@ import com.uit.se356.core.application.user.query.GetUserProfileQuery;
 import com.uit.se356.core.application.user.result.UserProfileResult;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.UserErrorCode;
-import com.uit.se356.core.domain.vo.authentication.UserId;
 
 public class GetUserProfileHandler implements QueryHandler<GetUserProfileQuery, UserProfileResult> {
 
@@ -21,7 +20,7 @@ public class GetUserProfileHandler implements QueryHandler<GetUserProfileQuery, 
   public UserProfileResult handle(GetUserProfileQuery query) {
     User user =
         userRepository
-            .findById(new UserId(query.userId().value()))
+            .findById(query.userId())
             .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 
     return UserProfileResult.fromUser(user);

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RecipientContactPersistenceMapper {
-
   /**
    * Chuyển từ Database Entity -> Domain Entity Dùng khi đọc dữ liệu từ DB lên để xử lý nghiệp vụ
    */
@@ -17,15 +16,13 @@ public class RecipientContactPersistenceMapper {
       return null;
     }
 
-    return new RecipientContact(
+    return RecipientContact.rehydrate(
         entity.getId(),
         new UserId(entity.getUserId()),
         entity.getName(),
         new PhoneNumber(entity.getPhoneNumber()),
         entity.getAddress(),
-        entity.getNote(),
-        entity.getCreatedAt(),
-        entity.getUpdatedAt());
+        entity.getNote());
   }
 
   /** Chuyển từ Domain Entity -> Database Entity Dùng khi muốn lưu (Save/Update) xuống DB */
@@ -52,9 +49,26 @@ public class RecipientContactPersistenceMapper {
     entity.setAddress(domain.getAddress());
     entity.setNote(domain.getNote());
 
-    entity.setCreatedAt(domain.getCreatedAt());
-    entity.setUpdatedAt(domain.getUpdatedAt());
-
     return entity;
+  }
+
+  public void updateEntityFromDomain(
+      RecipientContact contact, RecipientContactJpaEntity existingEntity) {
+    if (contact == null || existingEntity == null) {
+      return;
+    }
+
+    if (contact.getOwnerId() != null) {
+      existingEntity.setUserId(contact.getOwnerId().value());
+    }
+
+    existingEntity.setName(contact.getName());
+
+    if (contact.getPhoneNumber() != null) {
+      existingEntity.setPhoneNumber(contact.getPhoneNumber().value());
+    }
+
+    existingEntity.setAddress(contact.getAddress());
+    existingEntity.setNote(contact.getNote());
   }
 }
