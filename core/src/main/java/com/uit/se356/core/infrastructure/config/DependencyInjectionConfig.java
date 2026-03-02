@@ -41,10 +41,6 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.ForgotPasswordSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.PhoneVerificationSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
-import com.uit.se356.core.application.contact.handler.CreateContactHandler;
-import com.uit.se356.core.application.contact.handler.GetContactByPhoneHandler;
-import com.uit.se356.core.application.contact.handler.GetMyContactsHandler;
-import com.uit.se356.core.application.contact.port.RecipientContactRepository;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
 import com.uit.se356.core.application.user.handler.GetUserProfileHandler;
@@ -234,20 +230,5 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> assignPermissionHandler(
       RoleRepository roleRepository, PermissionRepository permissionRepository) {
     return new AssignPermissionHandler(roleRepository, permissionRepository);
-  }
-
-  @Bean
-  CommandHandler<?, ?> createContactCommandHandler(RecipientContactRepository contactRepository) {
-    return new CreateContactHandler(contactRepository);
-  }
-
-  @Bean
-  QueryHandler<?, ?> getContactByPhoneHandler(RecipientContactRepository contactRepository) {
-    return new GetContactByPhoneHandler(contactRepository);
-  }
-
-  @Bean
-  QueryHandler<?, ?> getMyContactsHandler(RecipientContactRepository contactRepository) {
-    return new GetMyContactsHandler(contactRepository);
   }
 }

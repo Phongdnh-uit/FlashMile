@@ -76,14 +76,13 @@ public class PermissionRepositoryImpl implements PermissionRepository {
   }
 
   @Override
-  public List<Permission> findAllByRoleId(RoleId roleId) {
-    List<PermissionJpaEntity> entities =
-        permissionJpaRepository.findAll(
-            (root, query, builder) -> {
-              Join<PermissionJpaEntity, RoleJpaEntity> roleJoin = root.join("roles");
-              return builder.equal(roleJoin.get("id"), roleId.value());
-            });
-    return entities.stream().map(permissionPersistenceMapper::toDomain).toList();
+  public List<PermissionSummaryProjection> findAllByRoleId(RoleId roleId) {
+    Specification<PermissionJpaEntity> spec =
+        (root, query, builder) -> {
+          Join<PermissionJpaEntity, RoleJpaEntity> roleJoin = root.join("roles");
+          return builder.equal(roleJoin.get("id"), roleId.value());
+        };
+    return permissionJpaRepository.findBy(spec, q -> q.as(PermissionSummaryProjection.class).all());
   }
 
   @Override
@@ -103,5 +102,21 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         permissionJpaRepository.findExistingIds(
             permissionIds.stream().map(PermissionId::value).collect(Collectors.toSet()));
     return existingIds.stream().map(PermissionId::new).collect(Collectors.toSet());
+  }
+
+  @Override
+  public PageResponse<PermissionSummaryProjection> findAllByRoleId(
+      RoleId roleId, SearchPageable searchPageable) {
+    Specification<PermissionJpaEntity> spec =
+        (root, query, builder) -> {
+          Join<PermissionJpaEntity, RoleJpaEntity> roleJoin = root.join("roles");
+          return builder.equal(roleJoin.get("id"), roleId.value());
+        };
+    spec = spec.and(RSQLJPASupport.toSpecification(searchPageable.filter()));
+    Pageable pageable = PageableUtil.createPageable(searchPageable);
+    var page =
+        permissionJpaRepository.findBy(
+            spec, q -> q.as(PermissionSummaryProjection.class).page(pageable));
+    return PageResponse.from(page);
   }
 }
