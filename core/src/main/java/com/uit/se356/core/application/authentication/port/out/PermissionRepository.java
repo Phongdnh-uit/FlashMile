@@ -18,9 +18,11 @@ public interface PermissionRepository {
 
   void deleteAll();
 
-  List<Permission> findAllByRoleId(RoleId roleId);
+  List<PermissionSummaryProjection> findAllByRoleId(RoleId roleId);
 
   PageResponse<PermissionSummaryProjection> findAll(SearchPageable pageable);
 
   Set<PermissionId> findExistingIds(Set<PermissionId> permissionIds);
+
+  PageResponse<PermissionSummaryProjection> findAllByRoleId(RoleId roleId, SearchPageable pageable);
 }

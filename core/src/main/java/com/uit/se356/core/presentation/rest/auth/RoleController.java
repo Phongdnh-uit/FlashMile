@@ -9,7 +9,9 @@ import com.uit.se356.core.application.authentication.command.permission.AssignPe
 import com.uit.se356.core.application.authentication.command.role.CreateRoleCommand;
 import com.uit.se356.core.application.authentication.command.role.DeleteRoleCommand;
 import com.uit.se356.core.application.authentication.command.role.UpdateRoleCommand;
+import com.uit.se356.core.application.authentication.projections.PermissionSummaryProjection;
 import com.uit.se356.core.application.authentication.projections.RoleSummaryProjection;
+import com.uit.se356.core.application.authentication.query.role.GetPermissionsByRoleQuery;
 import com.uit.se356.core.application.authentication.query.role.RoleSummaryQuery;
 import com.uit.se356.core.application.authentication.result.RoleResult;
 import com.uit.se356.core.domain.vo.authentication.PermissionId;
@@ -79,5 +81,14 @@ public class RoleController {
             request.getPermissionIds().stream().map(PermissionId::new).collect(Collectors.toSet()));
     return ResponseEntity.ok(
         ApiResponse.ok(commandBus.dispatch(command), "Permissions assigned to role successfully"));
+  }
+
+  @GetMapping("/{id}/permissions")
+  public ResponseEntity<ApiResponse<PageResponse<PermissionSummaryProjection>>> getRolePermissions(
+      @PathVariable("id") String id, @ParameterObject @ModelAttribute SearchPageable pageable) {
+    return ResponseEntity.ok(
+        ApiResponse.ok(
+            queryBus.dispatch(new GetPermissionsByRoleQuery(new RoleId(id), pageable)),
+            "Role permissions retrieved successfully"));
   }
 }
