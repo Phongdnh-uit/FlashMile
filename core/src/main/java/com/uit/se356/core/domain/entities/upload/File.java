@@ -47,6 +47,10 @@ public class File {
     this.status = FileStatus.UPLOADED;
   }
 
+  public void markAsInvalid() {
+    this.status = FileStatus.INVALID;
+  }
+
   // ============================ GETTERS ============================
   public FileId getId() {
     return id;

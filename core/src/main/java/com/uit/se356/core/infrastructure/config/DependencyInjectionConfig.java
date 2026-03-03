@@ -44,6 +44,7 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
+import com.uit.se356.core.application.upload.handler.ConfirmUploadCommandHandler;
 import com.uit.se356.core.application.upload.handler.UploadPresignedUrlHandler;
 import com.uit.se356.core.application.upload.port.out.FileRepository;
 import com.uit.se356.core.application.upload.port.out.StorageProvider;
@@ -256,5 +257,11 @@ public class DependencyInjectionConfig {
       FileRepository fileRepository) {
     return new UploadPresignedUrlHandler(
         fileRepository, uploadPolicies, idGenerator, storageProvider);
+  }
+
+  @Bean
+  CommandHandler<?, ?> confirmUploadCommandHandler(
+      FileRepository fileRepository, StorageProvider storageProvider) {
+    return new ConfirmUploadCommandHandler(fileRepository, storageProvider);
   }
 }

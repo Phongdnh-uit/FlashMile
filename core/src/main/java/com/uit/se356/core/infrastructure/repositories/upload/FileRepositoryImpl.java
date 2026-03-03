@@ -6,6 +6,7 @@ import com.uit.se356.core.infrastructure.persistence.entities.upload.FileJpaEnti
 import com.uit.se356.core.infrastructure.persistence.mappers.upload.FilePersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.upload.FileJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +39,14 @@ public class FileRepositoryImpl implements FileRepository {
 
     fileMapper.updateEntityFromDomain(file, existingEntity);
     return fileMapper.toDomain(existingEntity);
+  }
+
+  @Override
+  public Optional<File> findByStorageKey(String storageKey) {
+    return fileJpaRepository
+        .findOne(
+            (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("storageKey"), storageKey))
+        .map(fileMapper::toDomain);
   }
 }
