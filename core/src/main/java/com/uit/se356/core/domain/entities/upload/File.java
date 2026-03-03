@@ -8,7 +8,6 @@ public class File {
   private String storageKey;
   private String originalName;
   private String contentType;
-  private String bucket;
   private Long size;
   private FileStatus status;
 
@@ -17,27 +16,20 @@ public class File {
       String storageKey,
       String originalName,
       String contentType,
-      String bucket,
       Long size,
       FileStatus status) {
     this.id = id;
     this.storageKey = storageKey;
     this.originalName = originalName;
     this.contentType = contentType;
-    this.bucket = bucket;
     this.size = size;
     this.status = status;
   }
 
   // ============================ FACTORIES ============================
   public static File create(
-      FileId id,
-      String storageKey,
-      String originalName,
-      String contentType,
-      String bucket,
-      Long size) {
-    return new File(id, storageKey, originalName, contentType, bucket, size, FileStatus.PENDING);
+      FileId id, String storageKey, String originalName, String contentType, Long size) {
+    return new File(id, storageKey, originalName, contentType, size, FileStatus.PENDING);
   }
 
   public static File rehydrate(
@@ -45,10 +37,9 @@ public class File {
       String storageKey,
       String originalName,
       String contentType,
-      String bucket,
       Long size,
       FileStatus status) {
-    return new File(id, storageKey, originalName, contentType, bucket, size, status);
+    return new File(id, storageKey, originalName, contentType, size, status);
   }
 
   // ============================ BEHAVIOURS ============================
@@ -71,10 +62,6 @@ public class File {
 
   public String getContentType() {
     return contentType;
-  }
-
-  public String getBucket() {
-    return bucket;
   }
 
   public Long getSize() {

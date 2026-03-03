@@ -32,5 +32,6 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation ("com.redis:testcontainers-redis")
+    testImplementation ("org.testcontainers:testcontainers-minio")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
@@ -18,6 +21,15 @@ class CoreApplicationTests {
   static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:16-alpine");
 
   @Container @ServiceConnection static RedisContainer redis = new RedisContainer("redis:7-alpine");
+
+  @Container static MinIOContainer minio = new MinIOContainer("minio/minio:latest");
+
+  @DynamicPropertySource
+  static void minioProperties(DynamicPropertyRegistry registry) {
+    registry.add("application.s3.endpoint", minio::getS3URL);
+    registry.add("application.s3.access-key", minio::getUserName);
+    registry.add("application.s3.secret-key", minio::getPassword);
+  }
 
   @Test
   void contextLoads() {}

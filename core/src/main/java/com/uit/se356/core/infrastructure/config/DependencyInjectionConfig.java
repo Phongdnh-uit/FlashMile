@@ -44,6 +44,11 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
+import com.uit.se356.core.application.upload.handler.UploadPresignedUrlHandler;
+import com.uit.se356.core.application.upload.port.out.FileRepository;
+import com.uit.se356.core.application.upload.port.out.StorageProvider;
+import com.uit.se356.core.application.upload.strategies.AvatarUploadPolicy;
+import com.uit.se356.core.application.upload.strategies.UploadPolicy;
 import com.uit.se356.core.application.user.handler.GetUserProfileHandler;
 import com.uit.se356.core.application.user.handler.UpdateUserProfileHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
@@ -236,5 +241,20 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> getPermissionsByRoleHandler(PermissionRepository permissionRepository) {
     return new GetPermissionByRoleHandler(permissionRepository);
+  }
+
+  @Bean
+  UploadPolicy avatarUploadPolicy() {
+    return new AvatarUploadPolicy();
+  }
+
+  @Bean
+  CommandHandler<?, ?> uploadPresignedUrlCommandHandler(
+      List<UploadPolicy> uploadPolicies,
+      IdGenerator idGenerator,
+      StorageProvider storageProvider,
+      FileRepository fileRepository) {
+    return new UploadPresignedUrlHandler(
+        fileRepository, uploadPolicies, idGenerator, storageProvider);
   }
 }

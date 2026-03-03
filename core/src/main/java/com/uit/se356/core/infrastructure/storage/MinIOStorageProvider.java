@@ -39,7 +39,7 @@ public class MinIOStorageProvider implements StorageProvider {
                   .method(Method.PUT)
                   .expiry((int) expiration.toSeconds(), TimeUnit.SECONDS)
                   .build());
-      return new PresignedUrlResult(url, storageKey, expiration.getSeconds());
+      return new PresignedUrlResult(url, expiration.getSeconds());
     } catch (Exception e) {
       log.error("Failed to generate presigned URL for key {}: {}", storageKey, e.getMessage());
       throw new AppException(CommonErrorCode.INTERNAL_ERROR);
@@ -59,7 +59,7 @@ public class MinIOStorageProvider implements StorageProvider {
                   .method(Method.GET)
                   .expiry((int) expiration.toSeconds(), TimeUnit.SECONDS)
                   .build());
-      return new PresignedUrlResult(url, storageKey, expiration.getSeconds());
+      return new PresignedUrlResult(url, expiration.getSeconds());
     } catch (Exception e) {
       log.error("Failed to generate GET presigned URL for key {}: {}", storageKey, e.getMessage());
       throw new AppException(CommonErrorCode.INTERNAL_ERROR);
