@@ -115,6 +115,12 @@ application:
     admin-full-name: ${ADMIN_FULL_NAME}
     admin-password: ${ADMIN_PASSWORD}
     admin-phone-number: ${ADMIN_PHONE_NUMBER}
+  s3:
+    endpoint: ${S3_ENDPOINT}
+    access-key: ${S3_ACCESS_KEY}
+    secret-key: ${S3_SECRET_KEY}
+    main-bucket-name: ${S3_MAIN_BUCKET_NAME}
+    quarantine-bucket-name: ${S3_QUARANTINE_BUCKET_NAME}
 
 springdoc:
   default-produces-media-type: application/json
