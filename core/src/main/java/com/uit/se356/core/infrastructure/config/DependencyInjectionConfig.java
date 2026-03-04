@@ -6,6 +6,9 @@ import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.common.utils.SecurityUtil;
+import com.uit.se356.core.application.area.handler.CreateProvinceHandler;
+import com.uit.se356.core.application.area.handler.ProvinceSummaryQueryHandler;
+import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
 import com.uit.se356.core.application.authentication.handler.LogoutHandler;
 import com.uit.se356.core.application.authentication.handler.OAuth2LoginCommandHandler;
@@ -249,5 +252,15 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> getMyContactsHandler(RecipientContactRepository contactRepository) {
     return new GetMyContactsHandler(contactRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createProvinceHandler(ProvinceRepository provinceRepository) {
+    return new CreateProvinceHandler(provinceRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> provinceSummaryQueryHandler(ProvinceRepository provinceRepository) {
+    return new ProvinceSummaryQueryHandler(provinceRepository);
   }
 }
