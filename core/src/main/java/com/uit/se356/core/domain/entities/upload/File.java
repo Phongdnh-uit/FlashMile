@@ -47,6 +47,10 @@ public class File {
     this.status = FileStatus.UPLOADED;
   }
 
+  public void markAsDeleted() {
+    this.status = FileStatus.DELETED;
+  }
+
   public void markAsInvalid() {
     this.status = FileStatus.INVALID;
   }

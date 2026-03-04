@@ -2,6 +2,7 @@ package com.uit.se356.core.presentation.rest.upload;
 
 import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.common.services.CommandBus;
+import com.uit.se356.core.application.upload.command.ConfirmUploadCommand;
 import com.uit.se356.core.application.upload.command.UploadPresignedUrlCommand;
 import com.uit.se356.core.application.upload.result.PresignedUrlResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,5 +28,13 @@ public class UploadController {
       @RequestBody UploadPresignedUrlCommand command) {
     PresignedUrlResult result = commandBus.dispatch(command);
     return ResponseEntity.ok(ApiResponse.ok(result, "Presigned URL generated successfully"));
+  }
+
+  @Operation(summary = "Confirm file upload")
+  @PostMapping("/confirm-upload")
+  public ResponseEntity<ApiResponse<Void>> confirmUpload(
+      @RequestBody ConfirmUploadCommand command) {
+    commandBus.dispatch(command);
+    return ResponseEntity.ok(ApiResponse.ok(null, "File upload confirmed successfully"));
   }
 }

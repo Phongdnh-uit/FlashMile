@@ -55,6 +55,8 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s

@@ -46,10 +46,12 @@ import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
 import com.uit.se356.core.application.upload.handler.ConfirmUploadCommandHandler;
 import com.uit.se356.core.application.upload.handler.UploadPresignedUrlHandler;
+import com.uit.se356.core.application.upload.port.in.FileCleanupService;
 import com.uit.se356.core.application.upload.port.out.FileRepository;
 import com.uit.se356.core.application.upload.port.out.StorageProvider;
-import com.uit.se356.core.application.upload.strategies.AvatarUploadPolicy;
-import com.uit.se356.core.application.upload.strategies.UploadPolicy;
+import com.uit.se356.core.application.upload.services.FileCleanupServiceImpl;
+import com.uit.se356.core.application.upload.strategies.upload.AvatarUploadPolicy;
+import com.uit.se356.core.application.upload.strategies.upload.UploadPolicy;
 import com.uit.se356.core.application.user.handler.GetUserProfileHandler;
 import com.uit.se356.core.application.user.handler.UpdateUserProfileHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
@@ -263,5 +265,11 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> confirmUploadCommandHandler(
       FileRepository fileRepository, StorageProvider storageProvider) {
     return new ConfirmUploadCommandHandler(fileRepository, storageProvider);
+  }
+
+  @Bean
+  FileCleanupService fileCleanupService(
+      FileRepository fileRepository, StorageProvider storageProvider) {
+    return new FileCleanupServiceImpl(fileRepository, storageProvider);
   }
 }

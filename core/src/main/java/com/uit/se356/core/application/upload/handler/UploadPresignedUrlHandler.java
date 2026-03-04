@@ -5,8 +5,9 @@ import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.upload.command.UploadPresignedUrlCommand;
 import com.uit.se356.core.application.upload.port.out.FileRepository;
 import com.uit.se356.core.application.upload.port.out.StorageProvider;
+import com.uit.se356.core.application.upload.query.PutPresignedUrlQuery;
 import com.uit.se356.core.application.upload.result.PresignedUrlResult;
-import com.uit.se356.core.application.upload.strategies.UploadPolicy;
+import com.uit.se356.core.application.upload.strategies.upload.UploadPolicy;
 import com.uit.se356.core.domain.entities.upload.File;
 import com.uit.se356.core.domain.vo.upload.FileId;
 import com.uit.se356.core.domain.vo.upload.UploadType;
@@ -52,7 +53,12 @@ public class UploadPresignedUrlHandler
             command.fileSize());
 
     fileRepository.create(file);
-
-    return storageProvider.generatePutPresignedUrl(storageKey, Duration.ofMinutes(5));
+    PutPresignedUrlQuery query =
+        new PutPresignedUrlQuery(
+            storageKey,
+            command.contentType(),
+            command.fileSize(),
+            Duration.ofMinutes(5).toSeconds());
+    return storageProvider.generatePutPresignedUrl(query);
   }
 }

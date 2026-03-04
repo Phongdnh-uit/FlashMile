@@ -3,15 +3,26 @@ package com.uit.se356.core.infrastructure.storage;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.core.application.upload.port.out.StorageProvider;
+import com.uit.se356.core.application.upload.query.PutPresignedUrlQuery;
 import com.uit.se356.core.application.upload.result.PresignedUrlResult;
+import com.uit.se356.core.application.upload.result.StoredObjectMetadata;
 import com.uit.se356.core.infrastructure.config.AppProperties;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
+import io.minio.RemoveObjectsArgs;
+import io.minio.Result;
+import io.minio.StatObjectArgs;
+import io.minio.StatObjectResponse;
 import io.minio.http.Method;
+import io.minio.messages.DeleteError;
+import io.minio.messages.DeleteObject;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +36,12 @@ public class MinIOStorageProvider implements StorageProvider {
   private final AppProperties appProperties;
 
   @Override
-  public PresignedUrlResult generatePutPresignedUrl(String storageKey, Duration expiration) {
+  public PresignedUrlResult generatePutPresignedUrl(PutPresignedUrlQuery query) {
     // 1. Format lại storageKey
-    storageKey = normalizeStorageKey(storageKey);
+    String storageKey = normalizeStorageKey(query.storageKey());
+    Map<String, String> customHeaders = new HashMap<>();
+    customHeaders.put("Content-Type", query.contentType());
+    customHeaders.put("Content-Length", String.valueOf(query.contentLength()));
     try {
       String url =
           minioClient.getPresignedObjectUrl(
@@ -37,9 +51,10 @@ public class MinIOStorageProvider implements StorageProvider {
                   .bucket(appProperties.getS3().getQuarantineBucketName())
                   .object(storageKey)
                   .method(Method.PUT)
-                  .expiry((int) expiration.toSeconds(), TimeUnit.SECONDS)
+                  .expiry(query.expirationSeconds().intValue(), TimeUnit.SECONDS)
+                  .extraHeaders(customHeaders)
                   .build());
-      return new PresignedUrlResult(url, expiration.getSeconds());
+      return new PresignedUrlResult(url, query.expirationSeconds());
     } catch (Exception e) {
       log.error("Failed to generate presigned URL for key {}: {}", storageKey, e.getMessage());
       throw new AppException(CommonErrorCode.INTERNAL_ERROR);
@@ -98,6 +113,74 @@ public class MinIOStorageProvider implements StorageProvider {
     } catch (Exception e) {
       log.error(
           "Failed to promote object from quarantine with key {}: {}", storageKey, e.getMessage());
+      throw new AppException(CommonErrorCode.INTERNAL_ERROR);
+    }
+  }
+
+  @Override
+  public void deleteAll(List<String> storageKeys) {
+    // 1. Map sang dạng DeleteObject
+    List<DeleteObject> objectsToDelete =
+        storageKeys.stream().map(key -> new DeleteObject(key)).toList();
+
+    // 2. Xóa nhiều object cùng lúc
+    Iterable<Result<DeleteError>> results =
+        minioClient.removeObjects(
+            RemoveObjectsArgs.builder()
+                .bucket(appProperties.getS3().getMainBucketName())
+                .objects(objectsToDelete)
+                .build());
+
+    // 3. Xử lý kết quả xóa
+    for (Result<DeleteError> result : results) {
+      try {
+        DeleteError error = result.get();
+        log.error("Error in deleting file {}; {}", error.objectName(), error.message());
+      } catch (Exception e) {
+        log.error("Unexpected error during batch deletion file", e);
+      }
+    }
+  }
+
+  @Override
+  public StoredObjectMetadata getObjectStat(String storageKey) {
+    try {
+      StatObjectResponse stat =
+          minioClient.statObject(
+              StatObjectArgs.builder()
+                  .bucket(appProperties.getS3().getMainBucketName())
+                  .object(storageKey)
+                  .build());
+      return new StoredObjectMetadata(
+          stat.object(),
+          stat.size(),
+          stat.contentType(),
+          stat.lastModified().toInstant(),
+          stat.etag());
+    } catch (Exception e) {
+      log.error("Failed to stat object with key {}: {}", storageKey, e.getMessage());
+      throw new AppException(CommonErrorCode.INTERNAL_ERROR);
+    }
+  }
+
+  @Override
+  public StoredObjectMetadata getQuarantineObjectStat(String storageKey) {
+    try {
+
+      StatObjectResponse stat =
+          minioClient.statObject(
+              StatObjectArgs.builder()
+                  .bucket(appProperties.getS3().getQuarantineBucketName())
+                  .object(storageKey)
+                  .build());
+      return new StoredObjectMetadata(
+          stat.object(),
+          stat.size(),
+          stat.contentType(),
+          stat.lastModified().toInstant(),
+          stat.etag());
+    } catch (Exception e) {
+      log.error("Failed to stat quarantine object with key {}: {}", storageKey, e.getMessage());
       throw new AppException(CommonErrorCode.INTERNAL_ERROR);
     }
   }

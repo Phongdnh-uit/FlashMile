@@ -1,5 +1,6 @@
 package com.uit.se356.core.infrastructure.config;
 
+import com.uit.se356.core.domain.constants.SecurityConstant;
 import com.uit.se356.core.domain.constants.SystemConstant;
 import com.uit.se356.core.infrastructure.security.CustomAuthEntryPoint;
 import com.uit.se356.core.infrastructure.security.jwt.CustomJwtConverter;
@@ -57,7 +58,7 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(EndpointRequest.to("health", "info"))
                     .permitAll()
-                    .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
+                    .requestMatchers(SecurityConstant.PUBLIC_URLS)
                     .permitAll()
                     .anyRequest()
                     .authenticated())
