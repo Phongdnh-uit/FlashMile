@@ -17,6 +17,7 @@ dependencies {
     implementation ("com.bucket4j:bucket4j-core:8.10.1")
     implementation ("com.github.ben-manes.caffeine:caffeine:3.2.3")
     implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:6.0.33")
+    implementation ("io.minio:minio:8.6.0")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -31,5 +32,6 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation ("com.redis:testcontainers-redis")
+    testImplementation ("org.testcontainers:testcontainers-minio")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

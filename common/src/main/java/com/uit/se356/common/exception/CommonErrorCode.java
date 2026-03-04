@@ -11,7 +11,8 @@ public enum CommonErrorCode implements ErrorCode {
   VALIDATION_ERROR("COMMON-0002", "error.common.validation_error", 400),
   INTERNAL_ERROR("COMMON-0003", "error.common.internal_error", 500),
   INVALID_SORT_ORDER("COMMON-0004", "error.common.invalid_sort_order", 400),
-  FIELD_REQUIRED("COMMON-0005", "error.common.field_required", 400);
+  FIELD_REQUIRED("COMMON-0005", "error.common.field_required", 400),
+  RESOURCE_NOT_FOUND("COMMON-0006", "error.common.resource_not_found", 404);
   private final String code;
   private final String messageKey;
   private final int httpStatus;
