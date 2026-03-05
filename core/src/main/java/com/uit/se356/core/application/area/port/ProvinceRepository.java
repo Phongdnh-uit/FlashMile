@@ -17,4 +17,6 @@ public interface ProvinceRepository {
   boolean existsByCode(String code);
 
   void deleteById(String id);
+
+  Optional<Province> findByCode(String provinceCode);
 }

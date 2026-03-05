@@ -65,4 +65,9 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   public void deleteById(String id) {
     provinceJpaRepository.deleteById(id);
   }
+
+  @Override
+  public Optional<Province> findByCode(String provinceCode) {
+    return provinceJpaRepository.findByCode(provinceCode).map(provincePersistenceMapper::toDomain);
+  }
 }

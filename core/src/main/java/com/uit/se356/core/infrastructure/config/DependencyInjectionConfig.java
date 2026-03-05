@@ -295,4 +295,15 @@ public class DependencyInjectionConfig {
   QueryHandler<?, ?> wardSummaryQueryHandler(WardRepository wardRepository) {
     return new WardSummaryQueryHandler(wardRepository);
   }
+
+  @Bean
+  CommandHandler<?, ?> importProvinceGeoJsonHandler(ProvinceRepository provinceRepository) {
+    return new ImportProvinceGeoJsonHandler(provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> importWardGeoJsonHandler(
+      ProvinceRepository provinceRepository, WardRepository wardRepository) {
+    return new ImportWardGeoJsonHandler(provinceRepository, wardRepository);
+  }
 }
