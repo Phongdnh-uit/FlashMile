@@ -59,4 +59,9 @@ public class WardRepositoryImpl implements WardRepository {
   public boolean existsByCode(String code) {
     return wardJpaRepository.existsByCode(code);
   }
+
+  @Override
+  public void deleteById(String id) {
+    wardJpaRepository.deleteById(id);
+  }
 }

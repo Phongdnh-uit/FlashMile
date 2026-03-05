@@ -60,4 +60,9 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   public boolean existsByCode(String code) {
     return provinceJpaRepository.existsByCode(code);
   }
+
+  @Override
+  public void deleteById(String id) {
+    provinceJpaRepository.deleteById(id);
+  }
 }

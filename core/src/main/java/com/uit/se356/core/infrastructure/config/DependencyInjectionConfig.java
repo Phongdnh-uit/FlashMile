@@ -6,9 +6,7 @@ import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.common.utils.SecurityUtil;
-import com.uit.se356.core.application.area.handler.CreateProvinceHandler;
-import com.uit.se356.core.application.area.handler.CreateWardHandler;
-import com.uit.se356.core.application.area.handler.ProvinceSummaryQueryHandler;
+import com.uit.se356.core.application.area.handler.*;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.application.area.port.WardRepository;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
@@ -262,6 +260,16 @@ public class DependencyInjectionConfig {
   }
 
   @Bean
+  CommandHandler<?, ?> updateProvinceHandler(ProvinceRepository provinceRepository) {
+    return new UpdateProvinceHandler(provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteProvinceHandler(ProvinceRepository provinceRepository) {
+    return new DeleteProvinceHandler(provinceRepository);
+  }
+
+  @Bean
   QueryHandler<?, ?> provinceSummaryQueryHandler(ProvinceRepository provinceRepository) {
     return new ProvinceSummaryQueryHandler(provinceRepository);
   }
@@ -270,5 +278,21 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> createWardHandler(
       WardRepository wardRepository, ProvinceRepository provinceRepository) {
     return new CreateWardHandler(wardRepository, provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateWardHandler(
+      WardRepository wardRepository, ProvinceRepository provinceRepository) {
+    return new UpdateWardHandler(wardRepository, provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteWardHandler(WardRepository wardRepository) {
+    return new DeleteWardHandler(wardRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> wardSummaryQueryHandler(WardRepository wardRepository) {
+    return new WardSummaryQueryHandler(wardRepository);
   }
 }

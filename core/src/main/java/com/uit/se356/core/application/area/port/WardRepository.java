@@ -15,4 +15,6 @@ public interface WardRepository {
   PageResponse<Ward> findAll(SearchPageable pageable);
 
   boolean existsByCode(String code);
+
+  void deleteById(String id);
 }

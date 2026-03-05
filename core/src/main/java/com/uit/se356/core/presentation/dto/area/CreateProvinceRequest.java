@@ -1,4 +1,4 @@
-package com.uit.se356.core.application.area.dto;
+package com.uit.se356.core.presentation.dto.area;
 
 import com.uit.se356.core.domain.entities.area.Province;
 import com.uit.se356.core.domain.vo.area.BoundingBox;

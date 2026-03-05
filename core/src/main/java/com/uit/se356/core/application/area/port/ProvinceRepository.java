@@ -15,4 +15,6 @@ public interface ProvinceRepository {
   PageResponse<Province> findAll(SearchPageable pageable);
 
   boolean existsByCode(String code);
+
+  void deleteById(String id);
 }
