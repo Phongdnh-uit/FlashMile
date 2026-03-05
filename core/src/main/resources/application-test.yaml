@@ -66,3 +66,6 @@ application:
     admin-full-name: Admin Local
     admin-password: password
     admin-phone-number: "+84912345678"
+  s3:
+    main-bucket-name: "flashmile-main"
+    quarantine-bucket-name: "flashmile-quarantine"
