@@ -1,4 +1,4 @@
--- V8__create_provinces_table.sql
+-- V9__create_provinces_table.sql
 -- Create provinces table for geographic area management
 
 CREATE TABLE provinces (

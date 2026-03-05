@@ -1,0 +1,42 @@
+package com.uit.se356.core.application.area.handler;
+
+import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.services.CommandHandler;
+import com.uit.se356.core.application.area.command.CreateWardCommand;
+import com.uit.se356.core.application.area.port.ProvinceRepository;
+import com.uit.se356.core.application.area.port.WardRepository;
+import com.uit.se356.core.application.area.result.WardResult;
+import com.uit.se356.core.domain.entities.area.Ward;
+import com.uit.se356.core.domain.exception.AreaErrorCode;
+
+public class CreateWardHandler implements CommandHandler<CreateWardCommand, WardResult> {
+
+  private final WardRepository wardRepository;
+  private final ProvinceRepository provinceRepository;
+
+  public CreateWardHandler(WardRepository wardRepository, ProvinceRepository provinceRepository) {
+    this.wardRepository = wardRepository;
+    this.provinceRepository = provinceRepository;
+  }
+
+  @Override
+  public WardResult handle(CreateWardCommand command) {
+    if (wardRepository.existsByCode(command.code())) {
+      throw new AppException(AreaErrorCode.DUPLICATE_WARD_CODE);
+    }
+
+    provinceRepository
+        .findById(command.provinceId())
+        .orElseThrow(
+            () ->
+                new AppException(
+                    AreaErrorCode.PROVINCE_NOT_FOUND, "The specified Province ID does not exist."));
+
+    Ward newWard =
+        Ward.createNewWard(
+            command.code(), command.name(), command.provinceId(), command.boundingBox());
+    Ward savedWard = wardRepository.create(newWard);
+
+    return WardResult.fromEntity(savedWard);
+  }
+}

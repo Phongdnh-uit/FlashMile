@@ -7,8 +7,10 @@ import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.common.utils.SecurityUtil;
 import com.uit.se356.core.application.area.handler.CreateProvinceHandler;
+import com.uit.se356.core.application.area.handler.CreateWardHandler;
 import com.uit.se356.core.application.area.handler.ProvinceSummaryQueryHandler;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
+import com.uit.se356.core.application.area.port.WardRepository;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
 import com.uit.se356.core.application.authentication.handler.LogoutHandler;
 import com.uit.se356.core.application.authentication.handler.OAuth2LoginCommandHandler;
@@ -262,5 +264,11 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> provinceSummaryQueryHandler(ProvinceRepository provinceRepository) {
     return new ProvinceSummaryQueryHandler(provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createWardHandler(
+      WardRepository wardRepository, ProvinceRepository provinceRepository) {
+    return new CreateWardHandler(wardRepository, provinceRepository);
   }
 }

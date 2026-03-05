@@ -5,6 +5,7 @@ import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.application.area.projections.ProvinceSummaryProjection;
 import com.uit.se356.core.application.area.query.ProvinceSummaryQuery;
+import com.uit.se356.core.domain.entities.area.Province;
 
 /** Query Handler để xử lý lấy danh sách Province */
 public class ProvinceSummaryQueryHandler
@@ -19,8 +20,7 @@ public class ProvinceSummaryQueryHandler
   @Override
   public PageResponse<ProvinceSummaryProjection> handle(ProvinceSummaryQuery query) {
     // Lấy danh sách provinces từ repository
-    PageResponse<com.uit.se356.core.domain.entities.area.Province> provinces =
-        provinceRepository.findAll(query.pageable());
+    PageResponse<Province> provinces = provinceRepository.findAll(query.pageable());
 
     // Convert domain entities sang projection
     return new PageResponse<>(
