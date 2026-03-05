@@ -5,21 +5,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.common.services.CommandHandler;
+import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.ImportProvinceGeoJsonCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.domain.entities.area.Province;
 import com.uit.se356.core.domain.vo.area.BoundingBox;
 import com.uit.se356.core.infrastructure.utils.GeoJsonParserUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 public class ImportProvinceGeoJsonHandler
     implements CommandHandler<ImportProvinceGeoJsonCommand, Integer> {
 
   private final ProvinceRepository provinceRepository;
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
+  private final IdGenerator idGenerator; // 1. Khai báo IdGenerator
 
-  public ImportProvinceGeoJsonHandler(ProvinceRepository provinceRepository) {
+  // 2. Inject qua constructor
+  public ImportProvinceGeoJsonHandler(
+      ProvinceRepository provinceRepository, ObjectMapper objectMapper, IdGenerator idGenerator) {
     this.provinceRepository = provinceRepository;
+    this.objectMapper = objectMapper;
+    this.idGenerator = idGenerator;
   }
 
   @Override
@@ -28,40 +36,56 @@ public class ImportProvinceGeoJsonHandler
     int count = 0;
     try {
       JsonNode rootNode = objectMapper.readTree(command.file().getInputStream());
-      JsonNode features = rootNode.get("features");
+      JsonNode features = rootNode.path("features");
 
-      if (features == null || !features.isArray()) {
+      if (features.isMissingNode() || !features.isArray()) {
         throw new AppException(CommonErrorCode.VALIDATION_ERROR, "Invalid GeoJSON format");
       }
 
       for (JsonNode feature : features) {
-        JsonNode properties = feature.get("properties");
-        JsonNode geometry = feature.get("geometry");
+        try {
+          JsonNode properties = feature.path("properties");
+          JsonNode geometry = feature.path("geometry");
 
-        String name =
-            properties.has("ten_tinh")
-                ? properties.get("ten_tinh").asText()
-                : properties.get("Name").asText();
-        String code =
-            properties.has("ma_tinh")
-                ? properties.get("ma_tinh").asText()
-                : properties.get("Code").asText();
+          if ("Point".equalsIgnoreCase(geometry.path("type").asText(""))) continue;
 
-        BoundingBox bbox = GeoJsonParserUtil.calculateBoundingBox(geometry);
+          String name =
+              extractProperty(properties, "TinhThanh", "ten_tinh", "Name", "Ten", "name_1");
+          String code = extractProperty(properties, "Ma", "ma_tinh", "Code", "ID_1", "OBJECTID");
 
-        if (!provinceRepository.existsByCode(code)) {
-          Province province = Province.createNewProvince(code, name, bbox);
-          provinceRepository.create(province);
-          count++;
+          if (name.isBlank() || code.isBlank()) continue;
+
+          BoundingBox bbox = GeoJsonParserUtil.calculateBoundingBox(geometry);
+
+          if (!provinceRepository.existsByCode(code)) {
+            // 3. TẠO ID MỚI VÀ TRUYỀN VÀO HÀM CREATE
+            String newId = idGenerator.generate().toString();
+            Province province = Province.create(newId, code, name, bbox);
+
+            provinceRepository.create(province);
+            count++;
+          }
+        } catch (Exception ex) {
+          log.error(
+              "Lỗi khi xử lý tỉnh [{}]: {}",
+              feature.path("properties").toString(),
+              ex.getMessage());
         }
       }
     } catch (Exception e) {
       throw new AppException(
-          CommonErrorCode.UNCATEGORIZED_EXCEPTION,
-          "Failed to parse GeoJSON file: " + e.getMessage());
+          CommonErrorCode.UNCATEGORIZED_EXCEPTION, "Failed to parse GeoJSON: " + e.getMessage());
     }
 
-    // Trả về số lượng Tỉnh đã import thành công
     return count;
+  }
+
+  private String extractProperty(JsonNode properties, String... possibleKeys) {
+    for (String key : possibleKeys) {
+      if (properties.hasNonNull(key)) {
+        return properties.get(key).asText().trim();
+      }
+    }
+    return "";
   }
 }

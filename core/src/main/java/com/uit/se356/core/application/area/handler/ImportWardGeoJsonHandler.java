@@ -19,12 +19,15 @@ public class ImportWardGeoJsonHandler implements CommandHandler<ImportWardGeoJso
 
   private final ProvinceRepository provinceRepository;
   private final WardRepository wardRepository;
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
   public ImportWardGeoJsonHandler(
-      ProvinceRepository provinceRepository, WardRepository wardRepository) {
+      ProvinceRepository provinceRepository,
+      WardRepository wardRepository,
+      ObjectMapper objectMapper) {
     this.provinceRepository = provinceRepository;
     this.wardRepository = wardRepository;
+    this.objectMapper = objectMapper;
   }
 
   @Override

@@ -21,3 +21,12 @@ CREATE TABLE wards (
     -- Foreign key constraint to provinces table
     CONSTRAINT fk_wards_province FOREIGN KEY (province_id) REFERENCES provinces(id) ON DELETE CASCADE
 );
+
+-- Create index for code (frequently used in searches)
+CREATE INDEX idx_wards_code ON wards(code);
+
+-- Create index for name (frequently used in searches)
+CREATE INDEX idx_wards_name ON wards(name);
+
+-- Create index for province_id (used in joins and filtering)
+CREATE INDEX idx_wards_province_id ON wards(province_id);

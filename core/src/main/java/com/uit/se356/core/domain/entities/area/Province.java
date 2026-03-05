@@ -23,6 +23,14 @@ public class Province {
    * Factory method để tạo một tỉnh/thành phố mới (không có ID) Dùng khi tạo mới từ request từ người
    * dùng
    */
+  public static Province create(String id, String code, String name, BoundingBox boundingBox) {
+    Objects.requireNonNull(id); // Ép buộc phải có ID
+    Objects.requireNonNull(code);
+    Objects.requireNonNull(name);
+    Objects.requireNonNull(boundingBox);
+    return new Province(id, code, name, boundingBox);
+  }
+
   public static Province createNewProvince(String code, String name, BoundingBox boundingBox) {
     Objects.requireNonNull(code, "Province code must not be null");
     Objects.requireNonNull(name, "Province name must not be null");
