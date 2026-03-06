@@ -2,6 +2,7 @@ package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.CommandHandler;
+import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.CreateWardCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.application.area.port.WardRepository;
@@ -13,10 +14,12 @@ public class CreateWardHandler implements CommandHandler<CreateWardCommand, Ward
 
   private final WardRepository wardRepository;
   private final ProvinceRepository provinceRepository;
+  private final IdGenerator idGenerator;
 
-  public CreateWardHandler(WardRepository wardRepository, ProvinceRepository provinceRepository) {
+  public CreateWardHandler(WardRepository wardRepository, ProvinceRepository provinceRepository, IdGenerator idGenerator) {
     this.wardRepository = wardRepository;
     this.provinceRepository = provinceRepository;
+    this.idGenerator = idGenerator;
   }
 
   @Override
@@ -34,7 +37,7 @@ public class CreateWardHandler implements CommandHandler<CreateWardCommand, Ward
 
     Ward newWard =
         Ward.createNewWard(
-            command.code(), command.name(), command.provinceId(), command.boundingBox());
+            idGenerator.generate().toString(), command.code(), command.name(), command.provinceId(), command.boundingBox());
     Ward savedWard = wardRepository.create(newWard);
 
     return WardResult.fromEntity(savedWard);

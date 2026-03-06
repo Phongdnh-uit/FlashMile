@@ -22,7 +22,8 @@ public class Ward {
 
   // Factory method
   public static Ward createNewWard(
-      String code, String name, String provinceId, BoundingBox boundingBox) {
+      String id, String code, String name, String provinceId, BoundingBox boundingBox) {
+    Objects.requireNonNull(id);
     Objects.requireNonNull(code);
     Objects.requireNonNull(name);
     Objects.requireNonNull(boundingBox);
@@ -31,7 +32,7 @@ public class Ward {
       throw new AppException(AreaErrorCode.MISSING_PROVINCE_ID);
     }
 
-    return new Ward(null, code, name, provinceId, boundingBox);
+    return new Ward(id, code, name, provinceId, boundingBox);
   }
 
   public void update(String code, String name, String provinceId, BoundingBox boundingBox) {

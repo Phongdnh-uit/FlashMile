@@ -20,9 +20,8 @@ public class ImportProvinceGeoJsonHandler
 
   private final ProvinceRepository provinceRepository;
   private final ObjectMapper objectMapper;
-  private final IdGenerator idGenerator; // 1. Khai báo IdGenerator
+  private final IdGenerator idGenerator;
 
-  // 2. Inject qua constructor
   public ImportProvinceGeoJsonHandler(
       ProvinceRepository provinceRepository, ObjectMapper objectMapper, IdGenerator idGenerator) {
     this.provinceRepository = provinceRepository;
@@ -49,16 +48,19 @@ public class ImportProvinceGeoJsonHandler
 
           if ("Point".equalsIgnoreCase(geometry.path("type").asText(""))) continue;
 
-          String name =
-              extractProperty(properties, "TinhThanh", "ten_tinh", "Name", "Ten", "name_1");
-          String code = extractProperty(properties, "Ma", "ma_tinh", "Code", "ID_1", "OBJECTID");
+          // CẬP NHẬT: Quét các key phù hợp với file gis.vn
+          String name = extractProperty(properties, "ten_tinh", "name", "TinhThanh");
+          String code = extractProperty(properties, "ma_tinh", "ISO3166-2", "Ma");
+
+          if (code.isBlank()) {
+            code = extractProperty(properties, "@id", "OBJECTID");
+          }
 
           if (name.isBlank() || code.isBlank()) continue;
 
           BoundingBox bbox = GeoJsonParserUtil.calculateBoundingBox(geometry);
 
           if (!provinceRepository.existsByCode(code)) {
-            // 3. TẠO ID MỚI VÀ TRUYỀN VÀO HÀM CREATE
             String newId = idGenerator.generate().toString();
             Province province = Province.create(newId, code, name, bbox);
 
@@ -66,15 +68,11 @@ public class ImportProvinceGeoJsonHandler
             count++;
           }
         } catch (Exception ex) {
-          log.error(
-              "Lỗi khi xử lý tỉnh [{}]: {}",
-              feature.path("properties").toString(),
-              ex.getMessage());
+          log.error("Lỗi khi xử lý tỉnh [{}]: {}", feature.path("properties").toString(), ex.getMessage());
         }
       }
     } catch (Exception e) {
-      throw new AppException(
-          CommonErrorCode.UNCATEGORIZED_EXCEPTION, "Failed to parse GeoJSON: " + e.getMessage());
+      throw new AppException(CommonErrorCode.UNCATEGORIZED_EXCEPTION, "Failed to parse GeoJSON: " + e.getMessage());
     }
 
     return count;

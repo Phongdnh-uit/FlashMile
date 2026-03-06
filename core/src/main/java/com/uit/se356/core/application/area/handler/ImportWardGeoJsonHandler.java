@@ -1,10 +1,14 @@
 package com.uit.se356.core.application.area.handler;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.common.services.CommandHandler;
+import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.ImportWardGeoJsonCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.application.area.port.WardRepository;
@@ -13,87 +17,90 @@ import com.uit.se356.core.domain.entities.area.Ward;
 import com.uit.se356.core.domain.vo.area.BoundingBox;
 import com.uit.se356.core.infrastructure.utils.GeoJsonParserUtil;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 public class ImportWardGeoJsonHandler implements CommandHandler<ImportWardGeoJsonCommand, Integer> {
 
   private final ProvinceRepository provinceRepository;
   private final WardRepository wardRepository;
   private final ObjectMapper objectMapper;
+  private final IdGenerator idGenerator; // Bổ sung IdGenerator
 
   public ImportWardGeoJsonHandler(
       ProvinceRepository provinceRepository,
       WardRepository wardRepository,
-      ObjectMapper objectMapper) {
+      ObjectMapper objectMapper,
+      IdGenerator idGenerator) { // Inject vào đây
     this.provinceRepository = provinceRepository;
     this.wardRepository = wardRepository;
     this.objectMapper = objectMapper;
+    this.idGenerator = idGenerator;
   }
 
   @Override
   @Transactional
   public Integer handle(ImportWardGeoJsonCommand command) {
     int count = 0;
-    try {
-      JsonNode rootNode = objectMapper.readTree(command.file().getInputStream());
-      JsonNode features = rootNode.get("features");
+    JsonFactory factory = new JsonFactory();
 
-      if (features == null || !features.isArray()) {
-        throw new AppException(CommonErrorCode.VALIDATION_ERROR, "Invalid GeoJSON format");
+    try (JsonParser parser = factory.createParser(command.file().getInputStream())) {
+      // Di chuyển con trỏ đến mảng "features"
+      while (parser.nextToken() != null) {
+        if ("features".equals(parser.getCurrentName())) {
+          break;
+        }
       }
 
-      for (JsonNode feature : features) {
-        JsonNode properties = feature.get("properties");
-        JsonNode geometry = feature.get("geometry");
+      if (parser.nextToken() != JsonToken.START_ARRAY) {
+        throw new AppException(CommonErrorCode.VALIDATION_ERROR, "Không tìm thấy mảng features");
+      }
 
-        String wardCode =
-            properties.has("ma_xa")
-                ? properties.get("ma_xa").asText()
-                : properties.get("Code").asText();
-        String wardName =
-            properties.has("ten_xa")
-                ? properties.get("ten_xa").asText()
-                : properties.get("Name").asText();
-        String provinceCode =
-            properties.has("ma_tinh")
-                ? properties.get("ma_tinh").asText()
-                : properties.get("ProvinceCode").asText();
+      // Đọc từng Feature một (Streaming)
+      while (parser.nextToken() == JsonToken.START_OBJECT) {
+        try {
+          JsonNode feature = objectMapper.readTree(parser); // Đọc 1 feature vào RAM
+          JsonNode properties = feature.path("properties");
+          JsonNode geometry = feature.path("geometry");
 
-        // 1. Chỉ xử lý nếu Xã này chưa tồn tại trong Database
-        if (!wardRepository.existsByCode(wardCode)) {
+          // Bỏ qua Point
+          if ("Point".equalsIgnoreCase(geometry.path("type").asText(""))) continue;
 
-          // 2. Tra cứu Province ID từ Province Code
-          Optional<Province> provinceOpt = provinceRepository.findByCode(provinceCode);
+          // Lấy dữ liệu theo key từ file gis.vn
+          String wardCode = properties.path("ma_xa").asText().trim();
+          String wardName = properties.path("ten_xa").asText().trim();
+          String provinceCode = properties.path("ma_tinh").asText().trim();
 
-          if (provinceOpt.isPresent()) {
-            String provinceId = provinceOpt.get().getId();
+          if (wardCode.isEmpty() || wardName.isEmpty()) continue;
 
-            // 3. Tính toán Bounding Box bằng Utility đã tạo
-            BoundingBox bbox = GeoJsonParserUtil.calculateBoundingBox(geometry);
+          if (!wardRepository.existsByCode(wardCode)) {
+            Optional<Province> provinceOpt = provinceRepository.findByCode(provinceCode);
 
-            // 4. Tạo và lưu Entity Xã
-            Ward ward = Ward.createNewWard(wardCode, wardName, provinceId, bbox);
-            wardRepository.create(ward);
-            count++;
+            if (provinceOpt.isPresent()) {
+              BoundingBox bbox = GeoJsonParserUtil.calculateBoundingBox(geometry);
 
-          } else {
-            // Ghi tam log ra
-            System.out.println(
-                "Skipped Ward [{}] {} because Province Code [{}] is not found in DB: wardCode: "
-                    + wardCode
-                    + " wardName: "
-                    + wardName
-                    + " provinceCode: "
-                    + provinceCode);
+              // TẠO ID MỚI TRUYỀN VÀO HÀM CREATE ĐỂ TRÁNH LỖI IDENTIFIER PERSIST
+              String newId = idGenerator.generate().toString();
+
+              // Giả định bạn đã đổi Ward.createNewWard thành Ward.create(id, code, name...)
+              Ward ward = Ward.createNewWard(newId, wardCode, wardName, provinceOpt.get().getId(), bbox);
+
+              wardRepository.create(ward);
+              count++;
+
+            } else {
+              log.warn("Bỏ qua Xã [{}] vì không tìm thấy mã Tỉnh [{}]", wardName, provinceCode);
+            }
           }
+        } catch (Exception ex) {
+          log.error("Lỗi 1 feature phường/xã: {}", ex.getMessage());
         }
       }
     } catch (Exception e) {
-      throw new AppException(
-          CommonErrorCode.UNCATEGORIZED_EXCEPTION,
-          "Failed to parse Ward GeoJSON file: " + e.getMessage());
+      throw new AppException(CommonErrorCode.UNCATEGORIZED_EXCEPTION, "Lỗi đọc file Streaming: " + e.getMessage());
     }
-
-    return count; // Trả về số lượng Xã đã import thành công
+    return count;
   }
 }
