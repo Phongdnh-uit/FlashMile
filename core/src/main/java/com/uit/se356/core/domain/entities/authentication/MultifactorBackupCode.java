@@ -2,7 +2,7 @@ package com.uit.se356.core.domain.entities.authentication;
 
 import com.uit.se356.core.domain.vo.authentication.MultifactorBackupCodeId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
 
 public class MultifactorBackupCode {
@@ -10,10 +10,10 @@ public class MultifactorBackupCode {
   private final MultifactorBackupCodeId id;
   private final UserId userId;
   private final String hashedCode;
-  private Timestamp usedAt;
+  private Instant usedAt;
 
   private MultifactorBackupCode(
-      MultifactorBackupCodeId id, UserId userId, String hashedCode, Timestamp usedAt) {
+      MultifactorBackupCodeId id, UserId userId, String hashedCode, Instant usedAt) {
     this.id = Objects.requireNonNull(id);
     this.userId = Objects.requireNonNull(userId);
     this.hashedCode = Objects.requireNonNull(hashedCode);
@@ -23,17 +23,17 @@ public class MultifactorBackupCode {
   // ============================ FACTORY ============================
 
   public static MultifactorBackupCode create(
-      MultifactorBackupCodeId id, UserId userId, String hashedCode, Timestamp usedAt) {
+      MultifactorBackupCodeId id, UserId userId, String hashedCode, Instant usedAt) {
     return new MultifactorBackupCode(id, userId, hashedCode, usedAt);
   }
 
   public static MultifactorBackupCode rehydrate(
-      MultifactorBackupCodeId id, UserId userId, String hashedCode, Timestamp usedAt) {
+      MultifactorBackupCodeId id, UserId userId, String hashedCode, Instant usedAt) {
     return new MultifactorBackupCode(id, userId, hashedCode, usedAt);
   }
 
   // ============================ BEHAVIOR ============================
-  public void markAsUsed(Timestamp timestamp) {
+  public void markAsUsed(Instant timestamp) {
     this.usedAt = Objects.requireNonNull(timestamp, "Timestamp cannot be null");
   }
 
@@ -50,7 +50,7 @@ public class MultifactorBackupCode {
     return hashedCode;
   }
 
-  public Timestamp getUsedAt() {
+  public Instant getUsedAt() {
     return usedAt;
   }
 }
