@@ -98,7 +98,11 @@ public class ImportWardGeoJsonHandler implements CommandHandler<ImportWardGeoJso
               count++;
 
             } else {
-              System.out.println("Không tìm thấy tỉnh/thành phố với mã: " + provinceCode + " cho phường/xã: " + wardName);
+              System.out.println(
+                  "Không tìm thấy tỉnh/thành phố với mã: "
+                      + provinceCode
+                      + " cho phường/xã: "
+                      + wardName);
             }
           }
         } catch (Exception ex) {

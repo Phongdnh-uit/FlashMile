@@ -57,10 +57,10 @@ public class ImportProvinceGeoJsonHandler
 
           ProvinceType type = ProvinceType.PROVINCE; // Mặc định là Tỉnh
 
-          if (loai.equalsIgnoreCase("Thành phố") ||
-              name.contains("TP.") ||
-              name.contains("TP ") ||
-              name.toLowerCase().contains("thành phố")) {
+          if (loai.equalsIgnoreCase("Thành phố")
+              || name.contains("TP.")
+              || name.contains("TP ")
+              || name.toLowerCase().contains("thành phố")) {
             type = ProvinceType.CITY;
           }
 
@@ -68,8 +68,7 @@ public class ImportProvinceGeoJsonHandler
 
           if (!provinceRepository.existsByCode(code)) {
             String newId = idGenerator.generate().toString();
-            Province province =
-                Province.create(new ProvinceId(newId), code, name, type);
+            Province province = Province.create(new ProvinceId(newId), code, name, type);
 
             provinceRepository.create(province);
             count++;
