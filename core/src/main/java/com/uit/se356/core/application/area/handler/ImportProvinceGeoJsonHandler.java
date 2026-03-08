@@ -49,9 +49,19 @@ public class ImportProvinceGeoJsonHandler
           // CẬP NHẬT: Quét các key phù hợp với file gis.vn
           String name = extractProperty(properties, "ten_tinh", "name", "TinhThanh");
           String code = extractProperty(properties, "ma_tinh", "ISO3166-2", "Ma");
+          String loai = extractProperty(properties, "loai");
 
           if (code.isBlank()) {
             code = extractProperty(properties, "@id", "OBJECTID");
+          }
+
+          ProvinceType type = ProvinceType.PROVINCE; // Mặc định là Tỉnh
+
+          if (loai.equalsIgnoreCase("Thành phố") ||
+              name.contains("TP.") ||
+              name.contains("TP ") ||
+              name.toLowerCase().contains("thành phố")) {
+            type = ProvinceType.CITY;
           }
 
           if (name.isBlank() || code.isBlank()) continue;
@@ -59,7 +69,7 @@ public class ImportProvinceGeoJsonHandler
           if (!provinceRepository.existsByCode(code)) {
             String newId = idGenerator.generate().toString();
             Province province =
-                Province.create(new ProvinceId(newId), code, name, ProvinceType.PROVINCE);
+                Province.create(new ProvinceId(newId), code, name, type);
 
             provinceRepository.create(province);
             count++;
