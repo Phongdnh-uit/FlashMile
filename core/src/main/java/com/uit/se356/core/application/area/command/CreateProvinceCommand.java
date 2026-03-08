@@ -5,11 +5,11 @@ import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.core.application.area.result.ProvinceResult;
-import com.uit.se356.core.domain.vo.area.BoundingBox;
+import com.uit.se356.core.domain.vo.area.ProvinceType;
 import java.util.ArrayList;
 import java.util.List;
 
-public record CreateProvinceCommand(String code, String name, BoundingBox boundingBox)
+public record CreateProvinceCommand(String code, String name, ProvinceType type)
     implements Command<ProvinceResult> {
   public CreateProvinceCommand {
     List<FieldError> errors = new ArrayList<>();
@@ -23,12 +23,10 @@ public record CreateProvinceCommand(String code, String name, BoundingBox boundi
           new FieldError(
               "name", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"name"}));
     }
-    if (boundingBox == null) {
+    if (type == null) {
       errors.add(
           new FieldError(
-              "boundingBox",
-              CommonErrorCode.FIELD_REQUIRED.getMessageKey(),
-              new Object[] {"boundingBox"}));
+              "type", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"type"}));
     }
     if (!errors.isEmpty()) {
       throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);

@@ -1,11 +1,12 @@
 package com.uit.se356.core.domain.entities.contact;
 
+import com.uit.se356.core.domain.vo.area.ContactId;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.time.Instant;
 
 public class RecipientContact {
-  private final String id;
+  private final ContactId id;
   private final UserId ownerId;
   private String name;
   private PhoneNumber phoneNumber;
@@ -14,8 +15,13 @@ public class RecipientContact {
 
   // Private constructor for rehydration
   private RecipientContact(
-      Object o, UserId ownerId, String name, PhoneNumber phoneNumber, String address, String note) {
-    this.id = (String) o;
+      ContactId id,
+      UserId ownerId,
+      String name,
+      PhoneNumber phoneNumber,
+      String address,
+      String note) {
+    this.id = id;
     this.ownerId = ownerId;
     this.name = name;
     this.phoneNumber = phoneNumber;
@@ -32,11 +38,16 @@ public class RecipientContact {
   }
 
   // Factory method to create a new contact
-  public static RecipientContact createNewContact(
-      UserId ownerId, String name, PhoneNumber phoneNumber, String address, String note) {
+  public static RecipientContact create(
+      ContactId id,
+      UserId ownerId,
+      String name,
+      PhoneNumber phoneNumber,
+      String address,
+      String note) {
     Instant now = Instant.now();
     return new RecipientContact(
-        null, // ID will be set by the persistence layer
+        id, // ID will be set by the persistence layer
         ownerId,
         name,
         phoneNumber,
@@ -45,7 +56,7 @@ public class RecipientContact {
   }
 
   public static RecipientContact rehydrate(
-      String id,
+      ContactId id,
       UserId ownerId,
       String name,
       PhoneNumber phoneNumber,
@@ -55,7 +66,7 @@ public class RecipientContact {
   }
 
   // ============================ GETTERS ============================
-  public String getId() {
+  public ContactId getId() {
     return id;
   }
 

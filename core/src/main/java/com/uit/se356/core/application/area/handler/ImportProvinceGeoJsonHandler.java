@@ -9,12 +9,10 @@ import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.ImportProvinceGeoJsonCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.domain.entities.area.Province;
-import com.uit.se356.core.domain.vo.area.BoundingBox;
-import com.uit.se356.core.infrastructure.utils.GeoJsonParserUtil;
-import lombok.extern.slf4j.Slf4j;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
+import com.uit.se356.core.domain.vo.area.ProvinceType;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 public class ImportProvinceGeoJsonHandler
     implements CommandHandler<ImportProvinceGeoJsonCommand, Integer> {
 
@@ -58,21 +56,23 @@ public class ImportProvinceGeoJsonHandler
 
           if (name.isBlank() || code.isBlank()) continue;
 
-          BoundingBox bbox = GeoJsonParserUtil.calculateBoundingBox(geometry);
-
           if (!provinceRepository.existsByCode(code)) {
             String newId = idGenerator.generate().toString();
-            Province province = Province.create(newId, code, name, bbox);
+            Province province =
+                Province.create(new ProvinceId(newId), code, name, ProvinceType.PROVINCE);
 
             provinceRepository.create(province);
             count++;
           }
         } catch (Exception ex) {
-          log.error("Lỗi khi xử lý tỉnh [{}]: {}", feature.path("properties").toString(), ex.getMessage());
+          throw new AppException(
+              CommonErrorCode.UNCATEGORIZED_EXCEPTION,
+              "Failed to process feature: " + ex.getMessage());
         }
       }
     } catch (Exception e) {
-      throw new AppException(CommonErrorCode.UNCATEGORIZED_EXCEPTION, "Failed to parse GeoJSON: " + e.getMessage());
+      throw new AppException(
+          CommonErrorCode.UNCATEGORIZED_EXCEPTION, "Failed to parse GeoJSON: " + e.getMessage());
     }
 
     return count;

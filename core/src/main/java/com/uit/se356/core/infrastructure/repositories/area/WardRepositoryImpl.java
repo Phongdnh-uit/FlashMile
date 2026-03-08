@@ -4,7 +4,9 @@ import com.uit.se356.common.dto.PageResponse;
 import com.uit.se356.common.dto.SearchPageable;
 import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.area.port.WardRepository;
+import com.uit.se356.core.application.area.projections.WardSummaryProjection;
 import com.uit.se356.core.domain.entities.area.Ward;
+import com.uit.se356.core.domain.vo.area.WardId;
 import com.uit.se356.core.infrastructure.persistence.entities.area.WardJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.area.WardPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.area.WardJpaRepository;
@@ -31,7 +33,7 @@ public class WardRepositoryImpl implements WardRepository {
 
   @Override
   public Ward update(Ward ward) {
-    Optional<WardJpaEntity> existingEntityOpt = wardJpaRepository.findById(ward.getId());
+    Optional<WardJpaEntity> existingEntityOpt = wardJpaRepository.findById(ward.getId().value());
     if (existingEntityOpt.isEmpty()) {
       throw new RuntimeException("Ward not found with id: " + ward.getId());
     }
@@ -43,16 +45,17 @@ public class WardRepositoryImpl implements WardRepository {
   }
 
   @Override
-  public Optional<Ward> findById(String id) {
-    return wardJpaRepository.findById(id).map(wardPersistenceMapper::toDomain);
+  public Optional<Ward> findById(WardId id) {
+    return wardJpaRepository.findById(id.value()).map(wardPersistenceMapper::toDomain);
   }
 
   @Override
-  public PageResponse<Ward> findAll(SearchPageable pageable) {
-    Specification<WardJpaEntity> spec = RSQLJPASupport.toSpecification(pageable.filter());
-    Pageable pageableRequest = PageableUtil.createPageable(pageable);
-    var page = wardJpaRepository.findAll(spec, pageableRequest);
-    return PageResponse.from(page, wardPersistenceMapper::toDomain);
+  public PageResponse<WardSummaryProjection> findAll(SearchPageable searchCriteria) {
+    Specification<WardJpaEntity> spec = RSQLJPASupport.toSpecification(searchCriteria.filter());
+    Pageable pageable = PageableUtil.createPageable(searchCriteria);
+    var page =
+        wardJpaRepository.findBy(spec, q -> q.as(WardSummaryProjection.class).page(pageable));
+    return PageResponse.from(page);
   }
 
   @Override
@@ -61,7 +64,7 @@ public class WardRepositoryImpl implements WardRepository {
   }
 
   @Override
-  public void deleteById(String id) {
-    wardJpaRepository.deleteById(id);
+  public void deleteById(WardId id) {
+    wardJpaRepository.deleteById(id.value());
   }
 }

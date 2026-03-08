@@ -1,40 +1,39 @@
 package com.uit.se356.core.infrastructure.persistence.entities.area;
 
 import com.uit.se356.common.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import com.uit.se356.core.domain.vo.area.WardType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Getter
 @Setter
 @Entity
 @Table(
     name = "wards",
-    indexes = {@Index(name = "idx_ward_province_id", columnList = "province_id")})
+    indexes = {
+      @Index(name = "idx_wards_code", columnList = "code"),
+      @Index(name = "idx_wards_name", columnList = "name"),
+      @Index(name = "idx_wards_province_id", columnList = "province_id")
+    })
 public class WardJpaEntity extends BaseEntity<String> {
-  @Column(nullable = false, unique = true)
+
+  @Column(name = "code", nullable = false, unique = true, length = 50)
   private String code;
 
-  @Column(nullable = false)
+  @Column(name = "name", nullable = false, length = 255)
   private String name;
 
-  // Lưu Khóa ngoại tham chiếu đến Province
-  @Column(name = "province_id", nullable = false)
+  @Column(name = "province_id", nullable = false, length = 36)
   private String provinceId;
 
-  // 4 góc của Bounding Box
-  @Column(name = "min_lat", nullable = false)
-  private Double minLat;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "type", nullable = false, length = 50)
+  private WardType type;
 
-  @Column(name = "min_lng", nullable = false)
-  private Double minLng;
-
-  @Column(name = "max_lat", nullable = false)
-  private Double maxLat;
-
-  @Column(name = "max_lng", nullable = false)
-  private Double maxLng;
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "polygon", columnDefinition = "jsonb")
+  private String polygon;
 }

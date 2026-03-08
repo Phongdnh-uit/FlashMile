@@ -255,8 +255,9 @@ public class DependencyInjectionConfig {
   }
 
   @Bean
-  CommandHandler<?, ?> createContactCommandHandler(RecipientContactRepository contactRepository) {
-    return new CreateContactHandler(contactRepository);
+  CommandHandler<?, ?> createContactCommandHandler(
+      RecipientContactRepository contactRepository, IdGenerator idGenerator) {
+    return new CreateContactHandler(contactRepository, idGenerator);
   }
 
   @Bean
@@ -270,8 +271,9 @@ public class DependencyInjectionConfig {
   }
 
   @Bean
-  CommandHandler<?, ?> createProvinceHandler(ProvinceRepository provinceRepository) {
-    return new CreateProvinceHandler(provinceRepository);
+  CommandHandler<?, ?> createProvinceHandler(
+      ProvinceRepository provinceRepository, IdGenerator idGenerator) {
+    return new CreateProvinceHandler(provinceRepository, idGenerator);
   }
 
   @Bean
@@ -291,7 +293,9 @@ public class DependencyInjectionConfig {
 
   @Bean
   CommandHandler<?, ?> createWardHandler(
-      WardRepository wardRepository, ProvinceRepository provinceRepository, IdGenerator idGenerator) {
+      WardRepository wardRepository,
+      ProvinceRepository provinceRepository,
+      IdGenerator idGenerator) {
     return new CreateWardHandler(wardRepository, provinceRepository, idGenerator);
   }
 
@@ -323,7 +327,8 @@ public class DependencyInjectionConfig {
       WardRepository wardRepository,
       ObjectMapper objectMapper,
       IdGenerator idGenerator) {
-    return new ImportWardGeoJsonHandler(provinceRepository, wardRepository, objectMapper, idGenerator);
+    return new ImportWardGeoJsonHandler(
+        provinceRepository, wardRepository, objectMapper, idGenerator);
   }
 
   @Bean

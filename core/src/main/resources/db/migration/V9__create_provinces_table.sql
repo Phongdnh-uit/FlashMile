@@ -5,12 +5,7 @@ CREATE TABLE provinces (
     id VARCHAR(36) PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
-
-    -- Bounding Box coordinates (min and max latitude/longitude)
-    min_lat DOUBLE PRECISION NOT NULL,
-    min_lng DOUBLE PRECISION NOT NULL,
-    max_lat DOUBLE PRECISION NOT NULL,
-    max_lng DOUBLE PRECISION NOT NULL,
+    type VARCHAR(50) NOT NULL DEFAULT 'PROVINCE',
 
     -- Audit information
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

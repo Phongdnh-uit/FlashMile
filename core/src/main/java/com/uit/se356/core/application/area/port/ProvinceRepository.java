@@ -2,7 +2,9 @@ package com.uit.se356.core.application.area.port;
 
 import com.uit.se356.common.dto.PageResponse;
 import com.uit.se356.common.dto.SearchPageable;
+import com.uit.se356.core.application.area.projections.ProvinceSummaryProjection;
 import com.uit.se356.core.domain.entities.area.Province;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
 import java.util.Optional;
 
 public interface ProvinceRepository {
@@ -10,13 +12,13 @@ public interface ProvinceRepository {
 
   Province update(Province province);
 
-  Optional<Province> findById(String id);
+  Optional<Province> findById(ProvinceId id);
 
-  PageResponse<Province> findAll(SearchPageable pageable);
+  PageResponse<ProvinceSummaryProjection> findAll(SearchPageable pageable);
 
   boolean existsByCode(String code);
 
-  void deleteById(String id);
+  void deleteById(ProvinceId id);
 
   Optional<Province> findByCode(String provinceCode);
 }

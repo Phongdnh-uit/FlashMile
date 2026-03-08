@@ -1,8 +1,11 @@
 package com.uit.se356.core.infrastructure.persistence.entities.area;
 
 import com.uit.se356.common.entity.BaseEntity;
+import com.uit.se356.core.domain.vo.area.ProvinceType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,16 +25,7 @@ public class ProvinceJpaEntity extends BaseEntity<String> {
   @Column(nullable = false)
   private String name;
 
-  // 4 góc của Bounding Box
-  @Column(name = "min_lat", nullable = false)
-  private Double minLat;
-
-  @Column(name = "min_lng", nullable = false)
-  private Double minLng;
-
-  @Column(name = "max_lat", nullable = false)
-  private Double maxLat;
-
-  @Column(name = "max_lng", nullable = false)
-  private Double maxLng;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ProvinceType type;
 }

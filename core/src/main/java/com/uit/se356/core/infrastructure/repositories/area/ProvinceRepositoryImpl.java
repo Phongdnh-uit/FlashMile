@@ -5,8 +5,10 @@ import com.uit.se356.common.dto.SearchPageable;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
+import com.uit.se356.core.application.area.projections.ProvinceSummaryProjection;
 import com.uit.se356.core.domain.entities.area.Province;
 import com.uit.se356.core.domain.exception.AreaErrorCode;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
 import com.uit.se356.core.infrastructure.persistence.entities.area.ProvinceJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.area.ProvincePersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.area.ProvinceJpaRepository;
@@ -35,7 +37,7 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   public Province update(Province province) {
     ProvinceJpaEntity existingEntity =
         provinceJpaRepository
-            .findById(province.getId())
+            .findById(province.getId().value())
             .orElseThrow(
                 () -> new AppException(AreaErrorCode.PROVINCE_NOT_FOUND, province.getId()));
     provincePersistenceMapper.updateEntityFromDomain(province, existingEntity);
@@ -44,16 +46,18 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   }
 
   @Override
-  public Optional<Province> findById(String id) {
-    return provinceJpaRepository.findById(id).map(provincePersistenceMapper::toDomain);
+  public Optional<Province> findById(ProvinceId id) {
+    return provinceJpaRepository.findById(id.value()).map(provincePersistenceMapper::toDomain);
   }
 
   @Override
-  public PageResponse<Province> findAll(SearchPageable pageable) {
-    Specification<ProvinceJpaEntity> spec = RSQLJPASupport.toSpecification(pageable.filter());
-    Pageable pageableRequest = PageableUtil.createPageable(pageable);
-    var page = provinceJpaRepository.findAll(spec, pageableRequest);
-    return PageResponse.from(page, provincePersistenceMapper::toDomain);
+  public PageResponse<ProvinceSummaryProjection> findAll(SearchPageable searchCriteria) {
+    Specification<ProvinceJpaEntity> spec = RSQLJPASupport.toSpecification(searchCriteria.filter());
+    Pageable pageable = PageableUtil.createPageable(searchCriteria);
+    var page =
+        provinceJpaRepository.findBy(
+            spec, q -> q.as(ProvinceSummaryProjection.class).page(pageable));
+    return PageResponse.from(page);
   }
 
   @Override
@@ -62,8 +66,8 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   }
 
   @Override
-  public void deleteById(String id) {
-    provinceJpaRepository.deleteById(id);
+  public void deleteById(ProvinceId id) {
+    provinceJpaRepository.deleteById(id.value());
   }
 
   @Override

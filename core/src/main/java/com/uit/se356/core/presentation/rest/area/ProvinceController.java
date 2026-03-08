@@ -11,7 +11,7 @@ import com.uit.se356.core.application.area.command.UpdateProvinceCommand;
 import com.uit.se356.core.application.area.projections.ProvinceSummaryProjection;
 import com.uit.se356.core.application.area.query.ProvinceSummaryQuery;
 import com.uit.se356.core.application.area.result.ProvinceResult;
-import com.uit.se356.core.domain.vo.area.BoundingBox;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
 import com.uit.se356.core.presentation.dto.area.UpdateProvinceRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,10 +43,9 @@ public class ProvinceController {
   @PutMapping("/{id}")
   public ResponseEntity<ApiResponse<ProvinceResult>> updateProvince(
       @PathVariable String id, @RequestBody UpdateProvinceRequest request) {
-    BoundingBox boundingBox =
-        new BoundingBox(request.minLat(), request.minLng(), request.maxLat(), request.maxLng());
     UpdateProvinceCommand command =
-        new UpdateProvinceCommand(id, request.code(), request.name(), boundingBox);
+        new UpdateProvinceCommand(
+            new ProvinceId(id), request.code(), request.name(), request.type());
     ProvinceResult result = commandBus.dispatch(command);
     return ResponseEntity.ok(ApiResponse.ok(result, "Province updated successfully"));
   }
@@ -54,7 +53,7 @@ public class ProvinceController {
   @Operation(summary = "Delete an existing Province (Cấp Tỉnh)")
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteProvince(@PathVariable String id) {
-    commandBus.dispatch(new DeleteProvinceCommand(id));
+    commandBus.dispatch(new DeleteProvinceCommand(new ProvinceId(id)));
     return ResponseEntity.ok(ApiResponse.ok(null, "Province deleted successfully"));
   }
 

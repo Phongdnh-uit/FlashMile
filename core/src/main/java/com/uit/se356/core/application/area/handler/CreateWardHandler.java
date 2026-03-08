@@ -9,6 +9,7 @@ import com.uit.se356.core.application.area.port.WardRepository;
 import com.uit.se356.core.application.area.result.WardResult;
 import com.uit.se356.core.domain.entities.area.Ward;
 import com.uit.se356.core.domain.exception.AreaErrorCode;
+import com.uit.se356.core.domain.vo.area.WardId;
 
 public class CreateWardHandler implements CommandHandler<CreateWardCommand, WardResult> {
 
@@ -16,7 +17,10 @@ public class CreateWardHandler implements CommandHandler<CreateWardCommand, Ward
   private final ProvinceRepository provinceRepository;
   private final IdGenerator idGenerator;
 
-  public CreateWardHandler(WardRepository wardRepository, ProvinceRepository provinceRepository, IdGenerator idGenerator) {
+  public CreateWardHandler(
+      WardRepository wardRepository,
+      ProvinceRepository provinceRepository,
+      IdGenerator idGenerator) {
     this.wardRepository = wardRepository;
     this.provinceRepository = provinceRepository;
     this.idGenerator = idGenerator;
@@ -37,7 +41,12 @@ public class CreateWardHandler implements CommandHandler<CreateWardCommand, Ward
 
     Ward newWard =
         Ward.createNewWard(
-            idGenerator.generate().toString(), command.code(), command.name(), command.provinceId(), command.boundingBox());
+            new WardId(idGenerator.generate().toString()),
+            command.code(),
+            command.name(),
+            command.provinceId(),
+            command.type(),
+            command.polygon());
     Ward savedWard = wardRepository.create(newWard);
 
     return WardResult.fromEntity(savedWard);

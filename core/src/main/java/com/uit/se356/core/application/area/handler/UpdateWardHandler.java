@@ -35,7 +35,7 @@ public class UpdateWardHandler implements CommandHandler<UpdateWardCommand, Ward
 
     Ward existingWard = wardOpt.get();
     existingWard.update(
-        command.code(), command.name(), command.provinceId(), command.boundingBox());
+        command.code(), command.name(), command.provinceId(), command.type(), command.polygon());
     Ward updatedWard = wardRepository.update(existingWard);
 
     return WardResult.fromEntity(updatedWard);

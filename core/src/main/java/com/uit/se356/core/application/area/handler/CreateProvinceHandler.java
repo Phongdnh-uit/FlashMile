@@ -2,18 +2,22 @@ package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.CommandHandler;
+import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.CreateProvinceCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.application.area.result.ProvinceResult;
 import com.uit.se356.core.domain.entities.area.Province;
 import com.uit.se356.core.domain.exception.AreaErrorCode;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
 
 public class CreateProvinceHandler
     implements CommandHandler<CreateProvinceCommand, ProvinceResult> {
   private final ProvinceRepository provinceRepository;
+  private final IdGenerator idGenerator;
 
-  public CreateProvinceHandler(ProvinceRepository provinceRepository) {
+  public CreateProvinceHandler(ProvinceRepository provinceRepository, IdGenerator idGenerator) {
     this.provinceRepository = provinceRepository;
+    this.idGenerator = idGenerator;
   }
 
   @Override
@@ -23,7 +27,11 @@ public class CreateProvinceHandler
     }
 
     Province newProvince =
-        Province.createNewProvince(command.code(), command.name(), command.boundingBox());
+        Province.create(
+            new ProvinceId(idGenerator.generate().toString()),
+            command.code(),
+            command.name(),
+            command.type());
 
     Province savedProvince = provinceRepository.create(newProvince);
     return ProvinceResult.fromEntity(savedProvince);

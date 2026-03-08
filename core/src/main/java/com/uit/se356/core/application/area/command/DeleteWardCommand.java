@@ -4,10 +4,11 @@ import com.uit.se356.common.dto.Command;
 import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.core.domain.vo.area.WardId;
 
-public record DeleteWardCommand(String id) implements Command<Void> {
+public record DeleteWardCommand(WardId id) implements Command<Void> {
   public DeleteWardCommand {
-    if (id == null || id.isBlank()) {
+    if (id == null || id.value().isBlank()) {
       throw new AppException(
           CommonErrorCode.FIELD_REQUIRED,
           new FieldError(

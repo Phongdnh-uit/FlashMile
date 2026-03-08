@@ -1,38 +1,56 @@
 package com.uit.se356.core.infrastructure.persistence.mappers.area;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.core.domain.entities.area.Ward;
-import com.uit.se356.core.domain.vo.area.BoundingBox;
+import com.uit.se356.core.domain.vo.area.Polygon;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
+import com.uit.se356.core.domain.vo.area.WardId;
 import com.uit.se356.core.infrastructure.persistence.entities.area.WardJpaEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class WardPersistenceMapper {
+  private final ObjectMapper objectMapper;
+
   public Ward toDomain(WardJpaEntity entity) {
     if (entity == null) return null;
 
-    BoundingBox boundingBox =
-        new BoundingBox(
-            entity.getMinLat(), entity.getMinLng(),
-            entity.getMaxLat(), entity.getMaxLng());
+    Polygon polygon = null;
+    try {
+      if (entity.getPolygon() != null) {
+        polygon = objectMapper.readValue(entity.getPolygon(), Polygon.class);
+      }
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to deserialize Polygon from JSON", e);
+    }
 
     return Ward.rehydrate(
-        entity.getId(), entity.getCode(), entity.getName(), entity.getProvinceId(), boundingBox);
+        new WardId(entity.getId()),
+        entity.getCode(),
+        entity.getName(),
+        new ProvinceId(entity.getProvinceId()),
+        entity.getType(),
+        polygon);
   }
 
   public WardJpaEntity toEntity(Ward domain) {
     if (domain == null) return null;
 
     WardJpaEntity entity = new WardJpaEntity();
-    entity.setId(domain.getId());
+    entity.setId(domain.getId().value());
     entity.setCode(domain.getCode());
     entity.setName(domain.getName());
-    entity.setProvinceId(domain.getProvinceId());
+    entity.setProvinceId(domain.getProvinceId().value());
+    entity.setType(domain.getType());
 
-    if (domain.getBoundingBox() != null) {
-      entity.setMinLat(domain.getBoundingBox().minLat());
-      entity.setMinLng(domain.getBoundingBox().minLng());
-      entity.setMaxLat(domain.getBoundingBox().maxLat());
-      entity.setMaxLng(domain.getBoundingBox().maxLng());
+    try {
+      String polygonJson = objectMapper.writeValueAsString(domain.getPolygon());
+      entity.setPolygon(polygonJson);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to serialize Polygon to JSON", e);
     }
     return entity;
   }
@@ -42,13 +60,15 @@ public class WardPersistenceMapper {
 
     entity.setCode(domain.getCode());
     entity.setName(domain.getName());
-    entity.setProvinceId(domain.getProvinceId());
+    entity.setProvinceId(domain.getProvinceId().value());
+    entity.setType(domain.getType());
 
-    if (domain.getBoundingBox() != null) {
-      entity.setMinLat(domain.getBoundingBox().minLat());
-      entity.setMinLng(domain.getBoundingBox().minLng());
-      entity.setMaxLat(domain.getBoundingBox().maxLat());
-      entity.setMaxLng(domain.getBoundingBox().maxLng());
+    if (domain.getPolygon() != null) {
+      try {
+        entity.setPolygon(objectMapper.writeValueAsString(domain.getPolygon()));
+      } catch (Exception e) {
+        // Log error and skip
+      }
     }
   }
 }

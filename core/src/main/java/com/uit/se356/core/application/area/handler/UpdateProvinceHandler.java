@@ -25,7 +25,7 @@ public class UpdateProvinceHandler
     }
 
     Province existingProvince = provinceOpt.get();
-    existingProvince.updateProvince(command.code(), command.name(), command.boundingBox());
+    existingProvince.update(command.code(), command.name(), command.type());
     Province updatedProvince = provinceRepository.update(existingProvince);
 
     return ProvinceResult.fromEntity(updatedProvince);

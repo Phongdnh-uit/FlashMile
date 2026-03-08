@@ -11,7 +11,8 @@ import com.uit.se356.core.application.area.command.UpdateWardCommand;
 import com.uit.se356.core.application.area.projections.WardSummaryProjection;
 import com.uit.se356.core.application.area.query.WardSummaryQuery;
 import com.uit.se356.core.application.area.result.WardResult;
-import com.uit.se356.core.domain.vo.area.BoundingBox;
+import com.uit.se356.core.domain.vo.area.ProvinceId;
+import com.uit.se356.core.domain.vo.area.WardId;
 import com.uit.se356.core.presentation.dto.area.UpdateWardRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,11 +44,14 @@ public class WardController {
   @PutMapping("/{id}")
   public ResponseEntity<ApiResponse<WardResult>> updateWard(
       @PathVariable String id, @RequestBody UpdateWardRequest request) {
-    BoundingBox boundingBox =
-        new BoundingBox(request.minLat(), request.minLng(), request.maxLat(), request.maxLng());
     UpdateWardCommand command =
         new UpdateWardCommand(
-            id, request.code(), request.name(), request.provinceId(), boundingBox);
+            new WardId(id),
+            request.code(),
+            request.name(),
+            new ProvinceId(request.provinceId()),
+            request.type(),
+            request.polygon());
     WardResult result = commandBus.dispatch(command);
     return ResponseEntity.ok(ApiResponse.ok(result, "Ward updated successfully"));
   }
@@ -55,7 +59,7 @@ public class WardController {
   @Operation(summary = "Delete an existing Ward (Cấp Xã)")
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteWard(@PathVariable String id) {
-    commandBus.dispatch(new DeleteWardCommand(id));
+    commandBus.dispatch(new DeleteWardCommand(new WardId(id)));
     return ResponseEntity.ok(ApiResponse.ok(null, "Ward deleted successfully"));
   }
 
