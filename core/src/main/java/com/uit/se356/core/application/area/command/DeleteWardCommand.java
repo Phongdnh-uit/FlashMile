@@ -6,13 +6,18 @@ import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.core.domain.vo.area.WardId;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public record DeleteWardCommand(WardId id) implements Command<Void> {
   public DeleteWardCommand {
+    List<FieldError> errors = new ArrayList<>();
     if (id == null || id.value().isBlank()) {
-      throw new AppException(
-          CommonErrorCode.FIELD_REQUIRED,
-          new FieldError(
-              "id", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"id"}));
+      errors.add(new FieldError(
+          "id", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"id"}));
+    }
+    if (!errors.isEmpty()) {
+      throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);
     }
   }
 }
