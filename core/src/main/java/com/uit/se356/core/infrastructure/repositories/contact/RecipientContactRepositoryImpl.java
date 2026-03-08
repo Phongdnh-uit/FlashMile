@@ -42,7 +42,8 @@ public class RecipientContactRepositoryImpl implements RecipientContactRepositor
             .orElseThrow(
                 () -> new AppException(ContactErrorCode.CONTACT_NOT_FOUND, contact.getId()));
     mapper.updateEntityFromDomain(contact, existingEntity);
-    return mapper.toDomain(existingEntity);
+    RecipientContactJpaEntity updatedEntity = recipientContactJpaRepository.save(existingEntity);
+    return mapper.toDomain(updatedEntity);
   }
 
   @Override

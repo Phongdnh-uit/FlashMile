@@ -46,8 +46,10 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.PhoneVerificationSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.application.contact.handler.CreateContactHandler;
+import com.uit.se356.core.application.contact.handler.DeleteContactHandler;
 import com.uit.se356.core.application.contact.handler.GetContactByPhoneHandler;
 import com.uit.se356.core.application.contact.handler.GetMyContactsHandler;
+import com.uit.se356.core.application.contact.handler.UpdateContactHandler;
 import com.uit.se356.core.application.contact.port.RecipientContactRepository;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
@@ -258,6 +260,16 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> createContactCommandHandler(
       RecipientContactRepository contactRepository, IdGenerator idGenerator) {
     return new CreateContactHandler(contactRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateContactCommandHandler(RecipientContactRepository contactRepository) {
+    return new UpdateContactHandler(contactRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteContactCommandHandler(RecipientContactRepository contactRepository) {
+    return new DeleteContactHandler(contactRepository);
   }
 
   @Bean

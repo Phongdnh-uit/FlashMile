@@ -9,12 +9,16 @@ import com.uit.se356.common.services.CommandBus;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.utils.SecurityUtil;
 import com.uit.se356.core.application.contact.command.CreateContactCommand;
+import com.uit.se356.core.application.contact.command.DeleteContactCommand;
+import com.uit.se356.core.application.contact.command.UpdateContactCommand;
 import com.uit.se356.core.application.contact.query.GetContactByPhoneQuery;
 import com.uit.se356.core.application.contact.query.GetMyContactsQuery;
 import com.uit.se356.core.application.contact.result.ContactResult;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
+import com.uit.se356.core.domain.vo.area.ContactId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.presentation.dto.contact.CreateContactRequest;
+import com.uit.se356.core.presentation.dto.contact.UpdateContactRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +79,40 @@ public class RecipientContactController {
     ContactResult result = commandBus.dispatch(command);
 
     return ResponseEntity.ok(ApiResponse.created(result, "Contact saved successfully"));
+  }
+
+  @Operation(summary = "Update an existing contact")
+  @PutMapping("/{contactId}")
+  public ResponseEntity<ApiResponse<ContactResult>> updateContact(
+      @PathVariable String contactId, @RequestBody UpdateContactRequest request) {
+
+    UserId currentUserId = getCurrentUserId();
+
+    UpdateContactCommand command =
+        new UpdateContactCommand(
+            new ContactId(contactId),
+            currentUserId,
+            request.name(),
+            request.phoneNumber(),
+            request.address(),
+            request.note());
+
+    ContactResult result = commandBus.dispatch(command);
+
+    return ResponseEntity.ok(ApiResponse.ok(result, "Contact updated successfully"));
+  }
+
+  @Operation(summary = "Delete a contact from address book")
+  @DeleteMapping("/{contactId}")
+  public ResponseEntity<ApiResponse<Void>> deleteContact(@PathVariable String contactId) {
+
+    UserId currentUserId = getCurrentUserId();
+
+    DeleteContactCommand command =
+        new DeleteContactCommand(new ContactId(contactId), currentUserId);
+    commandBus.dispatch(command);
+
+    return ResponseEntity.ok(ApiResponse.ok(null, "Contact deleted successfully"));
   }
 
   private UserId getCurrentUserId() {
