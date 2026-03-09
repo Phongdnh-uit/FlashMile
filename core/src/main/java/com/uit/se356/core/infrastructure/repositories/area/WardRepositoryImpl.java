@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Repository
@@ -25,6 +26,7 @@ public class WardRepositoryImpl implements WardRepository {
   private final WardPersistenceMapper wardPersistenceMapper;
 
   @Override
+  @Transactional
   public Ward create(Ward ward) {
     WardJpaEntity wardJpaEntity = wardPersistenceMapper.toEntity(ward);
     WardJpaEntity savedEntity = wardJpaRepository.save(wardJpaEntity);
@@ -32,6 +34,7 @@ public class WardRepositoryImpl implements WardRepository {
   }
 
   @Override
+  @Transactional
   public Ward update(Ward ward) {
     Optional<WardJpaEntity> existingEntityOpt = wardJpaRepository.findById(ward.getId().value());
     if (existingEntityOpt.isEmpty()) {

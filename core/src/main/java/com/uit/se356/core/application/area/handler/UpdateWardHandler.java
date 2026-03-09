@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.core.application.area.command.UpdateWardCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
@@ -19,6 +20,7 @@ public class UpdateWardHandler implements CommandHandler<UpdateWardCommand, Ward
     this.provinceRepository = provinceRepository;
   }
 
+  @HasPermission("ward:update")
   @Override
   public WardResult handle(UpdateWardCommand command) {
     Optional<Ward> wardOpt = wardRepository.findById(command.id());
