@@ -8,13 +8,11 @@ import com.uit.se356.core.application.authentication.port.out.PermissionReposito
 import com.uit.se356.core.application.authentication.port.out.RoleRepository;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.constants.RoleName;
-import com.uit.se356.core.domain.entities.authentication.Permission;
 import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,9 +60,9 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     // Nếu không có trong cache, truy vấn từ database và lưu vào cache lại
     if (permissionList.isEmpty()) {
-      List<Permission> permissions = permissionRepository.findAllByRoleId(roleId);
+      var permissions = permissionRepository.findAllByRoleId(roleId);
       Set<String> permissionSet =
-          permissions.stream().map(Permission::getCode).collect(Collectors.toSet());
+          permissions.stream().map(p -> p.getCode()).collect(Collectors.toSet());
       cacheRepository.setSet(cacheKey, permissionSet, Duration.ofHours(1));
       permissionList = Optional.of(permissionSet);
     }

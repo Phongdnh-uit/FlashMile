@@ -7,7 +7,6 @@ import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.application.user.result.UserProfileResult;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.UserErrorCode;
-import com.uit.se356.core.domain.vo.authentication.UserId;
 
 public class UpdateUserProfileHandler
     implements CommandHandler<UpdateUserProfileCommand, UserProfileResult> {
@@ -23,18 +22,17 @@ public class UpdateUserProfileHandler
     // Fetch User Data
     User user =
         userRepository
-            .findById(new UserId(command.userId()))
+            .findById(command.userId())
             .orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 
     // BR: Check for Changes (MSG5)
     boolean isNameUnchanged = command.fullName().equals(user.getFullName());
-    boolean isEmailUnchanged = command.email().equals(user.getEmail().value());
 
-    if (isNameUnchanged && isEmailUnchanged) {
+    if (isNameUnchanged) {
       throw new AppException(UserErrorCode.NO_CHANGE_DETECTED);
     }
 
-    user.updateProfile(command.fullName(), command.email());
+    user.updateProfile(command.fullName());
     User updatedUser = userRepository.update(user);
     return UserProfileResult.fromUser(updatedUser);
   }

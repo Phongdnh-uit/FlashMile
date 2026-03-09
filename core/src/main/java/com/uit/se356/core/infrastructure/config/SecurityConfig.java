@@ -1,6 +1,8 @@
 package com.uit.se356.core.infrastructure.config;
 
+import com.uit.se356.core.domain.constants.SecurityConstant;
 import com.uit.se356.core.domain.constants.SystemConstant;
+import com.uit.se356.core.infrastructure.security.CustomAuthEntryPoint;
 import com.uit.se356.core.infrastructure.security.jwt.CustomJwtConverter;
 import com.uit.se356.core.infrastructure.security.oauth2.CustomOAuth2AuthRequestResolver;
 import com.uit.se356.core.infrastructure.security.oauth2.CustomOAuth2Service;
@@ -42,7 +44,10 @@ public class SecurityConfig {
 
   @Bean
   @Order(2)
-  SecurityFilterChain securityFilterChain(HttpSecurity http, CustomJwtConverter customJwtConverter)
+  SecurityFilterChain securityFilterChain(
+      HttpSecurity http,
+      CustomJwtConverter customJwtConverter,
+      CustomAuthEntryPoint customAuthEntryPoint)
       throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
@@ -53,12 +58,13 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(EndpointRequest.to("health", "info"))
                     .permitAll()
-                    .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
+                    .requestMatchers(SecurityConstant.PUBLIC_URLS)
                     .permitAll()
                     .anyRequest()
                     .authenticated())
         .oauth2ResourceServer(
-            oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtConverter)));
+            oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtConverter)))
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthEntryPoint));
 
     return http.build();
   }
@@ -70,7 +76,8 @@ public class SecurityConfig {
       OAuth2SuccessHandler oAuth2SuccessHandler,
       OAuth2FailureHandler oAuth2FailureHandler,
       CustomOAuth2Service oAuth2UserService,
-      CustomOAuth2AuthRequestResolver authorizationRequestResolver)
+      CustomOAuth2AuthRequestResolver authorizationRequestResolver,
+      CustomAuthEntryPoint customAuthEntryPoint)
       throws Exception {
     http.securityMatcher(
             SystemConstant.OAUTH2_AUTHORIZATION_BASE_URI + "/**",
@@ -92,7 +99,10 @@ public class SecurityConfig {
                             endpoint.baseUri(SystemConstant.OAUTH2_AUTHORIZATION_CALLBACK_URI))
                     .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                     .successHandler(oAuth2SuccessHandler)
-                    .failureHandler(oAuth2FailureHandler));
+                    .failureHandler(oAuth2FailureHandler))
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthEntryPoint));
     return http.build();
   }
 

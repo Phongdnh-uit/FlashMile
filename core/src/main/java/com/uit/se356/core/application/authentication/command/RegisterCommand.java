@@ -1,31 +1,46 @@
 package com.uit.se356.core.application.authentication.command;
 
 import com.uit.se356.common.dto.Command;
+import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.core.application.authentication.result.RegisterResult;
-import com.uit.se356.core.domain.exception.AuthErrorCode;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public record RegisterCommand(
     String verificationToken, String email, String fullName, String password)
     implements Command<RegisterResult> {
   public RegisterCommand {
-    Map<String, String> errors = new HashMap<>();
+    List<FieldError> errors = new ArrayList<>();
     if (verificationToken == null || verificationToken.isBlank()) {
-      errors.put("verificationToken", "Verification token is required.");
+      errors.add(
+          new FieldError(
+              "verificationToken",
+              CommonErrorCode.FIELD_REQUIRED.getMessageKey(),
+              new Object[] {"verification token"}));
     }
     if (email == null || email.isBlank()) {
-      errors.put("email", "Email is required.");
+      errors.add(
+          new FieldError(
+              "email", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"email"}));
     }
     if (fullName == null || fullName.isBlank()) {
-      errors.put("fullName", "Full name is required.");
+      errors.add(
+          new FieldError(
+              "fullName",
+              CommonErrorCode.FIELD_REQUIRED.getMessageKey(),
+              new Object[] {"full name"}));
     }
     if (password == null || password.isBlank()) {
-      errors.put("password", "Password is required.");
+      errors.add(
+          new FieldError(
+              "password",
+              CommonErrorCode.FIELD_REQUIRED.getMessageKey(),
+              new Object[] {"password"}));
     }
     if (!errors.isEmpty()) {
-      throw new AppException(AuthErrorCode.INVALID_REGISTER_COMMAND, errors);
+      throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);
     }
   }
 }

@@ -1,0 +1,92 @@
+package com.uit.se356.core.domain.entities.contact;
+
+import com.uit.se356.core.domain.vo.area.ContactId;
+import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
+import com.uit.se356.core.domain.vo.authentication.UserId;
+import java.time.Instant;
+
+public class RecipientContact {
+  private final ContactId id;
+  private final UserId ownerId;
+  private String name;
+  private PhoneNumber phoneNumber;
+  private String address;
+  private String note;
+
+  // Private constructor for rehydration
+  private RecipientContact(
+      ContactId id,
+      UserId ownerId,
+      String name,
+      PhoneNumber phoneNumber,
+      String address,
+      String note) {
+    this.id = id;
+    this.ownerId = ownerId;
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.address = address;
+    this.note = note;
+  }
+
+  // Update contact information
+  public void updateInfo(String name, PhoneNumber phoneNumber, String address, String note) {
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.address = address;
+    this.note = note;
+  }
+
+  // Factory method to create a new contact
+  public static RecipientContact create(
+      ContactId id,
+      UserId ownerId,
+      String name,
+      PhoneNumber phoneNumber,
+      String address,
+      String note) {
+    Instant now = Instant.now();
+    return new RecipientContact(
+        id, // ID will be set by the persistence layer
+        ownerId,
+        name,
+        phoneNumber,
+        address,
+        note);
+  }
+
+  public static RecipientContact rehydrate(
+      ContactId id,
+      UserId ownerId,
+      String name,
+      PhoneNumber phoneNumber,
+      String address,
+      String note) {
+    return new RecipientContact(id, ownerId, name, phoneNumber, address, note);
+  }
+
+  // ============================ GETTERS ============================
+  public ContactId getId() {
+    return id;
+  }
+
+  public UserId getOwnerId() {
+    return ownerId;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public PhoneNumber getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public String getNote() {
+    return note;
+  }
+}

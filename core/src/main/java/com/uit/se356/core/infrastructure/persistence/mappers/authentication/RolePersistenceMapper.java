@@ -1,8 +1,10 @@
 package com.uit.se356.core.infrastructure.persistence.mappers.authentication;
 
 import com.uit.se356.core.domain.entities.authentication.Role;
+import com.uit.se356.core.domain.vo.authentication.PermissionId;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +20,10 @@ public class RolePersistenceMapper {
         entity.getName(),
         entity.getDescription(),
         entity.isDefault(),
-        entity.isSystemRole());
+        entity.isSystemRole(),
+        entity.getPermissions().stream()
+            .map(permissionEntity -> new PermissionId(permissionEntity.getId()))
+            .collect(Collectors.toSet()));
   }
 
   public RoleJpaEntity toEntity(Role domain) {

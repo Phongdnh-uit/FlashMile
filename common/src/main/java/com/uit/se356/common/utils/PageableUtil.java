@@ -14,7 +14,7 @@ public class PageableUtil {
         searchPageable.sorts().stream()
             .map(
                 sort -> {
-                  String[] parts = sort.split(",");
+                  String[] parts = sort.split(":");
                   if (parts.length != 2) {
                     throw new AppException(CommonErrorCode.INVALID_SORT_ORDER);
                   }

@@ -2,6 +2,8 @@ package com.uit.se356.core.presentation.rest.user;
 
 import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
+import com.uit.se356.common.security.UserPrincipal;
 import com.uit.se356.common.services.CommandBus;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.utils.SecurityUtil;
@@ -28,13 +30,14 @@ public class UserController {
   private final SecurityUtil<UserId> securityUtil;
 
   @Operation(summary = "Get My Profile")
+  @HasPermission(value = "user:read", description = "Permission to read own profile information")
   @GetMapping("/me")
   public ResponseEntity<ApiResponse<UserProfileResult>> getMyProfile() {
-    String currentUserId =
+    UserId currentUserId =
         securityUtil
             .getCurrentUserPrincipal()
-            .map(principal -> principal.getId().value())
-            .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+            .map(UserPrincipal::getId)
+            .orElseThrow(() -> new AppException(AuthErrorCode.AUTHENTICATION_REQUIRED));
 
     GetUserProfileQuery query = new GetUserProfileQuery(currentUserId);
     UserProfileResult result = queryBus.dispatch(query);
@@ -47,14 +50,14 @@ public class UserController {
   public ResponseEntity<ApiResponse<UserProfileResult>> updateMyProfile(
       @RequestBody UpdateProfileRequest request) {
 
-    String currentUserId =
+    UserId currentUserId =
         securityUtil
             .getCurrentUserPrincipal()
-            .map(principal -> principal.getId().value())
-            .orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
+            .map(UserPrincipal::getId)
+            .orElseThrow(() -> new AppException(AuthErrorCode.AUTHENTICATION_REQUIRED));
 
     UpdateUserProfileCommand command =
-        new UpdateUserProfileCommand(currentUserId, request.fullName(), request.email());
+        new UpdateUserProfileCommand(currentUserId, request.fullName());
 
     UserProfileResult result = commandBus.dispatch(command);
 
