@@ -6,6 +6,9 @@ import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.common.utils.SecurityUtil;
+import com.uit.se356.core.application.area.handler.*;
+import com.uit.se356.core.application.area.port.ProvinceRepository;
+import com.uit.se356.core.application.area.port.WardRepository;
 import com.uit.se356.core.application.authentication.handler.LoginQueryHandler;
 import com.uit.se356.core.application.authentication.handler.LogoutHandler;
 import com.uit.se356.core.application.authentication.handler.OAuth2LoginCommandHandler;
@@ -42,8 +45,10 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.PhoneVerificationSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
 import com.uit.se356.core.application.contact.handler.CreateContactHandler;
+import com.uit.se356.core.application.contact.handler.DeleteContactHandler;
 import com.uit.se356.core.application.contact.handler.GetContactByPhoneHandler;
 import com.uit.se356.core.application.contact.handler.GetMyContactsHandler;
+import com.uit.se356.core.application.contact.handler.UpdateContactHandler;
 import com.uit.se356.core.application.contact.port.RecipientContactRepository;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
@@ -62,10 +67,12 @@ import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.ObjectMapper;
 
 /** Cấu hình các bean cho hệ thống, chủ yếu từ tầng application để decoupling với framework */
 @Configuration
 public class DependencyInjectionConfig {
+
   @Bean
   PhoneVerificationSendingStrategy phoneVerificationSendingStrategy(
       UserRepository userRepository,
@@ -245,8 +252,19 @@ public class DependencyInjectionConfig {
   }
 
   @Bean
-  CommandHandler<?, ?> createContactCommandHandler(RecipientContactRepository contactRepository) {
-    return new CreateContactHandler(contactRepository);
+  CommandHandler<?, ?> createContactCommandHandler(
+      RecipientContactRepository contactRepository, IdGenerator idGenerator) {
+    return new CreateContactHandler(contactRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateContactCommandHandler(RecipientContactRepository contactRepository) {
+    return new UpdateContactHandler(contactRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteContactCommandHandler(RecipientContactRepository contactRepository) {
+    return new DeleteContactHandler(contactRepository);
   }
 
   @Bean
@@ -257,6 +275,67 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> getMyContactsHandler(RecipientContactRepository contactRepository) {
     return new GetMyContactsHandler(contactRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createProvinceHandler(
+      ProvinceRepository provinceRepository, IdGenerator idGenerator) {
+    return new CreateProvinceHandler(provinceRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateProvinceHandler(ProvinceRepository provinceRepository) {
+    return new UpdateProvinceHandler(provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteProvinceHandler(ProvinceRepository provinceRepository) {
+    return new DeleteProvinceHandler(provinceRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> provinceSummaryQueryHandler(ProvinceRepository provinceRepository) {
+    return new ProvinceSummaryQueryHandler(provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createWardHandler(
+      WardRepository wardRepository,
+      ProvinceRepository provinceRepository,
+      IdGenerator idGenerator) {
+    return new CreateWardHandler(wardRepository, provinceRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> updateWardHandler(
+      WardRepository wardRepository, ProvinceRepository provinceRepository) {
+    return new UpdateWardHandler(wardRepository, provinceRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> deleteWardHandler(WardRepository wardRepository) {
+    return new DeleteWardHandler(wardRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> wardSummaryQueryHandler(WardRepository wardRepository) {
+    return new WardSummaryQueryHandler(wardRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> importProvinceGeoJsonHandler(
+      ProvinceRepository repo, ObjectMapper mapper, IdGenerator idGenerator) {
+    return new ImportProvinceGeoJsonHandler(repo, mapper, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> importWardGeoJsonHandler(
+      ProvinceRepository provinceRepository,
+      WardRepository wardRepository,
+      ObjectMapper objectMapper,
+      IdGenerator idGenerator) {
+    return new ImportWardGeoJsonHandler(
+        provinceRepository, wardRepository, objectMapper, idGenerator);
   }
 
   @Bean

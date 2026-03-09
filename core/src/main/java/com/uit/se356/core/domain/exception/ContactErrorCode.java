@@ -4,7 +4,8 @@ import com.uit.se356.common.exception.ErrorCode;
 
 public enum ContactErrorCode implements ErrorCode {
   CONTACT_NOT_FOUND("CONTACT_001", "error.contact.not_found", 404),
-  DUPLICATE_PHONE_NUMBER("CONTACT_002", "error.contact.duplicate_phone", 400);
+  DUPLICATE_PHONE_NUMBER("CONTACT_002", "error.contact.duplicate_phone", 400),
+  INVALID_CONTACT_ID("CONTACT_003", "error.contact.id.invalid", 400);
 
   private final String code;
   private final String messageKey;

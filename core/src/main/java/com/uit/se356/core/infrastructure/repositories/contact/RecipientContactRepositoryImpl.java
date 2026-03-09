@@ -7,6 +7,7 @@ import com.uit.se356.common.utils.PageableUtil;
 import com.uit.se356.core.application.contact.port.RecipientContactRepository;
 import com.uit.se356.core.domain.entities.contact.RecipientContact;
 import com.uit.se356.core.domain.exception.ContactErrorCode;
+import com.uit.se356.core.domain.vo.area.ContactId;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.infrastructure.persistence.entities.contact.RecipientContactJpaEntity;
@@ -37,11 +38,12 @@ public class RecipientContactRepositoryImpl implements RecipientContactRepositor
   public RecipientContact update(RecipientContact contact) {
     RecipientContactJpaEntity existingEntity =
         recipientContactJpaRepository
-            .findById(contact.getId())
+            .findById(contact.getId().value())
             .orElseThrow(
                 () -> new AppException(ContactErrorCode.CONTACT_NOT_FOUND, contact.getId()));
     mapper.updateEntityFromDomain(contact, existingEntity);
-    return mapper.toDomain(existingEntity);
+    RecipientContactJpaEntity updatedEntity = recipientContactJpaRepository.save(existingEntity);
+    return mapper.toDomain(updatedEntity);
   }
 
   @Override
@@ -74,13 +76,13 @@ public class RecipientContactRepositoryImpl implements RecipientContactRepositor
   }
 
   @Override
-  public Optional<RecipientContact> findById(String id) {
-    return recipientContactJpaRepository.findById(id).map(mapper::toDomain);
+  public Optional<RecipientContact> findById(ContactId id) {
+    return recipientContactJpaRepository.findById(id.value()).map(mapper::toDomain);
   }
 
   @Override
-  public void delete(String id) {
-    recipientContactJpaRepository.deleteById(id);
+  public void delete(ContactId id) {
+    recipientContactJpaRepository.deleteById(id.value());
   }
 
   @Override
