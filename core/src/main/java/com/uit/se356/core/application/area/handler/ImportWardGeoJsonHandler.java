@@ -18,7 +18,6 @@ import com.uit.se356.core.domain.vo.area.WardId;
 import com.uit.se356.core.domain.vo.area.WardType;
 import com.uit.se356.core.infrastructure.utils.GeoJsonParserUtil;
 import java.util.Optional;
-
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
