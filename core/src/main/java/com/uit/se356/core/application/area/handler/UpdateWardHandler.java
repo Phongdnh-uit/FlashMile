@@ -26,6 +26,10 @@ public class UpdateWardHandler implements CommandHandler<UpdateWardCommand, Ward
       throw new AppException(AreaErrorCode.WARD_NOT_FOUND);
     }
 
+    if (wardRepository.existsByCode(command.code())) {
+      throw new AppException(AreaErrorCode.DUPLICATE_WARD_CODE);
+    }
+
     provinceRepository
         .findById(command.provinceId())
         .orElseThrow(

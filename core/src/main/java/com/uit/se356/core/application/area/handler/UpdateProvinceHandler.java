@@ -24,6 +24,10 @@ public class UpdateProvinceHandler
       throw new AppException(AreaErrorCode.PROVINCE_NOT_FOUND);
     }
 
+    if (provinceRepository.existsByCode(command.code())) {
+      throw new AppException(AreaErrorCode.DUPLICATE_PROVINCE_CODE);
+    }
+
     Province existingProvince = provinceOpt.get();
     existingProvince.update(command.code(), command.name(), command.type());
     Province updatedProvince = provinceRepository.update(existingProvince);
