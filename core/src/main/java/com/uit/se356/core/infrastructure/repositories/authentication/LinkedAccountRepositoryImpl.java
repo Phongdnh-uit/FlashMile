@@ -58,7 +58,7 @@ public class LinkedAccountRepositoryImpl implements LinkedAccountRepository {
             (root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
                     criteriaBuilder.equal(root.get("provider"), provider),
-                    criteriaBuilder.equal(root.get("providerId"), providerId)));
+                    criteriaBuilder.equal(root.get("providerUserId"), providerId)));
     return jpaEntity.map(linkedAccountPersistenceMapper::toDomain);
   }
 

@@ -1,6 +1,8 @@
 package com.uit.se356.core.application.authentication.handler;
 
+import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.common.utils.IdGenerator;
@@ -20,6 +22,8 @@ import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.domain.vo.authentication.VerificationChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class RegisterCommandHandler implements CommandHandler<RegisterCommand, RegisterResult> {
@@ -47,6 +51,7 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
 
   @Override
   public RegisterResult handle(RegisterCommand command) {
+    List<FieldError> errors = new ArrayList<>();
     // Xác thực verificationToken từ cache để lấy số điện thoại đăng ký
     StringBuilder cacheKey =
         new StringBuilder(CacheKey.PHONE_VERIFIED_PREFIX)
@@ -58,6 +63,21 @@ public class RegisterCommandHandler implements CommandHandler<RegisterCommand, R
     }
     PhoneNumber phoneNumber = new PhoneNumber(phoneNumberOpt.get());
     Email email = new Email(command.email());
+    if (userRepository.existsByEmail(email)) {
+      errors.add(
+          new FieldError(
+              "email", CommonErrorCode.ALREADY_EXISTS.getMessageKey(), new Object[] {"email"}));
+    }
+    if (userRepository.existsByPhoneNumber(phoneNumber)) {
+      errors.add(
+          new FieldError(
+              "phoneNumber",
+              CommonErrorCode.ALREADY_EXISTS.getMessageKey(),
+              new Object[] {"phoneNumber"}));
+    }
+    if (!errors.isEmpty()) {
+      throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);
+    }
     Role defaultRole =
         roleRepository
             .findDefault()

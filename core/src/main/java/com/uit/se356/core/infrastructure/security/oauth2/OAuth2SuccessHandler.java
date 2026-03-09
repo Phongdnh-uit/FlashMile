@@ -48,19 +48,19 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     // Trả về SPA một trang HTML chứa JavaScript để gửi dữ liệu về cửa sổ cha và đóng cửa sổ hiện
     // tại
     String html =
-        "<!DOCTYPE html>\n"
-            + "<html>\n"
-            + "<body>\n"
-            + "<script>\n"
+        "<!DOCTYPE html>"
+            + "<html>"
+            + "<body>"
+            + "<script>"
             + "const response = "
             + mapper.writeValueAsString(apiResponse)
-            + ";\n"
+            + ";"
             + "window.opener.postMessage(response, '"
             + appProperties.getFrontend().getBaseUrl()
-            + "');\n"
-            + "window.close();\n"
-            + "</script>\n"
-            + "</body>\n"
+            + "');"
+            + "window.close();"
+            + "</script>"
+            + "</body>"
             + "</html>";
 
     response.setContentType("text/html");
