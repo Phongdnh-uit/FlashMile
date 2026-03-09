@@ -1,6 +1,7 @@
 package com.uit.se356.core.infrastructure.persistence.mappers.contact;
 
 import com.uit.se356.core.domain.entities.contact.RecipientContact;
+import com.uit.se356.core.domain.vo.area.ContactId;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.infrastructure.persistence.entities.contact.RecipientContactJpaEntity;
@@ -17,7 +18,7 @@ public class RecipientContactPersistenceMapper {
     }
 
     return RecipientContact.rehydrate(
-        entity.getId(),
+        new ContactId(entity.getId()),
         new UserId(entity.getUserId()),
         entity.getName(),
         new PhoneNumber(entity.getPhoneNumber()),
@@ -34,7 +35,7 @@ public class RecipientContactPersistenceMapper {
     RecipientContactJpaEntity entity = new RecipientContactJpaEntity();
 
     // Map ID (nếu có - trường hợp update)
-    entity.setId(domain.getId());
+    entity.setId(domain.getId().value());
 
     if (domain.getOwnerId() != null) {
       entity.setUserId(domain.getOwnerId().value());

@@ -14,6 +14,7 @@ public enum CommonErrorCode implements ErrorCode {
   FIELD_REQUIRED("COMMON-0005", "error.common.field_required", 400),
   RESOURCE_NOT_FOUND("COMMON-0006", "error.common.resource_not_found", 404),
   ALREADY_EXISTS("COMMON-0007", "error.common.duplicate_resource", 409);
+  UNCATEGORIZED_EXCEPTION("COMMON-0007", "error.common.uncategorized_exception", 500);
   private final String code;
   private final String messageKey;
   private final int httpStatus;
