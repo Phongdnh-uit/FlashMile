@@ -13,8 +13,8 @@ public enum CommonErrorCode implements ErrorCode {
   INVALID_SORT_ORDER("COMMON-0004", "error.common.invalid_sort_order", 400),
   FIELD_REQUIRED("COMMON-0005", "error.common.field_required", 400),
   RESOURCE_NOT_FOUND("COMMON-0006", "error.common.resource_not_found", 404),
-  ALREADY_EXISTS("COMMON-0007", "error.common.duplicate_resource", 409),
-  UNCATEGORIZED_EXCEPTION("COMMON-0007", "error.common.uncategorized_exception", 500);
+  UNCATEGORIZED_EXCEPTION("COMMON-0007", "error.common.uncategorized_exception", 500),
+  ALREADY_EXISTS("COMMON-0008", "error.common.already_exists", 409);
   private final String code;
   private final String messageKey;
   private final int httpStatus;
