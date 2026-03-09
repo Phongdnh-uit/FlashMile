@@ -56,6 +56,9 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
                 AuthErrorCode.INVALID_TOKEN.getCode());
       }
     } else {
+      while (cause.getCause() != null) {
+        cause = cause.getCause();
+      }
       errorResponse =
           new ErrorResponse(
               request.getRequestURI(),

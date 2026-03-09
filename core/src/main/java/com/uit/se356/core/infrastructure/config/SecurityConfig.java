@@ -76,7 +76,8 @@ public class SecurityConfig {
       OAuth2SuccessHandler oAuth2SuccessHandler,
       OAuth2FailureHandler oAuth2FailureHandler,
       CustomOAuth2Service oAuth2UserService,
-      CustomOAuth2AuthRequestResolver authorizationRequestResolver)
+      CustomOAuth2AuthRequestResolver authorizationRequestResolver,
+      CustomAuthEntryPoint customAuthEntryPoint)
       throws Exception {
     http.securityMatcher(
             SystemConstant.OAUTH2_AUTHORIZATION_BASE_URI + "/**",
@@ -98,7 +99,10 @@ public class SecurityConfig {
                             endpoint.baseUri(SystemConstant.OAUTH2_AUTHORIZATION_CALLBACK_URI))
                     .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                     .successHandler(oAuth2SuccessHandler)
-                    .failureHandler(oAuth2FailureHandler));
+                    .failureHandler(oAuth2FailureHandler))
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthEntryPoint));
     return http.build();
   }
 

@@ -3,6 +3,7 @@ package com.uit.se356.core.infrastructure.security;
 import com.uit.se356.common.security.UserPrincipal;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,17 +16,16 @@ public class CustomUserPrincipal implements UserPrincipal<UserId>, OAuth2User {
 
   private final UserId id;
   private final String role;
+  private final Map<String, Object> attributes;
 
   @Override
   public Map<String, Object> getAttributes() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getAttributes'");
+    return attributes;
   }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+    return Collections.emptyList();
   }
 
   @Override
