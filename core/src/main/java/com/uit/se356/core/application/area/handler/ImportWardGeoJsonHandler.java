@@ -3,10 +3,9 @@ package com.uit.se356.core.application.area.handler;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.ImportWardGeoJsonCommand;
@@ -19,7 +18,9 @@ import com.uit.se356.core.domain.vo.area.WardId;
 import com.uit.se356.core.domain.vo.area.WardType;
 import com.uit.se356.core.infrastructure.utils.GeoJsonParserUtil;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class ImportWardGeoJsonHandler implements CommandHandler<ImportWardGeoJsonCommand, Integer> {
 
@@ -39,8 +40,8 @@ public class ImportWardGeoJsonHandler implements CommandHandler<ImportWardGeoJso
     this.idGenerator = idGenerator;
   }
 
+  @HasPermission("ward:create")
   @Override
-  @Transactional
   public Integer handle(ImportWardGeoJsonCommand command) {
     int count = 0;
     JsonFactory factory = new JsonFactory();
@@ -56,7 +57,7 @@ public class ImportWardGeoJsonHandler implements CommandHandler<ImportWardGeoJso
 
       while (parser.nextToken() == JsonToken.START_OBJECT) {
         try {
-          JsonNode feature = objectMapper.readTree(parser);
+          JsonNode feature = objectMapper.readTree(String.valueOf(parser));
           JsonNode properties = feature.path("properties");
           JsonNode geometry = feature.path("geometry");
 

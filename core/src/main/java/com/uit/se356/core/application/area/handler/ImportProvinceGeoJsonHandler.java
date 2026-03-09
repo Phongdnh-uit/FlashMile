@@ -1,9 +1,8 @@
 package com.uit.se356.core.application.area.handler;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.ImportProvinceGeoJsonCommand;
@@ -11,7 +10,8 @@ import com.uit.se356.core.application.area.port.ProvinceRepository;
 import com.uit.se356.core.domain.entities.area.Province;
 import com.uit.se356.core.domain.vo.area.ProvinceId;
 import com.uit.se356.core.domain.vo.area.ProvinceType;
-import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class ImportProvinceGeoJsonHandler
     implements CommandHandler<ImportProvinceGeoJsonCommand, Integer> {
@@ -27,8 +27,8 @@ public class ImportProvinceGeoJsonHandler
     this.idGenerator = idGenerator;
   }
 
+  @HasPermission("province:create")
   @Override
-  @Transactional
   public Integer handle(ImportProvinceGeoJsonCommand command) {
     int count = 0;
     try {

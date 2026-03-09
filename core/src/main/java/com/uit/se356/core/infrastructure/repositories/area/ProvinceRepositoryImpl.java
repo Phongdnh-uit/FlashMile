@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Repository
@@ -27,6 +28,7 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   private final ProvincePersistenceMapper provincePersistenceMapper;
 
   @Override
+  @Transactional
   public Province create(Province province) {
     ProvinceJpaEntity entity = provincePersistenceMapper.toEntity(province);
     ProvinceJpaEntity savedProvince = provinceJpaRepository.save(entity);
@@ -34,6 +36,7 @@ public class ProvinceRepositoryImpl implements ProvinceRepository {
   }
 
   @Override
+  @Transactional
   public Province update(Province province) {
     ProvinceJpaEntity existingEntity =
         provinceJpaRepository

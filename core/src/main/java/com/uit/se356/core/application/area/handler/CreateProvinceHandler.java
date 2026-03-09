@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.CreateProvinceCommand;
@@ -20,6 +21,7 @@ public class CreateProvinceHandler
     this.idGenerator = idGenerator;
   }
 
+  @HasPermission("province:create")
   @Override
   public ProvinceResult handle(CreateProvinceCommand command) {
     if (provinceRepository.existsByCode(command.code())) {

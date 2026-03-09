@@ -1,6 +1,5 @@
 package com.uit.se356.core.infrastructure.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.common.security.PermissionScanner;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.services.QueryBus;
@@ -68,15 +67,11 @@ import com.uit.se356.core.domain.vo.authentication.UserId;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.ObjectMapper;
 
 /** Cấu hình các bean cho hệ thống, chủ yếu từ tầng application để decoupling với framework */
 @Configuration
 public class DependencyInjectionConfig {
-
-  @Bean
-  ObjectMapper objectMapper() {
-    return new ObjectMapper();
-  }
 
   @Bean
   PhoneVerificationSendingStrategy phoneVerificationSendingStrategy(

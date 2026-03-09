@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.area.command.CreateWardCommand;
@@ -26,6 +27,7 @@ public class CreateWardHandler implements CommandHandler<CreateWardCommand, Ward
     this.idGenerator = idGenerator;
   }
 
+  @HasPermission("ward:create")
   @Override
   public WardResult handle(CreateWardCommand command) {
     if (wardRepository.existsByCode(command.code())) {

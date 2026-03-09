@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.core.application.area.command.DeleteWardCommand;
 import com.uit.se356.core.application.area.port.WardRepository;
@@ -13,6 +14,7 @@ public class DeleteWardHandler implements CommandHandler<DeleteWardCommand, Void
     this.wardRepository = wardRepository;
   }
 
+  @HasPermission("ward:delete")
   @Override
   public Void handle(DeleteWardCommand command) {
     wardRepository

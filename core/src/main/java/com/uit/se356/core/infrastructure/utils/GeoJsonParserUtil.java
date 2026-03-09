@@ -1,9 +1,10 @@
 package com.uit.se356.core.infrastructure.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.uit.se356.core.domain.vo.area.BoundingBox;
 import com.uit.se356.core.domain.vo.area.Polygon;
 import com.uit.se356.core.domain.vo.area.Polygon.Coordinate;
+import tools.jackson.databind.JsonNode;
+
 import java.util.ArrayList;
 import java.util.List;
 

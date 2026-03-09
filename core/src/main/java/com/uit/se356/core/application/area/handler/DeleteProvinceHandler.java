@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.area.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.core.application.area.command.DeleteProvinceCommand;
 import com.uit.se356.core.application.area.port.ProvinceRepository;
@@ -14,6 +15,7 @@ public class DeleteProvinceHandler implements CommandHandler<DeleteProvinceComma
     this.provinceRepository = provinceRepository;
   }
 
+  @HasPermission("province:delete")
   @Override
   public Void handle(DeleteProvinceCommand command) {
     Province existingProvince =
