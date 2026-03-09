@@ -90,6 +90,12 @@ application:
     admin-full-name: Admin Local
     admin-password: password
     admin-phone-number: "+84912345678"
+  s3:
+    endpoint: "http://localhost:9000" # MinIO/Localstack endpoint
+    access-key: "minioadmin"
+    secret-key: "minioadmin"
+    main-bucket-name: "flashmile-main"
+    quarantine-bucket-name: "flashmile-quarantine"
 
 springdoc:
   swagger-ui:

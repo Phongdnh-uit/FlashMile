@@ -14,6 +14,8 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
+import com.uit.se356.core.application.authentication.handler.permission.PermissionSummaryQueryHandler;
 import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
 import com.uit.se356.core.application.authentication.handler.role.DeleteRoleHandler;
 import com.uit.se356.core.application.authentication.handler.role.RoleSummaryQueryHandler;
@@ -39,8 +41,20 @@ import com.uit.se356.core.application.authentication.strategies.verification.sen
 import com.uit.se356.core.application.authentication.strategies.verification.send.ForgotPasswordSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.PhoneVerificationSendingStrategy;
 import com.uit.se356.core.application.authentication.strategies.verification.send.SendVerificationStrategy;
+import com.uit.se356.core.application.contact.handler.CreateContactHandler;
+import com.uit.se356.core.application.contact.handler.GetContactByPhoneHandler;
+import com.uit.se356.core.application.contact.handler.GetMyContactsHandler;
+import com.uit.se356.core.application.contact.port.RecipientContactRepository;
 import com.uit.se356.core.application.internal.handler.DebugOtpHandler;
 import com.uit.se356.core.application.internal.handler.SyncPermissionHandler;
+import com.uit.se356.core.application.upload.handler.ConfirmUploadCommandHandler;
+import com.uit.se356.core.application.upload.handler.UploadPresignedUrlHandler;
+import com.uit.se356.core.application.upload.port.in.FileCleanupService;
+import com.uit.se356.core.application.upload.port.out.FileRepository;
+import com.uit.se356.core.application.upload.port.out.StorageProvider;
+import com.uit.se356.core.application.upload.services.FileCleanupServiceImpl;
+import com.uit.se356.core.application.upload.strategies.upload.AvatarUploadPolicy;
+import com.uit.se356.core.application.upload.strategies.upload.UploadPolicy;
 import com.uit.se356.core.application.user.handler.GetUserProfileHandler;
 import com.uit.se356.core.application.user.handler.UpdateUserProfileHandler;
 import com.uit.se356.core.application.user.port.UserRepository;
@@ -204,9 +218,8 @@ public class DependencyInjectionConfig {
   }
 
   @Bean
-  CommandHandler<?, ?> updateRoleCommandHandler(
-      RoleRepository roleRepository, IdGenerator idGenerator) {
-    return new UpdateRoleHandler(roleRepository, idGenerator);
+  CommandHandler<?, ?> updateRoleCommandHandler(RoleRepository roleRepository) {
+    return new UpdateRoleHandler(roleRepository);
   }
 
   @Bean
@@ -218,5 +231,58 @@ public class DependencyInjectionConfig {
   @Bean
   QueryHandler<?, ?> roleSummaryQueryHandler(RoleRepository roleRepository) {
     return new RoleSummaryQueryHandler(roleRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> permissionSummaryQueryHandler(PermissionRepository permissionRepository) {
+    return new PermissionSummaryQueryHandler(permissionRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> assignPermissionHandler(
+      RoleRepository roleRepository, PermissionRepository permissionRepository) {
+    return new AssignPermissionHandler(roleRepository, permissionRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> createContactCommandHandler(RecipientContactRepository contactRepository) {
+    return new CreateContactHandler(contactRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> getContactByPhoneHandler(RecipientContactRepository contactRepository) {
+    return new GetContactByPhoneHandler(contactRepository);
+  }
+
+  @Bean
+  QueryHandler<?, ?> getMyContactsHandler(RecipientContactRepository contactRepository) {
+    return new GetMyContactsHandler(contactRepository);
+  }
+
+  @Bean
+  UploadPolicy avatarUploadPolicy() {
+    return new AvatarUploadPolicy();
+  }
+
+  @Bean
+  CommandHandler<?, ?> uploadPresignedUrlCommandHandler(
+      List<UploadPolicy> uploadPolicies,
+      IdGenerator idGenerator,
+      StorageProvider storageProvider,
+      FileRepository fileRepository) {
+    return new UploadPresignedUrlHandler(
+        fileRepository, uploadPolicies, idGenerator, storageProvider);
+  }
+
+  @Bean
+  CommandHandler<?, ?> confirmUploadCommandHandler(
+      FileRepository fileRepository, StorageProvider storageProvider) {
+    return new ConfirmUploadCommandHandler(fileRepository, storageProvider);
+  }
+
+  @Bean
+  FileCleanupService fileCleanupService(
+      FileRepository fileRepository, StorageProvider storageProvider) {
+    return new FileCleanupServiceImpl(fileRepository, storageProvider);
   }
 }

@@ -9,6 +9,7 @@ import com.uit.se356.core.domain.entities.authentication.Role;
 import com.uit.se356.core.domain.vo.authentication.RoleId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.RoleJpaEntity;
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.RolePersistenceMapper;
+import com.uit.se356.core.infrastructure.persistence.repositories.authentication.PermissionJpaRepository;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.RoleJpaRepository;
 import io.github.perplexhub.rsql.RSQLJPASupport;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +27,7 @@ public class RoleRepositoryImpl implements RoleRepository {
 
   private final RoleJpaRepository roleJpaRepository;
   private final RolePersistenceMapper roleMapper;
+  private final PermissionJpaRepository permissionJpaRepository;
 
   @Override
   @Transactional
@@ -53,7 +55,13 @@ public class RoleRepositoryImpl implements RoleRepository {
     // 2. Cập nhật entity với dữ liệu mới từ domain object
     roleMapper.updateEntityFromDomain(roleToUpdate, existingEntity);
 
-    // 3. Không cần gọi save, entity tự flush khi hết transaction
+    // 3. Tham chiếu các permission
+    existingEntity.getPermissions().clear();
+    for (var perm : roleToUpdate.getPermissions()) {
+      existingEntity.getPermissions().add(permissionJpaRepository.getReferenceById(perm.value()));
+    }
+
+    // 4. Không cần gọi save, entity tự flush khi hết transaction
     return roleMapper.toDomain(existingEntity);
   }
 

@@ -1,21 +1,26 @@
 package com.uit.se356.core.application.authentication.command.role;
 
 import com.uit.se356.common.dto.Command;
+import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.core.application.authentication.result.RoleResult;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public record UpdateRoleCommand(String id, String name, String description, boolean isDefault)
     implements Command<RoleResult> {
   public UpdateRoleCommand {
-    Map<String, Object> errors = new HashMap<>();
-    if (id == null || id.isEmpty()) {
-      errors.put("id", "Id is required");
+    List<FieldError> errors = new ArrayList<>();
+    if (id == null || id.isBlank()) {
+      errors.add(
+          new FieldError(
+              "id", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"id"}));
     }
-    if (name == null || name.isEmpty()) {
-      errors.put("name", "Name is required");
+    if (name == null || name.isBlank()) {
+      errors.add(
+          new FieldError(
+              "name", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"name"}));
     }
     if (!errors.isEmpty()) {
       throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);

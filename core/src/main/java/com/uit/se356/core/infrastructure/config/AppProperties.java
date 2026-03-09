@@ -16,6 +16,7 @@ public class AppProperties {
   private Frontend frontend;
   private Verification verification;
   private Bootstrap bootstrap;
+  private S3 s3;
 
   @Getter
   @Setter
@@ -62,5 +63,15 @@ public class AppProperties {
     private String adminEmail;
     private String adminPhoneNumber;
     private String adminPassword;
+  }
+
+  @Getter
+  @Setter
+  public static class S3 {
+    private String endpoint;
+    private String accessKey;
+    private String secretKey;
+    private String mainBucketName;
+    private String quarantineBucketName;
   }
 }
