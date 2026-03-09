@@ -5,5 +5,5 @@ import com.uit.se356.core.infrastructure.persistence.entities.authentication.Mul
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MultifactorBackupCodeJpaRepository
+public interface MfaBackupCodeJpaRepository
     extends CommonRepository<MultifactorBackupCodeJpaEntity, String> {}

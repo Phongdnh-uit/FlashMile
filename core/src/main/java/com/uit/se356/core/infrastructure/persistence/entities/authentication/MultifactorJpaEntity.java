@@ -1,7 +1,7 @@
 package com.uit.se356.core.infrastructure.persistence.entities.authentication;
 
 import com.uit.se356.common.entity.BaseEntity;
-import com.uit.se356.core.domain.vo.authentication.MultifactorMethod;
+import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ public class MultifactorJpaEntity extends BaseEntity<String> {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private MultifactorMethod method;
+  private MfaMethod method;
 
   @Column(nullable = false)
   private boolean isVerified = false;

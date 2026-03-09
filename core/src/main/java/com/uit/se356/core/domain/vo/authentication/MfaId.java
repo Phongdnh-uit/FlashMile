@@ -3,8 +3,8 @@ package com.uit.se356.core.domain.vo.authentication;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
 
-public record MultifactorId(String value) {
-  public MultifactorId {
+public record MfaId(String value) {
+  public MfaId {
     if (value == null || value.isBlank()) {
       throw new AppException(CommonErrorCode.INVALID_ID_FORMAT);
     }

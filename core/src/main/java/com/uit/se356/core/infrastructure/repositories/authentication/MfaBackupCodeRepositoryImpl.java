@@ -1,11 +1,11 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
-import com.uit.se356.core.application.authentication.port.out.MultifactorBackupCodeRepository;
-import com.uit.se356.core.domain.entities.authentication.MultifactorBackupCode;
-import com.uit.se356.core.domain.vo.authentication.MultifactorBackupCodeId;
+import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
+import com.uit.se356.core.domain.entities.authentication.MfaBackupCode;
+import com.uit.se356.core.domain.vo.authentication.MfaBackupCodeId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.MultifactorBackupCodeJpaEntity;
-import com.uit.se356.core.infrastructure.persistence.mappers.authentication.MultifactorBackupCodePersistenceMapper;
-import com.uit.se356.core.infrastructure.persistence.repositories.authentication.MultifactorBackupCodeJpaRepository;
+import com.uit.se356.core.infrastructure.persistence.mappers.authentication.MfaBackupCodePersistenceMapper;
+import com.uit.se356.core.infrastructure.persistence.repositories.authentication.MfaBackupCodeJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MultifactorBackupCodeRepositoryImpl implements MultifactorBackupCodeRepository {
+public class MfaBackupCodeRepositoryImpl implements MfaBackupCodeRepository {
 
-  private final MultifactorBackupCodeJpaRepository backupCodeJpaRepository;
-  private final MultifactorBackupCodePersistenceMapper backupCodeMapper;
+  private final MfaBackupCodeJpaRepository backupCodeJpaRepository;
+  private final MfaBackupCodePersistenceMapper backupCodeMapper;
 
   @Override
   @Transactional
-  public MultifactorBackupCode create(MultifactorBackupCode backupCode) {
+  public MfaBackupCode create(MfaBackupCode backupCode) {
     MultifactorBackupCodeJpaEntity entityToCreate = backupCodeMapper.toEntity(backupCode);
     MultifactorBackupCodeJpaEntity savedEntity = backupCodeJpaRepository.save(entityToCreate);
     return backupCodeMapper.toDomain(savedEntity);
@@ -30,7 +30,7 @@ public class MultifactorBackupCodeRepositoryImpl implements MultifactorBackupCod
 
   @Override
   @Transactional
-  public MultifactorBackupCode update(MultifactorBackupCode backupCode) {
+  public MfaBackupCode update(MfaBackupCode backupCode) {
     MultifactorBackupCodeJpaEntity existingEntity =
         backupCodeJpaRepository
             .findById(backupCode.getId().value())
@@ -45,13 +45,13 @@ public class MultifactorBackupCodeRepositoryImpl implements MultifactorBackupCod
   }
 
   @Override
-  public Optional<MultifactorBackupCode> findById(MultifactorBackupCodeId id) {
+  public Optional<MfaBackupCode> findById(MfaBackupCodeId id) {
     return backupCodeJpaRepository.findById(id.value()).map(backupCodeMapper::toDomain);
   }
 
   @Override
   @Transactional
-  public void deleteById(MultifactorBackupCodeId id) {
+  public void deleteById(MfaBackupCodeId id) {
     backupCodeJpaRepository.deleteById(id.value());
   }
 }

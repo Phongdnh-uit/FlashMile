@@ -14,6 +14,8 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.CompleteSetupMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.InitiateMfaSetupHandler;
 import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
 import com.uit.se356.core.application.authentication.handler.permission.PermissionSummaryQueryHandler;
 import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
@@ -24,6 +26,8 @@ import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
 import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.out.MfaProvider;
+import com.uit.se356.core.application.authentication.port.out.MfaRepository;
 import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
 import com.uit.se356.core.application.authentication.port.out.RefreshTokenRepository;
@@ -284,5 +288,22 @@ public class DependencyInjectionConfig {
   FileCleanupService fileCleanupService(
       FileRepository fileRepository, StorageProvider storageProvider) {
     return new FileCleanupServiceImpl(fileRepository, storageProvider);
+  }
+
+  @Bean
+  CommandHandler<?, ?> initiateMfaSetupHandler(
+      List<MfaProvider> mfaProviders,
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository,
+      IdGenerator idGenerator) {
+    return new InitiateMfaSetupHandler(mfaProviders, securityUtil, mfaRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> completeMfaSetupHandler(
+      List<MfaProvider> mfaProviders,
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository) {
+    return new CompleteSetupMfaHandler(mfaProviders, securityUtil, mfaRepository);
   }
 }

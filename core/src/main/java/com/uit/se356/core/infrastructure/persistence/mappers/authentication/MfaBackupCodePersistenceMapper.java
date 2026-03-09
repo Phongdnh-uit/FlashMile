@@ -1,27 +1,27 @@
 package com.uit.se356.core.infrastructure.persistence.mappers.authentication;
 
-import com.uit.se356.core.domain.entities.authentication.MultifactorBackupCode;
-import com.uit.se356.core.domain.vo.authentication.MultifactorBackupCodeId;
+import com.uit.se356.core.domain.entities.authentication.MfaBackupCode;
+import com.uit.se356.core.domain.vo.authentication.MfaBackupCodeId;
 import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.MultifactorBackupCodeJpaEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MultifactorBackupCodePersistenceMapper {
+public class MfaBackupCodePersistenceMapper {
 
-  public MultifactorBackupCode toDomain(MultifactorBackupCodeJpaEntity entity) {
+  public MfaBackupCode toDomain(MultifactorBackupCodeJpaEntity entity) {
     if (entity == null) {
       return null;
     }
 
-    return MultifactorBackupCode.rehydrate(
-        new MultifactorBackupCodeId(entity.getId()),
+    return MfaBackupCode.rehydrate(
+        new MfaBackupCodeId(entity.getId()),
         new UserId(entity.getUserId()),
         entity.getHashedCode(),
         entity.getUsedAt());
   }
 
-  public MultifactorBackupCodeJpaEntity toEntity(MultifactorBackupCode domain) {
+  public MultifactorBackupCodeJpaEntity toEntity(MfaBackupCode domain) {
     if (domain == null) {
       return null;
     }
@@ -35,7 +35,7 @@ public class MultifactorBackupCodePersistenceMapper {
   }
 
   public void updateEntityFromDomain(
-      MultifactorBackupCode domain, MultifactorBackupCodeJpaEntity existingEntity) {
+      MfaBackupCode domain, MultifactorBackupCodeJpaEntity existingEntity) {
     existingEntity.setHashedCode(domain.getHashedCode());
     existingEntity.setUsedAt(domain.getUsedAt());
   }

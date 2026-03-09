@@ -1,5 +1,7 @@
 package com.uit.se356.core.domain.vo.authentication;
 
-public enum MultifactorMethod {
-  TOTP;
+public enum MfaMethod {
+  TOTP,
+  EMAIL,
+  WEBAUTHN
 }

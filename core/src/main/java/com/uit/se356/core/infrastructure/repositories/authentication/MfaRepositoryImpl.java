@@ -1,11 +1,13 @@
 package com.uit.se356.core.infrastructure.repositories.authentication;
 
-import com.uit.se356.core.application.authentication.port.out.MultifactorRepository;
-import com.uit.se356.core.domain.entities.authentication.Multifactor;
-import com.uit.se356.core.domain.vo.authentication.MultifactorId;
+import com.uit.se356.core.application.authentication.port.out.MfaRepository;
+import com.uit.se356.core.domain.entities.authentication.Mfa;
+import com.uit.se356.core.domain.vo.authentication.MfaId;
+import com.uit.se356.core.domain.vo.authentication.MfaMethod;
+import com.uit.se356.core.domain.vo.authentication.UserId;
 import com.uit.se356.core.infrastructure.persistence.entities.authentication.MultifactorJpaEntity;
-import com.uit.se356.core.infrastructure.persistence.mappers.authentication.MultifactorPersistenceMapper;
-import com.uit.se356.core.infrastructure.persistence.repositories.authentication.MultifactorJpaRepository;
+import com.uit.se356.core.infrastructure.persistence.mappers.authentication.MfaPersistenceMapper;
+import com.uit.se356.core.infrastructure.persistence.repositories.authentication.MfaJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MultifactorRepositoryImpl implements MultifactorRepository {
+public class MfaRepositoryImpl implements MfaRepository {
 
-  private final MultifactorJpaRepository multifactorJpaRepository;
-  private final MultifactorPersistenceMapper multifactorMapper;
+  private final MfaJpaRepository multifactorJpaRepository;
+  private final MfaPersistenceMapper multifactorMapper;
 
   @Override
   @Transactional
-  public Multifactor create(Multifactor multifactor) {
+  public Mfa create(Mfa multifactor) {
     MultifactorJpaEntity entityToCreate = multifactorMapper.toEntity(multifactor);
     MultifactorJpaEntity savedEntity = multifactorJpaRepository.save(entityToCreate);
     return multifactorMapper.toDomain(savedEntity);
@@ -30,7 +32,7 @@ public class MultifactorRepositoryImpl implements MultifactorRepository {
 
   @Override
   @Transactional
-  public Multifactor update(Multifactor multifactor) {
+  public Mfa update(Mfa multifactor) {
     MultifactorJpaEntity existingEntity =
         multifactorJpaRepository
             .findById(multifactor.getId().value())
@@ -45,7 +47,18 @@ public class MultifactorRepositoryImpl implements MultifactorRepository {
   }
 
   @Override
-  public Optional<Multifactor> findById(MultifactorId id) {
+  public Optional<Mfa> findById(MfaId id) {
     return multifactorJpaRepository.findById(id.value()).map(multifactorMapper::toDomain);
+  }
+
+  @Override
+  public Optional<Mfa> findByUserIdAndMethod(UserId userId, MfaMethod method) {
+    return multifactorJpaRepository
+        .findOne(
+            (root, query, criteriaBuilder) ->
+                criteriaBuilder.and(
+                    criteriaBuilder.equal(root.get("userId"), userId.value()),
+                    criteriaBuilder.equal(root.get("method"), method.name())))
+        .map(multifactorMapper::toDomain);
   }
 }
