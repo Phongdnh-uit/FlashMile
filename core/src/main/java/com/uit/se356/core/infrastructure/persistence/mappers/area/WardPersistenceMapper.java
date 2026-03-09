@@ -1,7 +1,5 @@
 package com.uit.se356.core.infrastructure.persistence.mappers.area;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uit.se356.core.domain.entities.area.Ward;
 import com.uit.se356.core.domain.vo.area.Polygon;
 import com.uit.se356.core.domain.vo.area.ProvinceId;
@@ -9,6 +7,7 @@ import com.uit.se356.core.domain.vo.area.WardId;
 import com.uit.se356.core.infrastructure.persistence.entities.area.WardJpaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ public class WardPersistenceMapper {
       if (entity.getPolygon() != null) {
         polygon = objectMapper.readValue(entity.getPolygon(), Polygon.class);
       }
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       throw new RuntimeException("Failed to deserialize Polygon from JSON", e);
     }
 
@@ -49,7 +48,7 @@ public class WardPersistenceMapper {
     try {
       String polygonJson = objectMapper.writeValueAsString(domain.getPolygon());
       entity.setPolygon(polygonJson);
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       throw new RuntimeException("Failed to serialize Polygon to JSON", e);
     }
     return entity;
