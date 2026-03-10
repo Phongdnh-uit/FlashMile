@@ -17,6 +17,7 @@ import com.uit.se356.core.domain.vo.authentication.mfa.MfaChallengeCache;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ChallengeMfaHandler
     implements CommandHandler<MfaChallengeCommand, MfaChallengeResult> {
@@ -65,6 +66,10 @@ public class ChallengeMfaHandler
             .orElseThrow(() -> new AppException(CommonErrorCode.INTERNAL_ERROR));
 
     MfaChallengeResult result = mfaProvider.initiateMfaChallenge(userId, command.method());
+
+    if (result.challengeId() == null || result.challengeId().isBlank()) {
+      result = result.withChallengeId(UUID.randomUUID().toString());
+    }
 
     String key = String.format(CacheKey.MFA_CHALLENGE_PREFIX, result.challengeId());
 

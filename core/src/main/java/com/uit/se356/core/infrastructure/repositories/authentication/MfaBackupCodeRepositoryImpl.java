@@ -53,12 +53,14 @@ public class MfaBackupCodeRepositoryImpl implements MfaBackupCodeRepository {
   }
 
   @Override
-  public void deleteAlById(List<MfaBackupCodeId> ids) {
-    List<String> idValues = ids.stream().map(id -> id.value()).toList();
-    backupCodeJpaRepository.deleteAllById(idValues);
+  @Transactional
+  public void deleteAllByUserId(UserId userId) {
+    backupCodeJpaRepository.delete(
+        (root, query, builder) -> builder.equal(root.get("userId"), userId.value()));
   }
 
   @Override
+  @Transactional
   public List<MfaBackupCode> saveAll(List<MfaBackupCode> backupCodes) {
     List<MultifactorBackupCodeJpaEntity> entities =
         backupCodes.stream().map(backupCodeMapper::toEntity).toList();

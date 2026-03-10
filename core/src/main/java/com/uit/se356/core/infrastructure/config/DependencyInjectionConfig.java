@@ -164,9 +164,15 @@ public class DependencyInjectionConfig {
       PasswordEncoder passwordEncoder,
       IssueTokenService issueTokenService,
       AuthCacheRepository cacheRepository,
-      AuthConfigPort authConfigPort) {
+      AuthConfigPort authConfigPort,
+      MfaRepository mfaRepository) {
     return new LoginQueryHandler(
-        userRepository, passwordEncoder, issueTokenService, cacheRepository, authConfigPort);
+        userRepository,
+        passwordEncoder,
+        issueTokenService,
+        cacheRepository,
+        authConfigPort,
+        mfaRepository);
   }
 
   @Bean
@@ -370,7 +376,9 @@ public class DependencyInjectionConfig {
 
   @Bean
   CommandHandler<?, ?> removeMfaMethodHandler(
-      SecurityUtil<UserId> securityUtil, MfaRepository mfaRepository) {
-    return new RemoveMfaMethodHandler(mfaRepository, securityUtil);
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository,
+      MfaBackupCodeRepository mfaBackupCodeRepository) {
+    return new RemoveMfaMethodHandler(mfaRepository, securityUtil, mfaBackupCodeRepository);
   }
 }

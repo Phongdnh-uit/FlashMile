@@ -51,8 +51,6 @@ public class RecoveryMfaHandler implements CommandHandler<RecoveryMfaCommand, Lo
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE);
     }
 
-    String hashedCode = passwordEncoder.encode(command.code());
-
     List<MfaBackupCode> backupCodes =
         mfaBackupCodeRepository.findByUserId(mfaChallengeCacheOpt.get().userId());
 
@@ -60,7 +58,7 @@ public class RecoveryMfaHandler implements CommandHandler<RecoveryMfaCommand, Lo
         backupCodes.stream()
             .filter(
                 code ->
-                    code.getUsedAt() != null
+                    code.getUsedAt() == null
                         && passwordEncoder.matches(command.code(), code.getHashedCode()))
             .findAny();
 

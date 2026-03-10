@@ -76,17 +76,24 @@ public class CompleteSetupMfaHandler
 
     // TODO: Backup code, dùng chung backup code cho tất cả các phương thức MFA,  không cần phải
     // tạo mới khi thêm phương thức MFA mới
-    List<String> bkCode = new ArrayList<>();
 
     List<MfaBackupCode> backupCodes = mfaBackupCodeRepository.findByUserId(userId);
-    List<MfaBackupCode> backupCodesToSave = new ArrayList<>();
+
     boolean isAllRevoked = backupCodes.stream().allMatch(v -> v.getUsedAt() != null);
+
+    // Trường hợp dùng hết mã hoặc lần setup MFA đầu tiên, tạo và trả về
     if (backupCodes.isEmpty() || isAllRevoked) {
-      mfaBackupCodeRepository.deleteAlById(backupCodes.stream().map(MfaBackupCode::getId).toList());
+
+      // Xóa các mã backup code cũ nếu có
+      mfaBackupCodeRepository.deleteAllByUserId(userId);
+
+      List<MfaBackupCode> backupCodesToSave = new ArrayList<>();
+      List<String> bkCode = new ArrayList<>();
       // Sinh khoảng 10 mã
       for (int i = 0; i < 10; i++) {
         String code = OtpGenerator.generateOtp(8);
         bkCode.add(code);
+        // Hash code
         String hashedCode = passwordEncoder.encode(code);
         MfaBackupCode backupCode =
             MfaBackupCode.create(
@@ -94,9 +101,12 @@ public class CompleteSetupMfaHandler
         backupCodesToSave.add(backupCode);
       }
       mfaBackupCodeRepository.saveAll(backupCodesToSave);
+      CompleteSetupMfaResult result = new CompleteSetupMfaResult(bkCode);
+      return result;
     }
 
-    CompleteSetupMfaResult result = new CompleteSetupMfaResult(bkCode);
+    // Trường hợp đã có, không trả về gì hết vì backup code đã lưu ở lần đầu tiên
+    CompleteSetupMfaResult result = new CompleteSetupMfaResult(List.of());
 
     return result;
   }

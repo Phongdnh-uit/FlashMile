@@ -15,5 +15,5 @@ public interface MfaBackupCodeRepository {
 
   void deleteById(MfaBackupCodeId id);
 
-  void deleteAlById(List<MfaBackupCodeId> ids);
+  void deleteAllByUserId(UserId userId);
 }

@@ -75,6 +75,7 @@ public class MfaRepositoryImpl implements MfaRepository {
   }
 
   @Override
+  @Transactional
   public void deleteById(MfaId id) {
     multifactorJpaRepository.deleteById(id.value());
   }

@@ -15,11 +15,15 @@ import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.application.authentication.result.mfa.MfaChallengeResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
+import com.uit.se356.core.infrastructure.config.AppProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MfaController {
   private final CommandBus commandBus;
   private final QueryBus queryBus;
+  private final AppProperties appProperties;
 
   @GetMapping("/methods")
   public ResponseEntity<ApiResponse<List<MfaMethodProjection>>> getMfaMethods() {
@@ -72,15 +77,35 @@ public class MfaController {
 
   @PostMapping("/verify")
   public ResponseEntity<ApiResponse<LoginResult>> verifyMfa(@RequestBody VerifyMfaCommand command) {
-    return ResponseEntity.ok(
-        ApiResponse.ok(commandBus.dispatch(command), "MFA verification successful"));
+    LoginResult result = commandBus.dispatch(command);
+    ResponseCookie cookie =
+        ResponseCookie.from("refreshToken", result.refreshToken())
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofMillis(appProperties.getSecurity().getJwt().getRefreshExpiration()))
+            .build();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(ApiResponse.ok(result, "MFA verification successful"));
   }
 
   @PostMapping("/recovery")
   public ResponseEntity<ApiResponse<LoginResult>> recoverMfa(
       @RequestBody RecoveryMfaCommand command) {
-    return ResponseEntity.ok(
-        ApiResponse.ok(commandBus.dispatch(command), "MFA recovery successful"));
+    LoginResult result = commandBus.dispatch(command);
+    ResponseCookie cookie =
+        ResponseCookie.from("refreshToken", result.refreshToken())
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofMillis(appProperties.getSecurity().getJwt().getRefreshExpiration()))
+            .build();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(ApiResponse.ok(commandBus.dispatch(command), "MFA recovery successful"));
   }
 
   @DeleteMapping("/remove/{method}")

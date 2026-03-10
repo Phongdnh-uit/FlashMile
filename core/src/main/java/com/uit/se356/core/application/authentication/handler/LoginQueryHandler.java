@@ -6,17 +6,23 @@ import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
 import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
+import com.uit.se356.core.application.authentication.port.out.MfaRepository;
 import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
+import com.uit.se356.core.application.authentication.projections.MfaMethodProjection;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
 import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
 import com.uit.se356.core.application.user.port.UserRepository;
+import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.exception.UserErrorCode;
 import com.uit.se356.core.domain.vo.authentication.Email;
 import com.uit.se356.core.domain.vo.authentication.PhoneNumber;
 import com.uit.se356.core.domain.vo.authentication.UserStatus;
+import java.time.Duration;
+import java.util.List;
+import java.util.UUID;
 
 public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> {
   private final UserRepository userRepository;
@@ -24,18 +30,21 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
   private final IssueTokenService issueTokenService;
   private final AuthCacheRepository authCacheRepository;
   private final AuthConfigPort authConfigPort;
+  private final MfaRepository mfaRepository;
 
   public LoginQueryHandler(
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
       IssueTokenService issueTokenService,
       AuthCacheRepository authCacheRepository,
-      AuthConfigPort authConfigPort) {
+      AuthConfigPort authConfigPort,
+      MfaRepository mfaRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.issueTokenService = issueTokenService;
     this.authCacheRepository = authCacheRepository;
     this.authConfigPort = authConfigPort;
+    this.mfaRepository = mfaRepository;
   }
 
   @Override
@@ -89,6 +98,17 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
       throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
     }
 
+    List<MfaMethodProjection> mfaMethods = mfaRepository.findActiveMethodsByUserId(user.getId());
+    if (!mfaMethods.isEmpty()) {
+      String token = UUID.randomUUID().toString(); // Có thể tạo token có nghĩa hơn nếu cần
+      String key = String.format(CacheKey.MFA_PRECHALLENGE_PREFIX, token);
+      authCacheRepository.set(
+          key,
+          user.getId().value(),
+          Duration.ofSeconds(authConfigPort.getPrechallengeTokenExpiration()));
+      return LoginResult.mfaRequired(mfaMethods, token);
+    }
+
     IssueTokenCommand issueTokenCommand = new IssueTokenCommand(user.getId(), user.getRoleId());
 
     TokenPairResult tokenPair = issueTokenService.issueToken(issueTokenCommand);
@@ -99,15 +119,6 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
             tokenPair.refreshToken(),
             tokenPair.expiresIn(),
             tokenPair.tokenType());
-
-    // TODO: Thêm isEnableMfa bên User và check
-    // Nếu có kích hoạt MFA, không trả về token ngay mà tạo token tạm
-    // String token = UUID.randomUUID().toString(); // Có thể tạo token có nghĩa hơn nếu cần
-    // String key = String.format(CacheKey.MFA_PRECHALLENGE_PREFIX, token);
-    // authCacheRepository.set(
-    //     key,
-    //     user.getId().value(),
-    //     Duration.ofSeconds(authConfigPort.getPrechallengeTokenExpiration()));
 
     return loginResult;
   }
