@@ -10,6 +10,9 @@ public interface SecurityConstant {
     "/api/v1/auth/login",
     "/api/v1/auth/register",
     "/api/v1/auth/reset-password",
+    "/api/v1/auth/mfa/challenge",
+    "/api/v1/auth/mfa/verify",
+    "/api/v1/auth/mfa/recovery",
   };
   String[] PUBLIC_GET_URLS = {};
 }

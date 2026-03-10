@@ -37,6 +37,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     if (bucket.tryConsume(1)) {
       filterChain.doFilter(request, response);
     } else {
+      long waitForRefill = bucket.getAvailableTokens();
       ErrorResponse errorResponse =
           new ErrorResponse(
               request.getRequestURI(),
@@ -48,6 +49,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
               null,
               AuthErrorCode.TOO_MANY_REQUESTS.getCode());
       response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+      response.setHeader("Retry-After", String.valueOf(waitForRefill));
       response.setContentType("application/json");
       objectMapper.writeValue(response.getWriter(), errorResponse);
     }

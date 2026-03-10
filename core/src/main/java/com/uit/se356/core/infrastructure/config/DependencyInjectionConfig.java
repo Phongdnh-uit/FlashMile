@@ -16,8 +16,10 @@ import com.uit.se356.core.application.authentication.handler.SendVerificationCod
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.ChallengeMfaHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.CompleteSetupMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.GetActiveMethodsHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.InitiateMfaSetupHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.RecoveryMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.RemoveMfaMethodHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.VerifyMfaHandler;
 import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
 import com.uit.se356.core.application.authentication.handler.permission.PermissionSummaryQueryHandler;
@@ -358,5 +360,17 @@ public class DependencyInjectionConfig {
         passwordEncoder,
         userRepository,
         issueTokenService);
+  }
+
+  @Bean
+  QueryHandler<?, ?> getActiveMfaMethodsHandler(
+      SecurityUtil<UserId> securityUtil, MfaRepository mfaRepository) {
+    return new GetActiveMethodsHandler(mfaRepository, securityUtil);
+  }
+
+  @Bean
+  CommandHandler<?, ?> removeMfaMethodHandler(
+      SecurityUtil<UserId> securityUtil, MfaRepository mfaRepository) {
+    return new RemoveMfaMethodHandler(mfaRepository, securityUtil);
   }
 }

@@ -21,9 +21,9 @@ public class RateLimitingConfig {
   FilterRegistrationBean<RateLimitingFilter> authRateLimitingFilter() {
     FilterRegistrationBean<RateLimitingFilter> registrationBean = new FilterRegistrationBean<>();
 
-    // Rate limit cho đăng nhập: 5 yêu cầu mỗi phút
+    // Rate limit cho đăng nhập: 10 yêu cầu mỗi phút
     Bandwidth limit =
-        Bandwidth.builder().capacity(5).refillIntervally(5, Duration.ofMinutes(1)).build();
+        Bandwidth.builder().capacity(10).refillGreedy(10, Duration.ofMinutes(1)).build();
     registrationBean.setFilter(new RateLimitingFilter(limit, objectMapper, messageSource));
     registrationBean.addUrlPatterns("/api/v1/auth/*");
     registrationBean.setOrder(1);
@@ -37,7 +37,7 @@ public class RateLimitingConfig {
 
     // Rate limit cho upload: 10 yêu cầu mỗi phút
     Bandwidth limit =
-        Bandwidth.builder().capacity(10).refillIntervally(10, Duration.ofMinutes(1)).build();
+        Bandwidth.builder().capacity(10).refillGreedy(10, Duration.ofMinutes(1)).build();
 
     registrationBean.setFilter(new RateLimitingFilter(limit, objectMapper, messageSource));
     registrationBean.addUrlPatterns("/api/v1/upload/*");
