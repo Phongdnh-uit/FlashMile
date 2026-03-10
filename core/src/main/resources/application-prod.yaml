@@ -98,6 +98,8 @@ application:
       secret-key: ${JWT_SECRET_KEY}
       expiration: ${JWT_EXPIRATION:86400000} # 1 ngày
       refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 ngày
+    encryption-salt: ${ENCRYPTION_SALT}
+    encryption-secret-key: ${ENCRYPTION_SECRET_KEY}
   mail:
     from: ${MAIL_FROM}
   frontend:
@@ -110,6 +112,8 @@ application:
     sms-otp-expiration: ${SMS_OTP_EXPIRATION:300}
     phone-verified-token-expiration: ${PHONE_VERIFIED_TOKEN_EXPIRATION:600}
     forgot-password-code-expiration: ${FORGOT_PASSWORD_CODE_EXPIRATION:300}
+    prechallenge-token-expiration: ${PRECHALLENGE_TOKEN_EXPIRATION:600}
+    mfa-challenge-expiration: ${MFA_CHALLENGE_EXPIRATION:600}
   bootstrap:
     admin-email: ${ADMIN_EMAIL}
     admin-full-name: ${ADMIN_FULL_NAME}

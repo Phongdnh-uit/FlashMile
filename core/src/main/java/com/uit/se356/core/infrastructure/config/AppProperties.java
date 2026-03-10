@@ -25,12 +25,16 @@ public class AppProperties {
     private long smsOtpExpiration;
     private long phoneVerifiedTokenExpiration;
     private long forgotPasswordCodeExpiration;
+    public long prechallengeTokenExpiration;
+    public long mfaChallengeExpiration;
   }
 
   @Getter
   @Setter
   public static class Security {
     private Jwt jwt;
+    private String encryptionSecretKey;
+    private String encryptionSalt;
   }
 
   @Getter

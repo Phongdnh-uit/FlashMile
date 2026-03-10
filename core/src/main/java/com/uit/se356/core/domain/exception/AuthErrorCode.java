@@ -27,7 +27,9 @@ public enum AuthErrorCode implements ErrorCode {
   TOKEN_EXPIRED("AUTH_020", "error.auth.token_expired", 401),
   AUTHENTICATION_REQUIRED("AUTH_021", "error.auth.authentication_required", 401),
   SYSTEM_ROLE_MODIFICATION("AUTH_022", "error.auth.system_role_modification", 400),
-  PERMISSION_NOT_FOUND("AUTH_023", "error.auth.permission_not_found", 400);
+  PERMISSION_NOT_FOUND("AUTH_023", "error.auth.permission_not_found", 400),
+  MFA_METHOD_ALREADY_EXISTS("AUTH_024", "error.auth.mfa_method_already_exists", 400),
+  MFA_METHOD_NOT_FOUND("AUTH_025", "error.auth.mfa_method_not_found", 404);
   private final String code;
   private final String messageKey;
   private final int httpStatus;

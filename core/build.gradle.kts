@@ -1,4 +1,11 @@
 dependencies {
+    val bucket4jVersion = "8.10.1"
+    val caffeineVersion = "3.2.3"
+    val rsqlVersion = "6.0.33"
+    val minioVersion = "8.6.0"
+    val zxingVersion = "3.5.3"
+    val googleAuthVersion = "1.5.0"   
+
     implementation(project(":common"))
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
@@ -14,10 +21,13 @@ dependencies {
     implementation ("com.fasterxml.uuid:java-uuid-generator:5.1.0")
     implementation ("org.springframework.boot:spring-boot-starter-mail")
     implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
-    implementation ("com.bucket4j:bucket4j-core:8.10.1")
-    implementation ("com.github.ben-manes.caffeine:caffeine:3.2.3")
-    implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:6.0.33")
-    implementation ("io.minio:minio:8.6.0")
+    implementation ("com.bucket4j:bucket4j-core:$bucket4jVersion")
+    implementation ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
+    implementation("io.github.perplexhub:rsql-jpa-spring-boot-starter:$rsqlVersion")
+    implementation ("io.minio:minio:$minioVersion")
+    implementation ("com.google.zxing:core:$zxingVersion")
+    implementation ("com.google.zxing:javase:$zxingVersion")
+    implementation ("com.warrenstrange:googleauth:$googleAuthVersion")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
