@@ -34,7 +34,7 @@ spring:
       password: ${REDIS_PASSWORD}
       ssl:
         enabled: true # Bật SSL cho Redis nếu được hỗ trợ bởi provider
-      
+
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
@@ -99,6 +99,8 @@ application:
       secret-key: ${JWT_SECRET_KEY}
       expiration: ${JWT_EXPIRATION:86400000} # 1 ngày
       refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 ngày
+    encryption-salt: ${ENCRYPTION_SALT}
+    encryption-secret-key: ${ENCRYPTION_SECRET_KEY}
   mail:
     from: ${MAIL_FROM}
   frontend:

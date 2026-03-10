@@ -25,7 +25,9 @@ import com.uit.se356.core.application.authentication.handler.role.UpdateRoleHand
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.EncryptService;
 import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
 import com.uit.se356.core.application.authentication.port.out.MfaProvider;
 import com.uit.se356.core.application.authentication.port.out.MfaRepository;
 import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
@@ -303,7 +305,16 @@ public class DependencyInjectionConfig {
   CommandHandler<?, ?> completeMfaSetupHandler(
       List<MfaProvider> mfaProviders,
       SecurityUtil<UserId> securityUtil,
-      MfaRepository mfaRepository) {
-    return new CompleteSetupMfaHandler(mfaProviders, securityUtil, mfaRepository);
+      IdGenerator idGenerator,
+      MfaRepository mfaRepository,
+      MfaBackupCodeRepository mfaBackupCodeRepository,
+      EncryptService encryptService) {
+    return new CompleteSetupMfaHandler(
+        mfaProviders,
+        securityUtil,
+        mfaRepository,
+        idGenerator,
+        encryptService,
+        mfaBackupCodeRepository);
   }
 }

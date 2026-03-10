@@ -4,6 +4,7 @@ import com.uit.se356.common.dto.Command;
 import com.uit.se356.common.dto.FieldError;
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.exception.CommonErrorCode;
+import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public record CompleteSetupMfaCommand(
     MfaMethod method,
     String credential, // Dùng cho TOTP và email
     Map<String, String> properties // Dùng cho webauth
-    ) implements Command<Void> {
+    ) implements Command<CompleteSetupMfaResult> {
   public CompleteSetupMfaCommand {
     List<FieldError> errors = new ArrayList<>();
     if (method == null) {

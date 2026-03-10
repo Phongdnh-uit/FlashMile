@@ -2,15 +2,21 @@ package com.uit.se356.core.application.authentication.port.out;
 
 import com.uit.se356.core.domain.entities.authentication.MfaBackupCode;
 import com.uit.se356.core.domain.vo.authentication.MfaBackupCodeId;
+import com.uit.se356.core.domain.vo.authentication.UserId;
+import java.util.List;
 import java.util.Optional;
 
 public interface MfaBackupCodeRepository {
 
-  MfaBackupCode create(MfaBackupCode backupCode);
-
   MfaBackupCode update(MfaBackupCode backupCode);
+
+  List<MfaBackupCode> saveAll(List<MfaBackupCode> backupCodes);
 
   Optional<MfaBackupCode> findById(MfaBackupCodeId id);
 
+  List<MfaBackupCode> findByUserId(UserId userId);
+
   void deleteById(MfaBackupCodeId id);
+
+  void deleteAlById(List<MfaBackupCodeId> ids);
 }

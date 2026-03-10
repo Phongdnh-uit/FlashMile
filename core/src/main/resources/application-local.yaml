@@ -73,6 +73,8 @@ application:
       secret-key: "mySuperSecretKeyForJwtSigningMustBeLongEnoughToSatisfyHS256Requirements"
       expiration: 86400000 # 1 day
       refresh-expiration: 604800000 # 7 days
+    encryption-salt: fixed-salt-change-me
+    encryption-secret-key: mySuperSecretKeyForEncryptionMustBeLongEnough
   mail:
     from: "noreply@flashmile.local"
   frontend:

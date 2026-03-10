@@ -31,6 +31,8 @@ public class AppProperties {
   @Setter
   public static class Security {
     private Jwt jwt;
+    private String encryptionSecretKey;
+    private String encryptionSalt;
   }
 
   @Getter

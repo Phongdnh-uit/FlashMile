@@ -4,6 +4,7 @@ import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.common.services.CommandBus;
 import com.uit.se356.core.application.authentication.command.mfa.CompleteSetupMfaCommand;
 import com.uit.se356.core.application.authentication.command.mfa.InitiateMfaSetupCommand;
+import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,7 +42,7 @@ public class MfaController {
 
   @Operation(summary = "Hoàn tất quá trình thiết lập MFA cho người dùng")
   @PostMapping("/setup/complete")
-  public ResponseEntity<ApiResponse<Void>> completeMfaSetup(
+  public ResponseEntity<ApiResponse<CompleteSetupMfaResult>> completeMfaSetup(
       @RequestBody CompleteSetupMfaCommand command) {
     return ResponseEntity.ok(
         ApiResponse.ok(commandBus.dispatch(command), "MFA setup completed successfully"));

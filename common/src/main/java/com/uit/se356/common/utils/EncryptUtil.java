@@ -19,7 +19,7 @@ public class EncryptUtil {
   private static final int IV_LENGTH_BYTE = 12; // IV chuẩn cho GCM
   private static final int AES_KEY_BIT = 256; // Dùng AES-256
 
-  public String encrypt(String plainText, String secretKey) {
+  public static String encrypt(String plainText, String secretKey, String salt) {
     try {
       // 1. Tạo IV ngẫu nhiên cho mỗi lần mã hóa (Bắt buộc để bảo mật)
       byte[] iv = new byte[IV_LENGTH_BYTE];
@@ -27,7 +27,7 @@ public class EncryptUtil {
 
       Cipher cipher = Cipher.getInstance(ALGORITHM);
       GCMParameterSpec spec = new GCMParameterSpec(TAG_LENGTH_BIT, iv);
-      cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(secretKey), spec);
+      cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(secretKey, salt), spec);
 
       // 2. Mã hóa
       byte[] cipherText = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
@@ -43,7 +43,7 @@ public class EncryptUtil {
     }
   }
 
-  public String decrypt(String encryptedText, String secretKey) {
+  public static String decrypt(String encryptedText, String secretKey, String salt) {
     try {
       byte[] decode = Base64.getDecoder().decode(encryptedText);
 
@@ -56,7 +56,7 @@ public class EncryptUtil {
 
       Cipher cipher = Cipher.getInstance(ALGORITHM);
       GCMParameterSpec spec = new GCMParameterSpec(TAG_LENGTH_BIT, iv);
-      cipher.init(Cipher.DECRYPT_MODE, getSecretKey(secretKey), spec);
+      cipher.init(Cipher.DECRYPT_MODE, getSecretKey(secretKey, salt), spec);
 
       // 2. Giải mã
       byte[] plainText = cipher.doFinal(cipherText);
@@ -66,13 +66,13 @@ public class EncryptUtil {
     }
   }
 
-  private SecretKey getSecretKey(String secretKey) throws Exception {
+  private static SecretKey getSecretKey(String secretKey, String salt) throws Exception {
 
-    byte[] salt = "fixed-salt-change-me".getBytes();
+    byte[] saltByte = salt.getBytes();
 
     SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
 
-    KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), salt, 65536, 256);
+    KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), saltByte, 65536, 256);
 
     SecretKey tmp = factory.generateSecret(spec);
 
