@@ -5,11 +5,15 @@ import com.uit.se356.common.services.CommandBus;
 import com.uit.se356.core.application.authentication.command.mfa.CompleteSetupMfaCommand;
 import com.uit.se356.core.application.authentication.command.mfa.InitiateMfaSetupCommand;
 import com.uit.se356.core.application.authentication.command.mfa.MfaChallengeCommand;
+import com.uit.se356.core.application.authentication.command.mfa.RecoveryMfaCommand;
+import com.uit.se356.core.application.authentication.command.mfa.VerifyMfaCommand;
+import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.application.authentication.result.mfa.MfaChallengeResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MfaController {
   private final CommandBus commandBus;
 
-  // Placeholder cho endpoint lấy danh sách đã cấu hình MFA
   @GetMapping("/methods")
-  public ResponseEntity<ApiResponse<Void>> getMfaMethods() {
+  public ResponseEntity<ApiResponse<List<String>>> getMfaMethods() {
     throw new UnsupportedOperationException("Not implemented yet");
   }
 
@@ -59,12 +62,15 @@ public class MfaController {
   }
 
   @PostMapping("/verify")
-  public ResponseEntity<ApiResponse<Void>> verifyMfa() {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public ResponseEntity<ApiResponse<LoginResult>> verifyMfa(@RequestBody VerifyMfaCommand command) {
+    return ResponseEntity.ok(
+        ApiResponse.ok(commandBus.dispatch(command), "MFA verification successful"));
   }
 
   @PostMapping("/recovery")
-  public ResponseEntity<ApiResponse<Void>> recoverMfa() {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public ResponseEntity<ApiResponse<LoginResult>> recoverMfa(
+      @RequestBody RecoveryMfaCommand command) {
+    return ResponseEntity.ok(
+        ApiResponse.ok(commandBus.dispatch(command), "MFA recovery successful"));
   }
 }

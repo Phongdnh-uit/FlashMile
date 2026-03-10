@@ -7,10 +7,10 @@ import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.common.utils.OtpGenerator;
 import com.uit.se356.common.utils.SecurityUtil;
 import com.uit.se356.core.application.authentication.command.mfa.CompleteSetupMfaCommand;
-import com.uit.se356.core.application.authentication.port.out.EncryptService;
 import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
 import com.uit.se356.core.application.authentication.port.out.MfaProvider;
 import com.uit.se356.core.application.authentication.port.out.MfaRepository;
+import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.domain.entities.authentication.Mfa;
 import com.uit.se356.core.domain.entities.authentication.MfaBackupCode;
@@ -28,21 +28,21 @@ public class CompleteSetupMfaHandler
   private final MfaRepository mfaRepository;
   private final MfaBackupCodeRepository mfaBackupCodeRepository;
   private final IdGenerator idGenerator;
-  private final EncryptService encryptService;
+  private final PasswordEncoder passwordEncoder;
 
   public CompleteSetupMfaHandler(
       List<MfaProvider> mfaProviders,
       SecurityUtil<UserId> securityUtil,
       MfaRepository mfaRepository,
       IdGenerator idGenerator,
-      EncryptService encryptService,
-      MfaBackupCodeRepository mfaBackupCodeRepository) {
+      MfaBackupCodeRepository mfaBackupCodeRepository,
+      PasswordEncoder passwordEncoder) {
     this.mfaProviders = mfaProviders;
     this.securityUtil = securityUtil;
     this.mfaRepository = mfaRepository;
     this.mfaBackupCodeRepository = mfaBackupCodeRepository;
     this.idGenerator = idGenerator;
-    this.encryptService = encryptService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -87,7 +87,7 @@ public class CompleteSetupMfaHandler
       for (int i = 0; i < 10; i++) {
         String code = OtpGenerator.generateOtp(8);
         bkCode.add(code);
-        String hashedCode = encryptService.encrypt(code);
+        String hashedCode = passwordEncoder.encode(code);
         MfaBackupCode backupCode =
             MfaBackupCode.create(
                 new MfaBackupCodeId(idGenerator.generate().toString()), userId, hashedCode, null);

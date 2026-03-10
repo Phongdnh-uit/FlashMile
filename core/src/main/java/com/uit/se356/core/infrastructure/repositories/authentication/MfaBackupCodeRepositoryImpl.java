@@ -9,7 +9,6 @@ import com.uit.se356.core.infrastructure.persistence.mappers.authentication.MfaB
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.MfaBackupCodeJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,11 +35,6 @@ public class MfaBackupCodeRepositoryImpl implements MfaBackupCodeRepository {
     backupCodeMapper.updateEntityFromDomain(backupCode, existingEntity);
 
     return backupCodeMapper.toDomain(existingEntity);
-  }
-
-  @Override
-  public Optional<MfaBackupCode> findById(MfaBackupCodeId id) {
-    return backupCodeJpaRepository.findById(id.value()).map(backupCodeMapper::toDomain);
   }
 
   @Override

@@ -17,6 +17,8 @@ import com.uit.se356.core.application.authentication.handler.TokenRotationHandle
 import com.uit.se356.core.application.authentication.handler.mfa.ChallengeMfaHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.CompleteSetupMfaHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.InitiateMfaSetupHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.RecoveryMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.VerifyMfaHandler;
 import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
 import com.uit.se356.core.application.authentication.handler.permission.PermissionSummaryQueryHandler;
 import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
@@ -27,7 +29,6 @@ import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
 import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
-import com.uit.se356.core.application.authentication.port.out.EncryptService;
 import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
 import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
 import com.uit.se356.core.application.authentication.port.out.MfaProvider;
@@ -312,14 +313,14 @@ public class DependencyInjectionConfig {
       IdGenerator idGenerator,
       MfaRepository mfaRepository,
       MfaBackupCodeRepository mfaBackupCodeRepository,
-      EncryptService encryptService) {
+      PasswordEncoder passwordEncoder) {
     return new CompleteSetupMfaHandler(
         mfaProviders,
         securityUtil,
         mfaRepository,
         idGenerator,
-        encryptService,
-        mfaBackupCodeRepository);
+        mfaBackupCodeRepository,
+        passwordEncoder);
   }
 
   @Bean
@@ -331,5 +332,31 @@ public class DependencyInjectionConfig {
       AuthConfigPort authConfigPort) {
     return new ChallengeMfaHandler(
         authCacheRepository, mfaProviders, mfaRepository, authConfigPort);
+  }
+
+  @Bean
+  CommandHandler<?, ?> verifyMfaHandler(
+      List<MfaProvider> mfaProviders,
+      AuthCacheRepository authCacheRepository,
+      MfaRepository mfaRepository,
+      IssueTokenService issueTokenService,
+      UserRepository userRepository) {
+    return new VerifyMfaHandler(
+        mfaProviders, authCacheRepository, mfaRepository, issueTokenService, userRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> recoveryMfaHandler(
+      AuthCacheRepository authCacheRepository,
+      MfaBackupCodeRepository mfaBackupCodeRepository,
+      PasswordEncoder passwordEncoder,
+      UserRepository userRepository,
+      IssueTokenService issueTokenService) {
+    return new RecoveryMfaHandler(
+        authCacheRepository,
+        mfaBackupCodeRepository,
+        passwordEncoder,
+        userRepository,
+        issueTokenService);
   }
 }
