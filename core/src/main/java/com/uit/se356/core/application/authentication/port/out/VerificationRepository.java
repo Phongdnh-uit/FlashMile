@@ -15,4 +15,6 @@ public interface VerificationRepository {
   void deleteByUserIdAndType(UserId id, VerificationType type);
 
   void delete(Verification verification);
+
+  void cleanupExpiredVerifications();
 }

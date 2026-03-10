@@ -63,6 +63,8 @@ application:
     sms-otp-expiration: 300 # 5 minutes
     phone-verified-token-expiration: 600 # 10 minutes
     forgot-password-code-expiration: 300 # 5 minutes
+    mfa-challenge-expiration: 600 # 10 minutes
+    prechallenge-token-expiration: 600 # 10 minutes
   bootstrap:
     admin-email: admin@example.com
     admin-full-name: Admin Local

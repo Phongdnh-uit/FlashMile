@@ -2,7 +2,7 @@ package com.uit.se356.core.application.authentication.strategies.verification.se
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
 import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
 import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.user.port.UserRepository;
@@ -22,13 +22,13 @@ import java.util.UUID;
 public class ForgotPasswordSendingStrategy implements SendVerificationStrategy {
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
-  private final VerificationConfigPort verificationConfigPort;
+  private final AuthConfigPort verificationConfigPort;
   private final IdGenerator idGenerator;
 
   public ForgotPasswordSendingStrategy(
       UserRepository userRepository,
       VerificationRepository verificationRepository,
-      VerificationConfigPort verificationConfigPort,
+      AuthConfigPort verificationConfigPort,
       IdGenerator idGenerator) {
     this.userRepository = userRepository;
     this.verificationRepository = verificationRepository;

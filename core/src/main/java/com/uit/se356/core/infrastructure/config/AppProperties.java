@@ -25,6 +25,8 @@ public class AppProperties {
     private long smsOtpExpiration;
     private long phoneVerifiedTokenExpiration;
     private long forgotPasswordCodeExpiration;
+    public long prechallengeTokenExpiration;
+    public long mfaChallengeExpiration;
   }
 
   @Getter

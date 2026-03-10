@@ -42,4 +42,11 @@ public interface AuthCacheRepository {
 
   /** Lấy set giá trị từ cache. */
   Optional<Set<String>> getSet(String key);
+
+  // Dạng generic cho các loại giá trị phức tạp
+  <T> void setObject(String key, T value);
+
+  <T> void setObject(String key, T value, Duration ttl);
+
+  <T> Optional<T> getObject(String key, Class<T> clazz);
 }

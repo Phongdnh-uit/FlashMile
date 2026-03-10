@@ -14,6 +14,7 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.ChallengeMfaHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.CompleteSetupMfaHandler;
 import com.uit.se356.core.application.authentication.handler.mfa.InitiateMfaSetupHandler;
 import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
@@ -25,6 +26,7 @@ import com.uit.se356.core.application.authentication.handler.role.UpdateRoleHand
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
 import com.uit.se356.core.application.authentication.port.out.EncryptService;
 import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
 import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
@@ -35,7 +37,6 @@ import com.uit.se356.core.application.authentication.port.out.PermissionReposito
 import com.uit.se356.core.application.authentication.port.out.RefreshTokenRepository;
 import com.uit.se356.core.application.authentication.port.out.RoleRepository;
 import com.uit.se356.core.application.authentication.port.out.TokenProvider;
-import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
 import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
 import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.authentication.services.IssueTokenServiceImpl;
@@ -76,7 +77,7 @@ public class DependencyInjectionConfig {
   PhoneVerificationSendingStrategy phoneVerificationSendingStrategy(
       UserRepository userRepository,
       AuthCacheRepository cacheRepository,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     return new PhoneVerificationSendingStrategy(
         userRepository, cacheRepository, verificationConfigPort);
   }
@@ -86,7 +87,7 @@ public class DependencyInjectionConfig {
       IdGenerator idGenerator,
       UserRepository userRepository,
       VerificationRepository verificationRepository,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     return new EmailVerificationSendingStrategy(
         userRepository, verificationRepository, idGenerator, verificationConfigPort);
   }
@@ -96,14 +97,14 @@ public class DependencyInjectionConfig {
       IdGenerator idGenerator,
       UserRepository userRepository,
       VerificationRepository verificationRepository,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     return new ForgotPasswordSendingStrategy(
         userRepository, verificationRepository, verificationConfigPort, idGenerator);
   }
 
   @Bean
   PhoneVerificationProcessingStrategy phoneVerificationProcessingStrategy(
-      AuthCacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
+      AuthCacheRepository cacheRepository, AuthConfigPort verificationConfigPort) {
     return new PhoneVerificationProcessingStrategy(cacheRepository, verificationConfigPort);
   }
 
@@ -158,8 +159,11 @@ public class DependencyInjectionConfig {
   QueryHandler<?, ?> loginQueryHandler(
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
-      IssueTokenService issueTokenService) {
-    return new LoginQueryHandler(userRepository, passwordEncoder, issueTokenService);
+      IssueTokenService issueTokenService,
+      AuthCacheRepository cacheRepository,
+      AuthConfigPort authConfigPort) {
+    return new LoginQueryHandler(
+        userRepository, passwordEncoder, issueTokenService, cacheRepository, authConfigPort);
   }
 
   @Bean
@@ -316,5 +320,16 @@ public class DependencyInjectionConfig {
         idGenerator,
         encryptService,
         mfaBackupCodeRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> challengeMfaHandler(
+      AuthCacheRepository authCacheRepository,
+      List<MfaProvider> mfaProviders,
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository,
+      AuthConfigPort authConfigPort) {
+    return new ChallengeMfaHandler(
+        authCacheRepository, mfaProviders, mfaRepository, authConfigPort);
   }
 }

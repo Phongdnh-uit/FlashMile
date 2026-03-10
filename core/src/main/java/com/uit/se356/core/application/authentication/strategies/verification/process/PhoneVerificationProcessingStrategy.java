@@ -2,7 +2,7 @@ package com.uit.se356.core.application.authentication.strategies.verification.pr
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
-import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
 import com.uit.se356.core.application.authentication.result.VerificationResult;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
@@ -14,10 +14,10 @@ import java.util.UUID;
 
 public class PhoneVerificationProcessingStrategy implements ProcessVerificationStrategy {
   private final AuthCacheRepository cacheRepository;
-  private final VerificationConfigPort verificationConfigPort;
+  private final AuthConfigPort verificationConfigPort;
 
   public PhoneVerificationProcessingStrategy(
-      AuthCacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
+      AuthCacheRepository cacheRepository, AuthConfigPort verificationConfigPort) {
     this.cacheRepository = cacheRepository;
     this.verificationConfigPort = verificationConfigPort;
   }

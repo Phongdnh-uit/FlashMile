@@ -4,7 +4,9 @@ import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.common.services.CommandBus;
 import com.uit.se356.core.application.authentication.command.mfa.CompleteSetupMfaCommand;
 import com.uit.se356.core.application.authentication.command.mfa.InitiateMfaSetupCommand;
+import com.uit.se356.core.application.authentication.command.mfa.MfaChallengeCommand;
 import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
+import com.uit.se356.core.application.authentication.result.mfa.MfaChallengeResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,9 +50,12 @@ public class MfaController {
         ApiResponse.ok(commandBus.dispatch(command), "MFA setup completed successfully"));
   }
 
+  @Operation(summary = "Thực hiện MFA challenge")
   @PostMapping("/challenge")
-  public ResponseEntity<ApiResponse<Void>> challengeMfa() {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public ResponseEntity<ApiResponse<MfaChallengeResult>> challengeMfa(
+      @RequestBody MfaChallengeCommand command) {
+    return ResponseEntity.ok(
+        ApiResponse.ok(commandBus.dispatch(command), "MFA challenge successful"));
   }
 
   @PostMapping("/verify")

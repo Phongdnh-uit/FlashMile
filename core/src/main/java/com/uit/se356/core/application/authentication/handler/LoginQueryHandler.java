@@ -4,6 +4,8 @@ import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.services.QueryHandler;
 import com.uit.se356.core.application.authentication.command.IssueTokenCommand;
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
+import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
 import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import com.uit.se356.core.application.authentication.query.LoginQuery;
 import com.uit.se356.core.application.authentication.result.LoginResult;
@@ -20,14 +22,20 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final IssueTokenService issueTokenService;
+  private final AuthCacheRepository authCacheRepository;
+  private final AuthConfigPort authConfigPort;
 
   public LoginQueryHandler(
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
-      IssueTokenService issueTokenService) {
+      IssueTokenService issueTokenService,
+      AuthCacheRepository authCacheRepository,
+      AuthConfigPort authConfigPort) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.issueTokenService = issueTokenService;
+    this.authCacheRepository = authCacheRepository;
+    this.authConfigPort = authConfigPort;
   }
 
   @Override
@@ -91,6 +99,15 @@ public class LoginQueryHandler implements QueryHandler<LoginQuery, LoginResult> 
             tokenPair.refreshToken(),
             tokenPair.expiresIn(),
             tokenPair.tokenType());
+
+    // TODO: Thêm isEnableMfa bên User và check
+    // Nếu có kích hoạt MFA, không trả về token ngay mà tạo token tạm
+    // String token = UUID.randomUUID().toString(); // Có thể tạo token có nghĩa hơn nếu cần
+    // String key = String.format(CacheKey.MFA_PRECHALLENGE_PREFIX, token);
+    // authCacheRepository.set(
+    //     key,
+    //     user.getId().value(),
+    //     Duration.ofSeconds(authConfigPort.getPrechallengeTokenExpiration()));
 
     return loginResult;
   }
