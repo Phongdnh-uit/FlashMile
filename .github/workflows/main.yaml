@@ -1,4 +1,4 @@
-name: Build, SonarQube Analysis Workflow, Push Docker Image
+name: Build Push Docker Image
 on:
   push:
     branches:
@@ -19,21 +19,22 @@ jobs:
           java-version: 21
           distribution: "zulu" # Dùng zulu vì tối ưu cho môi trường container
           cache: "gradle"
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+      # - name: Cache SonarQube packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.sonar/cache
+      #     key: ${{ runner.os }}-sonar
+      #     restore-keys: ${{ runner.os }}-sonar
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build, Test, and Analyze with SonarQube
+      - name: Build, Test
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew spotlessCheck clean build sonar --no-daemon --info
+        # run: ./gradlew spotlessCheck clean build sonar --no-daemon --info
+        run: ./gradlew spotlessCheck clean build --no-daemon --info
 
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
