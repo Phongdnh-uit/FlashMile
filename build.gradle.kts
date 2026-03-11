@@ -23,7 +23,7 @@ spotless {
 
 sonar {
     properties {
-        property("sonar.projectKey", "Phongdnh-uit_SE356")
+        property("sonar.projectKey", "Phongdnh-uit_FlashMile")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.organization", "phongdnh")
         property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
