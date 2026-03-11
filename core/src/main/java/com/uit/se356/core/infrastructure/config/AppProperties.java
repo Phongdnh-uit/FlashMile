@@ -58,6 +58,7 @@ public class AppProperties {
     private String verifyEmailPath;
     private String resetPasswordPath;
     private String logoUrl;
+    private String oauth2CallbackPath;
   }
 
   @Getter

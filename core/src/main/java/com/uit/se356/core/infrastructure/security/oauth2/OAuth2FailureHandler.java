@@ -19,6 +19,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
@@ -82,25 +83,16 @@ public class OAuth2FailureHandler implements AuthenticationFailureHandler {
         exception.getMessage(),
         mapper.writeValueAsString(errorResponse));
 
-    String html =
-        "<!DOCTYPE html>"
-            + "<html>"
-            + "<body>"
-            + "<script>"
-            + "const response = "
-            + mapper.writeValueAsString(errorResponse)
-            + ";"
-            + "window.opener.postMessage(response, '"
-            + appProperties.getFrontend().getBaseUrl()
-            + "');"
-            + "window.close();"
-            + "</script>"
-            + "</body>"
-            + "</html>";
+    // Trả về Callback của SPA
+    String url =
+        UriComponentsBuilder.fromUriString(appProperties.getFrontend().getBaseUrl())
+            .path(appProperties.getFrontend().getOauth2CallbackPath())
+            .queryParam("success", false)
+            .queryParam("error", mapper.writeValueAsString(errorResponse))
+            .build()
+            .toUriString();
 
-    response.setContentType("text/html");
-    response.setCharacterEncoding("UTF-8");
-    mapper.writeValue(response.getWriter(), html);
+    response.sendRedirect(url);
   }
 
   private AppException findAppException(Throwable throwable) {

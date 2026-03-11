@@ -20,14 +20,10 @@ public class SmsVerificationSender implements VerificationSender {
     // In a real application, integrate with SMS provider (Twilio, AWS SNS, etc.)
     switch (purpose) {
       case PHONE_VERIFICATION:
-        log.info("Phone Verification SMS to [{}]: {}", recipient, code);
-        System.out.println("=================================================");
-        System.out.println("SMS to: " + recipient);
-        System.out.println("Code: " + code);
-        System.out.println("=================================================");
+        log.info("Phone Verification SMS to [{}]", recipient);
         break;
       default:
-        log.warn("Unknown purpose SMS to [{}]: {}", recipient, code);
+        log.warn("Unknown purpose SMS to [{}]", recipient);
     }
   }
 }
