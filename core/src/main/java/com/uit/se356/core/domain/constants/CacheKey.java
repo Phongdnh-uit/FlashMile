@@ -6,4 +6,5 @@ public interface CacheKey {
   String PERMISSION_LIST = "PERMISSION_LIST";
   String MFA_PRECHALLENGE_PREFIX = "MFA_CHALLENGE:{verificationToken}";
   String MFA_CHALLENGE_PREFIX = "MFA_CHALLENGE:{challengeId}";
+  // String AUTH_EXCHANGE_TOKEN = "AUTH_EX:{exchangeToken}";
 }
