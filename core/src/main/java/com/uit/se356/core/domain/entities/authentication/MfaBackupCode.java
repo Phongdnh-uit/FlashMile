@@ -32,8 +32,8 @@ public class MfaBackupCode {
   }
 
   // ============================ BEHAVIOR ============================
-  public void markAsUsed(Instant timestamp) {
-    this.usedAt = Objects.requireNonNull(timestamp, "Timestamp cannot be null");
+  public void markAsUsed() {
+    this.usedAt = Instant.now();
   }
 
   // ============================ GETTERS ============================

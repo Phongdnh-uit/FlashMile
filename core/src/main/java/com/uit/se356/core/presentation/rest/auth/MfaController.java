@@ -2,18 +2,32 @@ package com.uit.se356.core.presentation.rest.auth;
 
 import com.uit.se356.common.dto.ApiResponse;
 import com.uit.se356.common.services.CommandBus;
+import com.uit.se356.common.services.QueryBus;
 import com.uit.se356.core.application.authentication.command.mfa.CompleteSetupMfaCommand;
 import com.uit.se356.core.application.authentication.command.mfa.InitiateMfaSetupCommand;
 import com.uit.se356.core.application.authentication.command.mfa.MfaChallengeCommand;
+import com.uit.se356.core.application.authentication.command.mfa.RecoveryMfaCommand;
+import com.uit.se356.core.application.authentication.command.mfa.RemoveMfaMethodCommand;
+import com.uit.se356.core.application.authentication.command.mfa.VerifyMfaCommand;
+import com.uit.se356.core.application.authentication.projections.MfaMethodProjection;
+import com.uit.se356.core.application.authentication.query.mfa.GetActiveMethodsQuery;
+import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.application.authentication.result.mfa.MfaChallengeResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
+import com.uit.se356.core.infrastructure.config.AppProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +40,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MfaController {
   private final CommandBus commandBus;
+  private final QueryBus queryBus;
+  private final AppProperties appProperties;
 
-  // Placeholder cho endpoint lấy danh sách đã cấu hình MFA
   @GetMapping("/methods")
-  public ResponseEntity<ApiResponse<Void>> getMfaMethods() {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public ResponseEntity<ApiResponse<List<MfaMethodProjection>>> getMfaMethods() {
+    GetActiveMethodsQuery query = new GetActiveMethodsQuery();
+    return ResponseEntity.ok(
+        ApiResponse.ok(queryBus.dispatch(query), "Active MFA methods retrieved successfully"));
   }
 
   @Operation(summary = "Khởi tạo quá trình thiết lập MFA cho người dùng")
@@ -59,12 +76,43 @@ public class MfaController {
   }
 
   @PostMapping("/verify")
-  public ResponseEntity<ApiResponse<Void>> verifyMfa() {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public ResponseEntity<ApiResponse<LoginResult>> verifyMfa(@RequestBody VerifyMfaCommand command) {
+    LoginResult result = commandBus.dispatch(command);
+    ResponseCookie cookie =
+        ResponseCookie.from("refreshToken", result.refreshToken())
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofMillis(appProperties.getSecurity().getJwt().getRefreshExpiration()))
+            .build();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(ApiResponse.ok(result, "MFA verification successful"));
   }
 
   @PostMapping("/recovery")
-  public ResponseEntity<ApiResponse<Void>> recoverMfa() {
-    throw new UnsupportedOperationException("Not implemented yet");
+  public ResponseEntity<ApiResponse<LoginResult>> recoverMfa(
+      @RequestBody RecoveryMfaCommand command) {
+    LoginResult result = commandBus.dispatch(command);
+    ResponseCookie cookie =
+        ResponseCookie.from("refreshToken", result.refreshToken())
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .path("/")
+            .maxAge(Duration.ofMillis(appProperties.getSecurity().getJwt().getRefreshExpiration()))
+            .build();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(ApiResponse.ok(commandBus.dispatch(command), "MFA recovery successful"));
+  }
+
+  @DeleteMapping("/remove/{method}")
+  public ResponseEntity<ApiResponse<Void>> removeMfaMethod(
+      @PathVariable("method") MfaMethod method) {
+    RemoveMfaMethodCommand command = new RemoveMfaMethodCommand(method);
+    return ResponseEntity.ok(
+        ApiResponse.ok(commandBus.dispatch(command), "MFA method removed successfully"));
   }
 }

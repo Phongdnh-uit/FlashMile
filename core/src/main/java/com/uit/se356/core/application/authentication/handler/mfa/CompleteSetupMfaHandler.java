@@ -7,10 +7,10 @@ import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.common.utils.OtpGenerator;
 import com.uit.se356.common.utils.SecurityUtil;
 import com.uit.se356.core.application.authentication.command.mfa.CompleteSetupMfaCommand;
-import com.uit.se356.core.application.authentication.port.out.EncryptService;
 import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
 import com.uit.se356.core.application.authentication.port.out.MfaProvider;
 import com.uit.se356.core.application.authentication.port.out.MfaRepository;
+import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfaResult;
 import com.uit.se356.core.domain.entities.authentication.Mfa;
 import com.uit.se356.core.domain.entities.authentication.MfaBackupCode;
@@ -28,21 +28,21 @@ public class CompleteSetupMfaHandler
   private final MfaRepository mfaRepository;
   private final MfaBackupCodeRepository mfaBackupCodeRepository;
   private final IdGenerator idGenerator;
-  private final EncryptService encryptService;
+  private final PasswordEncoder passwordEncoder;
 
   public CompleteSetupMfaHandler(
       List<MfaProvider> mfaProviders,
       SecurityUtil<UserId> securityUtil,
       MfaRepository mfaRepository,
       IdGenerator idGenerator,
-      EncryptService encryptService,
-      MfaBackupCodeRepository mfaBackupCodeRepository) {
+      MfaBackupCodeRepository mfaBackupCodeRepository,
+      PasswordEncoder passwordEncoder) {
     this.mfaProviders = mfaProviders;
     this.securityUtil = securityUtil;
     this.mfaRepository = mfaRepository;
     this.mfaBackupCodeRepository = mfaBackupCodeRepository;
     this.idGenerator = idGenerator;
-    this.encryptService = encryptService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -76,27 +76,37 @@ public class CompleteSetupMfaHandler
 
     // TODO: Backup code, dùng chung backup code cho tất cả các phương thức MFA,  không cần phải
     // tạo mới khi thêm phương thức MFA mới
-    List<String> bkCode = new ArrayList<>();
 
     List<MfaBackupCode> backupCodes = mfaBackupCodeRepository.findByUserId(userId);
-    List<MfaBackupCode> backupCodesToSave = new ArrayList<>();
+
     boolean isAllRevoked = backupCodes.stream().allMatch(v -> v.getUsedAt() != null);
+
+    // Trường hợp dùng hết mã hoặc lần setup MFA đầu tiên, tạo và trả về
     if (backupCodes.isEmpty() || isAllRevoked) {
-      mfaBackupCodeRepository.deleteAlById(backupCodes.stream().map(MfaBackupCode::getId).toList());
+
+      // Xóa các mã backup code cũ nếu có
+      mfaBackupCodeRepository.deleteAllByUserId(userId);
+
+      List<MfaBackupCode> backupCodesToSave = new ArrayList<>();
+      List<String> bkCode = new ArrayList<>();
       // Sinh khoảng 10 mã
       for (int i = 0; i < 10; i++) {
         String code = OtpGenerator.generateOtp(8);
         bkCode.add(code);
-        String hashedCode = encryptService.encrypt(code);
+        // Hash code
+        String hashedCode = passwordEncoder.encode(code);
         MfaBackupCode backupCode =
             MfaBackupCode.create(
                 new MfaBackupCodeId(idGenerator.generate().toString()), userId, hashedCode, null);
         backupCodesToSave.add(backupCode);
       }
       mfaBackupCodeRepository.saveAll(backupCodesToSave);
+      CompleteSetupMfaResult result = new CompleteSetupMfaResult(bkCode);
+      return result;
     }
 
-    CompleteSetupMfaResult result = new CompleteSetupMfaResult(bkCode);
+    // Trường hợp đã có, không trả về gì hết vì backup code đã lưu ở lần đầu tiên
+    CompleteSetupMfaResult result = new CompleteSetupMfaResult(List.of());
 
     return result;
   }

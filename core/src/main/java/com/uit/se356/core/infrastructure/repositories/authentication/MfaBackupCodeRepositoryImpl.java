@@ -9,7 +9,6 @@ import com.uit.se356.core.infrastructure.persistence.mappers.authentication.MfaB
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.MfaBackupCodeJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +38,6 @@ public class MfaBackupCodeRepositoryImpl implements MfaBackupCodeRepository {
   }
 
   @Override
-  public Optional<MfaBackupCode> findById(MfaBackupCodeId id) {
-    return backupCodeJpaRepository.findById(id.value()).map(backupCodeMapper::toDomain);
-  }
-
-  @Override
   @Transactional
   public void deleteById(MfaBackupCodeId id) {
     backupCodeJpaRepository.deleteById(id.value());
@@ -59,12 +53,14 @@ public class MfaBackupCodeRepositoryImpl implements MfaBackupCodeRepository {
   }
 
   @Override
-  public void deleteAlById(List<MfaBackupCodeId> ids) {
-    List<String> idValues = ids.stream().map(id -> id.value()).toList();
-    backupCodeJpaRepository.deleteAllById(idValues);
+  @Transactional
+  public void deleteAllByUserId(UserId userId) {
+    backupCodeJpaRepository.delete(
+        (root, query, builder) -> builder.equal(root.get("userId"), userId.value()));
   }
 
   @Override
+  @Transactional
   public List<MfaBackupCode> saveAll(List<MfaBackupCode> backupCodes) {
     List<MultifactorBackupCodeJpaEntity> entities =
         backupCodes.stream().map(backupCodeMapper::toEntity).toList();

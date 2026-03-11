@@ -13,9 +13,11 @@ import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.entities.authentication.Mfa;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.vo.authentication.UserId;
+import com.uit.se356.core.domain.vo.authentication.mfa.MfaChallengeCache;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ChallengeMfaHandler
     implements CommandHandler<MfaChallengeCommand, MfaChallengeResult> {
@@ -65,11 +67,17 @@ public class ChallengeMfaHandler
 
     MfaChallengeResult result = mfaProvider.initiateMfaChallenge(userId, command.method());
 
-    String key = String.format(CacheKey.MFA_CHALLENGE_PREFIX, userId.value(), result.challengeId());
+    if (result.challengeId() == null || result.challengeId().isBlank()) {
+      result = result.withChallengeId(UUID.randomUUID().toString());
+    }
+
+    String key = String.format(CacheKey.MFA_CHALLENGE_PREFIX, result.challengeId());
+
+    MfaChallengeCache cacheData = new MfaChallengeCache(userId, command.method());
 
     // Lưu thông tin challenge vào cache để dùng cho bước verify sau
     authCacheRepository.setObject(
-        key, result, Duration.ofSeconds(authConfigPort.getMfaChallengeExpiration()));
+        key, cacheData, Duration.ofSeconds(authConfigPort.getMfaChallengeExpiration()));
 
     return result;
   }
