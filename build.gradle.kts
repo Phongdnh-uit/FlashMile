@@ -27,6 +27,7 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.organization", "phongdnh")
         property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
+        property ("sonar.sourceEncoding", "UTF-8")
     }
 }
 
@@ -59,9 +60,7 @@ subprojects {
 
     sonar {
         properties {
-            property("sonar.sources", "src/main/java")
-            property("sonar.tests", "src/test/java")
-            property("sonar.java.binaries", "build/classes/java/main")
+            property("sonar.sources", "src/main")
         }
     }
 
