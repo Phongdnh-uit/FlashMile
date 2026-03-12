@@ -8,6 +8,7 @@ import com.uit.se356.core.infrastructure.persistence.entities.authentication.Ver
 import com.uit.se356.core.infrastructure.persistence.mappers.authentication.VerificationPersistenceMapper;
 import com.uit.se356.core.infrastructure.persistence.repositories.authentication.VerificationJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -72,5 +73,11 @@ public class VerificationRepositoryImpl implements VerificationRepository {
   @Override
   public void delete(Verification verification) {
     verificationJpaRepository.deleteById(verification.getId().value());
+  }
+
+  @Override
+  public void cleanupExpiredVerifications() {
+    verificationJpaRepository.delete(
+        (root, query, builder) -> builder.lessThan(root.get("expiresAt"), Instant.now()));
   }
 }

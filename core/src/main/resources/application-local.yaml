@@ -73,6 +73,8 @@ application:
       secret-key: "mySuperSecretKeyForJwtSigningMustBeLongEnoughToSatisfyHS256Requirements"
       expiration: 86400000 # 1 day
       refresh-expiration: 604800000 # 7 days
+    encryption-salt: fixed-salt-change-me
+    encryption-secret-key: mySuperSecretKeyForEncryptionMustBeLongEnough
   mail:
     from: "noreply@flashmile.local"
   frontend:
@@ -80,11 +82,14 @@ application:
     verify-email-path: "/verify-email"
     reset-password-path: "/reset-password" # Đường dẫn frontend cho
     logo-url: https://res.cloudinary.com/dfavjndwj/image/upload/v1771167529/Vector_scx4r9.jpg
+    oauth2-callback-path: /oauth2/callback
   verification:
     email-link-expiration: 900 # 15 minutes
     sms-otp-expiration: 300 # 5 minutes
     phone-verified-token-expiration: 600 # 10 minutes
     forgot-password-code-expiration: 300 # 5 minutes
+    mfa-challenge-expiration: 600 # 10 minutes
+    prechallenge-token-expiration: 600 # 10 minutes
   bootstrap:
     admin-email: admin@example.com
     admin-full-name: Admin Local

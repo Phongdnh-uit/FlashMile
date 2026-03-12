@@ -1,6 +1,6 @@
 package com.uit.se356.core.application.authentication.port.out;
 
-public interface VerificationConfigPort {
+public interface AuthConfigPort {
   long getEmailLinkExpiration();
 
   long getSmsOtpExpiration();
@@ -8,4 +8,8 @@ public interface VerificationConfigPort {
   long getPhoneVerifiedTokenExpiration();
 
   long getForgotPasswordCodeExpiration();
+
+  long getPrechallengeTokenExpiration();
+
+  long getMfaChallengeExpiration();
 }

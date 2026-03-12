@@ -2,7 +2,7 @@ package com.uit.se356.core.application.authentication.strategies.verification.se
 
 import com.uit.se356.common.exception.AppException;
 import com.uit.se356.common.utils.IdGenerator;
-import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
+import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
 import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
 import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.user.port.UserRepository;
@@ -23,13 +23,13 @@ public class EmailVerificationSendingStrategy implements SendVerificationStrateg
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
   private final IdGenerator idGenerator;
-  private final VerificationConfigPort verificationConfigPort;
+  private final AuthConfigPort verificationConfigPort;
 
   public EmailVerificationSendingStrategy(
       UserRepository userRepository,
       VerificationRepository verificationRepository,
       IdGenerator idGenerator,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     this.userRepository = userRepository;
     this.verificationRepository = verificationRepository;
     this.idGenerator = idGenerator;

@@ -17,6 +17,13 @@ import com.uit.se356.core.application.authentication.handler.RegisterCommandHand
 import com.uit.se356.core.application.authentication.handler.ResetPasswordCommandHandler;
 import com.uit.se356.core.application.authentication.handler.SendVerificationCodeHandler;
 import com.uit.se356.core.application.authentication.handler.TokenRotationHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.ChallengeMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.CompleteSetupMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.GetActiveMethodsHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.InitiateMfaSetupHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.RecoveryMfaHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.RemoveMfaMethodHandler;
+import com.uit.se356.core.application.authentication.handler.mfa.VerifyMfaHandler;
 import com.uit.se356.core.application.authentication.handler.permission.AssignPermissionHandler;
 import com.uit.se356.core.application.authentication.handler.permission.PermissionSummaryQueryHandler;
 import com.uit.se356.core.application.authentication.handler.role.CreateRoleHandler;
@@ -26,13 +33,16 @@ import com.uit.se356.core.application.authentication.handler.role.UpdateRoleHand
 import com.uit.se356.core.application.authentication.port.in.IssueTokenService;
 import com.uit.se356.core.application.authentication.port.in.PermissionChecker;
 import com.uit.se356.core.application.authentication.port.out.AuthCacheRepository;
+import com.uit.se356.core.application.authentication.port.out.AuthConfigPort;
 import com.uit.se356.core.application.authentication.port.out.LinkedAccountRepository;
+import com.uit.se356.core.application.authentication.port.out.MfaBackupCodeRepository;
+import com.uit.se356.core.application.authentication.port.out.MfaProvider;
+import com.uit.se356.core.application.authentication.port.out.MfaRepository;
 import com.uit.se356.core.application.authentication.port.out.PasswordEncoder;
 import com.uit.se356.core.application.authentication.port.out.PermissionRepository;
 import com.uit.se356.core.application.authentication.port.out.RefreshTokenRepository;
 import com.uit.se356.core.application.authentication.port.out.RoleRepository;
 import com.uit.se356.core.application.authentication.port.out.TokenProvider;
-import com.uit.se356.core.application.authentication.port.out.VerificationConfigPort;
 import com.uit.se356.core.application.authentication.port.out.VerificationRepository;
 import com.uit.se356.core.application.authentication.port.out.VerificationSender;
 import com.uit.se356.core.application.authentication.services.IssueTokenServiceImpl;
@@ -77,7 +87,7 @@ public class DependencyInjectionConfig {
   PhoneVerificationSendingStrategy phoneVerificationSendingStrategy(
       UserRepository userRepository,
       AuthCacheRepository cacheRepository,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     return new PhoneVerificationSendingStrategy(
         userRepository, cacheRepository, verificationConfigPort);
   }
@@ -87,7 +97,7 @@ public class DependencyInjectionConfig {
       IdGenerator idGenerator,
       UserRepository userRepository,
       VerificationRepository verificationRepository,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     return new EmailVerificationSendingStrategy(
         userRepository, verificationRepository, idGenerator, verificationConfigPort);
   }
@@ -97,14 +107,14 @@ public class DependencyInjectionConfig {
       IdGenerator idGenerator,
       UserRepository userRepository,
       VerificationRepository verificationRepository,
-      VerificationConfigPort verificationConfigPort) {
+      AuthConfigPort verificationConfigPort) {
     return new ForgotPasswordSendingStrategy(
         userRepository, verificationRepository, verificationConfigPort, idGenerator);
   }
 
   @Bean
   PhoneVerificationProcessingStrategy phoneVerificationProcessingStrategy(
-      AuthCacheRepository cacheRepository, VerificationConfigPort verificationConfigPort) {
+      AuthCacheRepository cacheRepository, AuthConfigPort verificationConfigPort) {
     return new PhoneVerificationProcessingStrategy(cacheRepository, verificationConfigPort);
   }
 
@@ -159,8 +169,17 @@ public class DependencyInjectionConfig {
   QueryHandler<?, ?> loginQueryHandler(
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
-      IssueTokenService issueTokenService) {
-    return new LoginQueryHandler(userRepository, passwordEncoder, issueTokenService);
+      IssueTokenService issueTokenService,
+      AuthCacheRepository cacheRepository,
+      AuthConfigPort authConfigPort,
+      MfaRepository mfaRepository) {
+    return new LoginQueryHandler(
+        userRepository,
+        passwordEncoder,
+        issueTokenService,
+        cacheRepository,
+        authConfigPort,
+        mfaRepository);
   }
 
   @Bean
@@ -363,5 +382,82 @@ public class DependencyInjectionConfig {
   FileCleanupService fileCleanupService(
       FileRepository fileRepository, StorageProvider storageProvider) {
     return new FileCleanupServiceImpl(fileRepository, storageProvider);
+  }
+
+  @Bean
+  CommandHandler<?, ?> initiateMfaSetupHandler(
+      List<MfaProvider> mfaProviders,
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository,
+      IdGenerator idGenerator) {
+    return new InitiateMfaSetupHandler(mfaProviders, securityUtil, mfaRepository, idGenerator);
+  }
+
+  @Bean
+  CommandHandler<?, ?> completeMfaSetupHandler(
+      List<MfaProvider> mfaProviders,
+      SecurityUtil<UserId> securityUtil,
+      IdGenerator idGenerator,
+      MfaRepository mfaRepository,
+      MfaBackupCodeRepository mfaBackupCodeRepository,
+      PasswordEncoder passwordEncoder) {
+    return new CompleteSetupMfaHandler(
+        mfaProviders,
+        securityUtil,
+        mfaRepository,
+        idGenerator,
+        mfaBackupCodeRepository,
+        passwordEncoder);
+  }
+
+  @Bean
+  CommandHandler<?, ?> challengeMfaHandler(
+      AuthCacheRepository authCacheRepository,
+      List<MfaProvider> mfaProviders,
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository,
+      AuthConfigPort authConfigPort) {
+    return new ChallengeMfaHandler(
+        authCacheRepository, mfaProviders, mfaRepository, authConfigPort);
+  }
+
+  @Bean
+  CommandHandler<?, ?> verifyMfaHandler(
+      List<MfaProvider> mfaProviders,
+      AuthCacheRepository authCacheRepository,
+      MfaRepository mfaRepository,
+      IssueTokenService issueTokenService,
+      UserRepository userRepository) {
+    return new VerifyMfaHandler(
+        mfaProviders, authCacheRepository, mfaRepository, issueTokenService, userRepository);
+  }
+
+  @Bean
+  CommandHandler<?, ?> recoveryMfaHandler(
+      AuthCacheRepository authCacheRepository,
+      MfaBackupCodeRepository mfaBackupCodeRepository,
+      PasswordEncoder passwordEncoder,
+      UserRepository userRepository,
+      IssueTokenService issueTokenService) {
+    return new RecoveryMfaHandler(
+        authCacheRepository,
+        mfaBackupCodeRepository,
+        passwordEncoder,
+        userRepository,
+        issueTokenService);
+  }
+
+  @Bean
+  QueryHandler<?, ?> getActiveMfaMethodsHandler(
+      SecurityUtil<UserId> securityUtil, MfaRepository mfaRepository) {
+    return new GetActiveMethodsHandler(mfaRepository, securityUtil);
+  }
+
+  @Bean
+  CommandHandler<?, ?> removeMfaMethodHandler(
+      SecurityUtil<UserId> securityUtil,
+      MfaRepository mfaRepository,
+      MfaBackupCodeRepository mfaBackupCodeRepository) {
+    return new RemoveMfaMethodHandler(mfaRepository, securityUtil, mfaBackupCodeRepository);
   }
 }
