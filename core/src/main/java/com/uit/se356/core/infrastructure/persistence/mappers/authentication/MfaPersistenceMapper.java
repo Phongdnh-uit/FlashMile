@@ -33,10 +33,6 @@ public class MfaPersistenceMapper {
           case TOTP -> objectMapper.readValue(entity.getDetails(), TotpMfaConfig.class);
           case EMAIL -> objectMapper.readValue(entity.getDetails(), EmailMfaConfig.class);
           case WEBAUTHN -> objectMapper.readValue(entity.getDetails(), WebAuthMfaConfig.class);
-          default -> {
-            log.error("Unsupported MFA method: {}", entity.getMethod());
-            throw new AppException(CommonErrorCode.INTERNAL_ERROR);
-          }
         };
 
     return Mfa.rehydrate(

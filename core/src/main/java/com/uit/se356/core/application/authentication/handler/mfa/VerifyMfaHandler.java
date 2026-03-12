@@ -84,12 +84,10 @@ public class VerifyMfaHandler implements CommandHandler<VerifyMfaCommand, LoginR
         new IssueTokenCommand(mfaChallengeCacheOpt.get().userId(), user.getRoleId());
     TokenPairResult tokenPair = issueTokenService.issueToken(issueTokenCommand);
     // Trả về kết quả đăng nhập thành công
-    LoginResult loginResult =
-        new LoginResult(
-            tokenPair.accessToken(),
-            tokenPair.refreshToken(),
-            tokenPair.expiresIn(),
-            tokenPair.tokenType());
-    return loginResult;
+    return new LoginResult(
+        tokenPair.accessToken(),
+        tokenPair.refreshToken(),
+        tokenPair.expiresIn(),
+        tokenPair.tokenType());
   }
 }

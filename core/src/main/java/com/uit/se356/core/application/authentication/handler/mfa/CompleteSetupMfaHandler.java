@@ -101,13 +101,11 @@ public class CompleteSetupMfaHandler
         backupCodesToSave.add(backupCode);
       }
       mfaBackupCodeRepository.saveAll(backupCodesToSave);
-      CompleteSetupMfaResult result = new CompleteSetupMfaResult(bkCode);
-      return result;
+
+      return new CompleteSetupMfaResult(bkCode);
     }
 
     // Trường hợp đã có, không trả về gì hết vì backup code đã lưu ở lần đầu tiên
-    CompleteSetupMfaResult result = new CompleteSetupMfaResult(List.of());
-
-    return result;
+    return new CompleteSetupMfaResult(List.of());
   }
 }
