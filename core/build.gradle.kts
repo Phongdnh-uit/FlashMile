@@ -28,6 +28,8 @@ dependencies {
     implementation ("com.google.zxing:core:$zxingVersion")
     implementation ("com.google.zxing:javase:$zxingVersion")
     implementation ("com.warrenstrange:googleauth:$googleAuthVersion")
+    implementation("com.webauthn4j:webauthn4j-core:0.23.0.RELEASE")
+    implementation("com.webauthn4j:webauthn4j-device-reputation:0.23.0.RELEASE")
 
 	runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
