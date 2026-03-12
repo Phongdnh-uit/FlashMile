@@ -62,16 +62,48 @@ public class CompleteSetupMfaHandler
           if (mfa.isVerified()) {
             throw new AppException(AuthErrorCode.MFA_METHOD_ALREADY_EXISTS);
           }
-          // TODO: Chưa tính đến trường hợp dùng WebAuth
-          boolean isValid = provider.verify(mfa.getConfig(), command.credential());
-          if (!isValid) {
-            throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
+
+          if (provider instanceof WebAuthnProvider webAuthnProvider) {
+              byte[] attestationObject = command.properties().get("attestationObject").getBytes();
+              byte[] clientDataJSON = command.properties().get("clientDataJSON").getBytes();
+
+              WebAuthMfaConfig config = webAuthnProvider.completeMfaSetup(
+                  attestationObject,
+                  clientDataJSON,
+                  userId
+              );
+              mfa.updateConfig(config);
+          } else {
+              boolean isValid = provider.verify(mfa.getConfig(), command.credential());
+              if (!isValid) {
+                throw new AppException(AuthErrorCode.INVALID_CREDENTIALS);
+              }
           }
+
           mfa.markAsVerified();
           mfaRepository.update(mfa);
         },
         () -> {
-          throw new AppException(AuthErrorCode.MFA_METHOD_NOT_FOUND);
+          if (provider instanceof WebAuthnProvider webAuthnProvider) {
+              byte[] attestationObject = command.properties().get("attestationObject").getBytes();
+              byte[] clientDataJSON = command.properties().get("clientDataJSON").getBytes();
+
+              WebAuthMfaConfig config = webAuthnProvider.completeMfaSetup(
+                  attestationObject,
+                  clientDataJSON,
+                  userId
+              );
+              Mfa newMfa = Mfa.create(
+                  new MfaId(idGenerator.generate().toString()),
+                  userId,
+                  command.method(),
+                  config
+              );
+              newMfa.markAsVerified();
+              mfaRepository.create(newMfa);
+          } else {
+              throw new AppException(AuthErrorCode.MFA_METHOD_NOT_FOUND);
+          }
         });
 
     // TODO: Backup code, dùng chung backup code cho tất cả các phương thức MFA,  không cần phải

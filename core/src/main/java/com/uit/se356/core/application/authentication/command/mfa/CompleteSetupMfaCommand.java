@@ -22,9 +22,8 @@ public record CompleteSetupMfaCommand(
           new FieldError(
               "method", CommonErrorCode.FIELD_REQUIRED.getMessageKey(), new Object[] {"method"}));
     }
-    // Credential có thể null nếu method là webauth, nhưng nếu method là TOTP hoặc email thì
-    // credential không được null
-    if ((method == MfaMethod.TOTP || method == MfaMethod.EMAIL)
+    // Credential có thể null nếu method là webauthn
+    if (method != MfaMethod.WEBAUTHN
         && (credential == null || credential.isBlank())) {
       errors.add(
           new FieldError(
@@ -34,16 +33,7 @@ public record CompleteSetupMfaCommand(
     }
 
     if (method == MfaMethod.WEBAUTHN) {
-      // WebAuthn yêu cầu properties phải có "publicKey" và "attestationObject"
-      if (properties == null
-          || !properties.containsKey("publicKey")
-          || !properties.containsKey("attestationObject")) {
-        errors.add(
-            new FieldError(
-                "properties",
-                CommonErrorCode.FIELD_REQUIRED.getMessageKey(),
-                new Object[] {"properties with publicKey and attestationObject"}));
-      }
+        // Validation for WebAuthn properties is handled by the WebAuthnProvider
     }
     if (!errors.isEmpty()) {
       throw new AppException(CommonErrorCode.VALIDATION_ERROR, errors);

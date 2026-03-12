@@ -58,19 +58,22 @@ public class InitiateMfaSetupHandler
 
     MfaSetupResult<? extends MfaConfig> result = provider.initiateMfaSetup(userId);
 
-    if (mfaOpt.isPresent()) {
-      Mfa existingMfa = mfaOpt.get();
-      existingMfa.updateConfig(result.config());
-      mfaRepository.update(existingMfa);
-    } else {
-      Mfa newMfa =
-          Mfa.create(
-              new MfaId(idGenerator.generate().toString()),
-              userId,
-              command.method(),
-              result.config());
-      mfaRepository.create(newMfa);
+    if (result.config() != null) {
+        if (mfaOpt.isPresent()) {
+          Mfa existingMfa = mfaOpt.get();
+          existingMfa.updateConfig(result.config());
+          mfaRepository.update(existingMfa);
+        } else {
+          Mfa newMfa =
+              Mfa.create(
+                  new MfaId(idGenerator.generate().toString()),
+                  userId,
+                  command.method(),
+                  result.config());
+          mfaRepository.create(newMfa);
+        }
     }
+
 
     // Trả về metadata của result để frontend có thể hiển thị hướng dẫn setup cho người dùng
     return result.metadata();

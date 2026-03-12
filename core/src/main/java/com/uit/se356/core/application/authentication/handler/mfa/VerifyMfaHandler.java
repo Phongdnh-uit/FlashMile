@@ -67,10 +67,19 @@ public class VerifyMfaHandler implements CommandHandler<VerifyMfaCommand, LoginR
       throw new AppException(AuthErrorCode.MFA_METHOD_NOT_FOUND);
     }
 
-    boolean isValid = mfaProvider.verify(mfaOpt.get().getConfig(), command.code());
-
-    if (!isValid) {
-      throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE);
+    if (mfaProvider instanceof WebAuthnProvider webAuthnProvider) {
+        webAuthnProvider.verify(
+            mfaOpt.get(),
+            command.getCredentialId(),
+            command.getAuthenticatorData(),
+            command.getClientDataJSON(),
+            command.getSignature()
+        );
+    } else {
+        boolean isValid = mfaProvider.verify(mfaOpt.get().getConfig(), command.code());
+        if (!isValid) {
+          throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE);
+        }
     }
 
     authCacheRepository.delete(cacheKey);

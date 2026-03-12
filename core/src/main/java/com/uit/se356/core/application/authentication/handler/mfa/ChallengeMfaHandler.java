@@ -65,10 +65,15 @@ public class ChallengeMfaHandler
             .findFirst()
             .orElseThrow(() -> new AppException(CommonErrorCode.INTERNAL_ERROR));
 
-    MfaChallengeResult result = mfaProvider.initiateMfaChallenge(userId, command.method());
+    MfaChallengeResult result;
+    if (mfaProvider instanceof WebAuthnProvider webAuthnProvider) {
+        result = webAuthnProvider.challenge(mfaOpt.get());
+    } else {
+        result = mfaProvider.initiateMfaChallenge(userId, command.method());
+    }
 
     if (result.challengeId() == null || result.challengeId().isBlank()) {
-      result = result.withChallengeId(UUID.randomUUID().toString());
+        result = result.withChallengeId(UUID.randomUUID().toString());
     }
 
     String key = String.format(CacheKey.MFA_CHALLENGE_PREFIX, result.challengeId());
