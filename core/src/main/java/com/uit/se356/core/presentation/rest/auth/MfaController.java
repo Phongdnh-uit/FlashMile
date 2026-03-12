@@ -16,6 +16,8 @@ import com.uit.se356.core.application.authentication.result.mfa.CompleteSetupMfa
 import com.uit.se356.core.application.authentication.result.mfa.MfaChallengeResult;
 import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import com.uit.se356.core.infrastructure.config.AppProperties;
+import com.uit.se356.core.presentation.request.mfa.CompleteWebAuthnSetupRequest;
+import com.uit.se356.core.presentation.request.mfa.VerifyWebAuthnRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Duration;
@@ -62,7 +64,16 @@ public class MfaController {
   @Operation(summary = "Hoàn tất quá trình thiết lập MFA cho người dùng")
   @PostMapping("/setup/complete")
   public ResponseEntity<ApiResponse<CompleteSetupMfaResult>> completeMfaSetup(
-      @RequestBody CompleteSetupMfaCommand command) {
+      @RequestParam("method") MfaMethod method,
+      @RequestBody CompleteWebAuthnSetupRequest request) { // Use new DTO
+    CompleteSetupMfaCommand command = new CompleteSetupMfaCommand(
+        method,
+        null, // Credential is null for WebAuthn
+        Map.of(
+            "attestationObject", request.getAttestationObject(),
+            "clientDataJSON", request.getClientDataJSON()
+        )
+    );
     return ResponseEntity.ok(
         ApiResponse.ok(commandBus.dispatch(command), "MFA setup completed successfully"));
   }
@@ -76,7 +87,19 @@ public class MfaController {
   }
 
   @PostMapping("/verify")
-  public ResponseEntity<ApiResponse<LoginResult>> verifyMfa(@RequestBody VerifyMfaCommand command) {
+  public ResponseEntity<ApiResponse<LoginResult>> verifyMfa(
+      @RequestParam("method") MfaMethod method,
+      @RequestBody VerifyWebAuthnRequest request) { // Use new DTO
+    VerifyMfaCommand command = new VerifyMfaCommand(
+        request.getChallengeId(),
+        null, // Code is null for WebAuthn
+        Map.of(
+            "credentialId", request.getCredentialId(),
+            "authenticatorData", request.getAuthenticatorData(),
+            "clientDataJSON", request.getClientDataJSON(),
+            "signature", request.getSignature()
+        )
+    );
     LoginResult result = commandBus.dispatch(command);
     ResponseCookie cookie =
         ResponseCookie.from("refreshToken", result.refreshToken())
