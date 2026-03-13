@@ -1,7 +1,5 @@
 package com.uit.se356.core.infrastructure.persistence.mappers.authentication;
 
-import com.uit.se356.common.exception.AppException;
-import com.uit.se356.common.exception.CommonErrorCode;
 import com.uit.se356.core.domain.entities.authentication.Mfa;
 import com.uit.se356.core.domain.vo.authentication.MfaId;
 import com.uit.se356.core.domain.vo.authentication.UserId;

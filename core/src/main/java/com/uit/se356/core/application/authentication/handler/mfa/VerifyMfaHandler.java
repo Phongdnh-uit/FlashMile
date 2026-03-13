@@ -11,12 +11,14 @@ import com.uit.se356.core.application.authentication.port.out.MfaProvider;
 import com.uit.se356.core.application.authentication.port.out.MfaRepository;
 import com.uit.se356.core.application.authentication.result.LoginResult;
 import com.uit.se356.core.application.authentication.result.TokenPairResult;
+import com.uit.se356.core.application.authentication.result.mfa.MfaVerifyResult;
 import com.uit.se356.core.application.user.port.UserRepository;
 import com.uit.se356.core.domain.constants.CacheKey;
 import com.uit.se356.core.domain.entities.authentication.Mfa;
 import com.uit.se356.core.domain.entities.authentication.User;
 import com.uit.se356.core.domain.exception.AuthErrorCode;
 import com.uit.se356.core.domain.exception.UserErrorCode;
+import com.uit.se356.core.domain.vo.authentication.MfaMethod;
 import com.uit.se356.core.domain.vo.authentication.mfa.MfaChallengeCache;
 import java.util.List;
 import java.util.Optional;
@@ -67,10 +69,15 @@ public class VerifyMfaHandler implements CommandHandler<VerifyMfaCommand, LoginR
       throw new AppException(AuthErrorCode.MFA_METHOD_NOT_FOUND);
     }
 
-    boolean isValid = mfaProvider.verify(mfaOpt.get().getConfig(), command.code());
+    MfaVerifyResult result = mfaProvider.verify(mfaOpt.get().getConfig(), command.credential());
 
-    if (!isValid) {
+    if (!result.success()) {
       throw new AppException(AuthErrorCode.INVALID_VERIFICATION_CODE);
+    }
+    // Nếu là WEBAUTH cần lưu lại config mới
+    if (mfaOpt.get().getMethod() == MfaMethod.WEBAUTHN) {
+      mfaOpt.get().updateConfig(result.updatedConfig());
+      mfaRepository.update(mfaOpt.get());
     }
 
     authCacheRepository.delete(cacheKey);
