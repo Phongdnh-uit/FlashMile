@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.depot.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.core.application.depot.command.DeleteDepotCommand;
 import com.uit.se356.core.application.depot.port.DepotRepository;
@@ -18,6 +19,7 @@ public class DeleteDepotHandler implements CommandHandler<DeleteDepotCommand, Vo
   }
 
   @Override
+  @HasPermission("depot:delete")
   public Void handle(DeleteDepotCommand command) {
     Depot depot =
         depotRepository

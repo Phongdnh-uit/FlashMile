@@ -1,5 +1,6 @@
 package com.uit.se356.core.application.depot.handler;
 
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.common.utils.IdGenerator;
 import com.uit.se356.core.application.depot.command.CreateDepotCommand;
@@ -19,6 +20,7 @@ public class CreateDepotHandler implements CommandHandler<CreateDepotCommand, De
   }
 
   @Override
+  @HasPermission("depot:create")
   public DepotResult handle(CreateDepotCommand command) {
     String newId = idGenerator.generate().toString();
     Coordinate coordinate = new Coordinate(command.lat(), command.lng());

@@ -1,6 +1,7 @@
 package com.uit.se356.core.application.depot.handler;
 
 import com.uit.se356.common.exception.AppException;
+import com.uit.se356.common.security.HasPermission;
 import com.uit.se356.common.services.CommandHandler;
 import com.uit.se356.core.application.depot.command.UpdateDepotCommand;
 import com.uit.se356.core.application.depot.port.DepotRepository;
@@ -17,6 +18,7 @@ public class UpdateDepotHandler implements CommandHandler<UpdateDepotCommand, De
   }
 
   @Override
+  @HasPermission("depot:update")
   public DepotResult handle(UpdateDepotCommand command) {
     Depot depot =
         depotRepository
